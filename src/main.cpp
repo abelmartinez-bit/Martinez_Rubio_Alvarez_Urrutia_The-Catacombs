@@ -8,6 +8,7 @@ int main()
     sf::RenderWindow window(sf::VideoMode({800, 600}), "The Catacombs");
     
     std::cout << "testbien" << std::endl;
+    std::cout << "Window is open: " << window.isOpen() << std::endl;
 
     while (window.isOpen())
     {
