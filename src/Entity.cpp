@@ -3,9 +3,13 @@
 #include <iostream>
 
 Entity::Entity(std::string name, int hp, int atk, int def, int spAtk, int spDef, int spd)
-    : name(name), hp(hp), maxHp(hp), atk(atk), def(def), 
-      spAtk(spAtk), spDef(spDef), spd(spd), isBlocking(false),
-      moves(4, Move("Empty", MoveType::EFFECT, 0, 0)) {}
+    : name(name), hp(hp), maxHp(hp), 
+      atk(atk), baseAtk(atk),
+      def(def), baseDef(def),
+      spAtk(spAtk), baseSpAtk(spAtk),
+      spDef(spDef), baseSpDef(spDef),
+      spd(spd), baseSpd(spd),
+      isBlocking(false), moves(4, Move("Empty", MoveType::EFFECT, 0, 0)) {}
 
 // Getters
 std::string Entity::getName() const { return name; }
@@ -26,6 +30,20 @@ void Entity::setDef(int amount) { def = amount; }
 void Entity::setSpAtk(int amount) { spAtk = amount; }
 void Entity::setSpDef(int amount) { spDef = amount; }
 void Entity::setSpd(int amount) { spd = amount; }
+void Entity::setBaseAtk(int amount) { baseAtk = amount; }
+void Entity::setBaseDef(int amount) { baseDef = amount; }
+void Entity::setBaseSpAtk(int amount) { baseSpAtk = amount; }
+void Entity::setBaseSpDef(int amount) { baseSpDef = amount; }
+void Entity::setBaseSpd(int amount) { baseSpd = amount; }
+
+void Entity::resetStats() {
+    atk = baseAtk;
+    def = baseDef;
+    spAtk = baseSpAtk;
+    spDef = baseSpDef;
+    spd = baseSpd;
+    isBlocking = false;
+}
 
 // Actions
 void Entity::takeDamage(int amount) {

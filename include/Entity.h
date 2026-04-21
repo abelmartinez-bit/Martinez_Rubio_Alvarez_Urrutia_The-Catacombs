@@ -15,6 +15,8 @@ protected:
     int spDef;
     int spd;
     bool isBlocking;
+
+    int baseAtk, baseDef, baseSpAtk, baseSpDef, baseSpd;
     std::vector<Move> moves; // 4 moves por entidad
 
 public:
@@ -40,12 +42,19 @@ public:
     void setSpDef(int amount);
     void setSpd(int amount);
 
+    void setBaseAtk(int amount);
+    void setBaseDef(int amount);
+    void setBaseSpAtk(int amount);
+    void setBaseSpDef(int amount);
+    void setBaseSpd(int amount);
+
     // Acciones por ahora
     void takeDamage(int amount);
     void heal(int amount);
     void setBlocking(bool blocking);
     void setMove(int index, Move move);
     bool isAlive() const;
+    void resetStats(); // para resetear stats a base despues de cada combate, por ahora resetea todo a los base, pero se puede modificar para solo resetear los stats que fueron boosteados/debuffeados
 
     //virtual para que cada clase hija pueda mostrar sus stats/destruirse de forma diferente
     virtual void displayStats() const;

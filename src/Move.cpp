@@ -1,8 +1,9 @@
 #include "../include/Move.h"
 
-Move::Move(std::string name, MoveType type, int power, int accuracy, MoveEffect effect, MoveTarget target)
-: name(name), type(type), power(power), accuracy(accuracy), effect(effect), target(target) {}
+Move::Move(std::string name, MoveType type, int power, int accuracy, MoveEffect effect, MoveTarget target, int effectPotency)
+    : name(name), type(type), power(power), accuracy(accuracy), effect(effect), target(target), effectPotency(effectPotency) {}
 
+int Move::getEffectPotency() const { return effectPotency; }
 std::string Move::getName() const { return name; }
 MoveType Move::getType() const { return type; }
 MoveEffect Move::getEffect() const { return effect; }

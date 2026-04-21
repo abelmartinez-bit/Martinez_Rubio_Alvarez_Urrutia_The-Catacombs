@@ -1,4 +1,6 @@
 {
+	// por ahora no funciona, creo que es por el ${file} que solo trata de abrir el file que se esta editando, pero no es el que se quiere compilar, sino el main.cpp, por ejemplo
+	//abran el projecto con ctrl + shift + d, para abrir el debug y seleccionan su OS
     "version": "2.0.0",
     "tasks": [
         {
