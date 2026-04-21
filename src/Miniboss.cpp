@@ -1,4 +1,4 @@
-#include "../include/MiniBoss.h"
+#include "../include/Miniboss.h"
 
 MiniBoss::MiniBoss(std::string name, EnemyType type, int hp, int atk, int def,
                    int spAtk, int spDef, int spd)
