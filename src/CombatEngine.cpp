@@ -5,8 +5,9 @@
 CombatEngine::CombatEngine(Player* p, Entity* e)
     : player(p), enemy(e) {
     srand(time(0)); // seed random for accuracy checks y despues para crit chance
-    void setBaseStats(); // para setear los base stats de player y enemy al inicio del combate
-    //asi se pueden resetear despues con resetStats() sin perder el valor original
+    // set base stats of player and enemy at the start of combat
+    setBaseStats();
+    // asi se pueden resetear despues con resetStats() sin perder el valor original
 }
 
 void CombatEngine::executeTurn(int playerMoveIndex, int enemyMoveIndex) {
@@ -161,16 +162,24 @@ void CombatEngine::clearLog() {
     combatLog = "";
 }
 
-void setBaseStats(){
-    void setBaseAtk(void getAtk());
-    void setBaseDef(void getDef());
-    void setBaseSpAtk(void getSpAtk());
-    void setBaseSpDef(void getSpDef());
-    void setBaseSpd(void getSpd());
+void CombatEngine::setBaseStats() {
+    player->setBaseAtk(player->getAtk());
+    player->setBaseDef(player->getDef());
+    player->setBaseSpAtk(player->getSpAtk());
+    player->setBaseSpDef(player->getSpDef());
+    player->setBaseSpd(player->getSpd());
+
+    enemy->setBaseAtk(enemy->getAtk());
+    enemy->setBaseDef(enemy->getDef());
+    enemy->setBaseSpAtk(enemy->getSpAtk());
+    enemy->setBaseSpDef(enemy->getSpDef());
+    enemy->setBaseSpd(enemy->getSpd());
 }
 
-void endReset(Entity* entity, Entity* entity2){ {
-    entity->resetStats();
-    entity2->resetStats();
-    entity2->~Entity();
+void CombatEngine::endReset(Entity* entity, Entity* entity2) {
+    if (entity) entity->resetStats();
+    if (entity2) {
+        entity2->resetStats();
+        entity2->~Entity();
+    }
 }
