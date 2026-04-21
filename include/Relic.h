@@ -9,7 +9,9 @@ enum class RelicRarity {
     LEGENDARY
 };
 
+//clase abstracta para objetos que el jugador puede encontrar y equipar, con efectos únicos
 class Relic {
+//para que las hereden las subclases de los tipos de relic
 protected:
     std::string name;
     std::string description;

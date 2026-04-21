@@ -2,9 +2,11 @@
 #pragma once
 #include <string>
 #include <vector>
-#include "Move.h"
+#include "Move.h" //para crear el vector de movimientos
 
+//La clase base, tanto jugador y enemigo son un entity, tienen stats , movimiuentos y acciones
 class Entity {
+//protected para que solo las subclases tengan acceso, Enemy y Player
 protected:
     std::string name;
     int hp;
@@ -40,14 +42,15 @@ public:
     void setSpDef(int amount);
     void setSpd(int amount);
 
-    // Acciones por ahora
+    //acciones por ahora
     void takeDamage(int amount);
     void heal(int amount);
     void setBlocking(bool blocking);
     void setMove(int index, Move move);
     bool isAlive() const;
 
-    //virtual para que cada clase hija pueda mostrar sus stats/destruirse de forma diferente
+    /*virtual para que cada clase hija pueda mostrar sus stats/destruirse de forma diferente
+    o sea redefinir la funcion */
     virtual void displayStats() const;
     virtual ~Entity() = default;
 };

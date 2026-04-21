@@ -2,30 +2,31 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Run Game",
+      "name": "C/C++: clang++ build and debug active file",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/game",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "lldb",
+      "preLaunchTask": "Build (Mac)"
+    },
+    {
+      "name": "C/C++: g++ build and debug active file",
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceFolder}/build/game.exe",
       "args": [],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
-      "environment": [
-        {
-          "name": "PATH",
-          "value": "C:/SFML-3.1.0/bin;${env:PATH}"
-        }
-      ],
+      "environment": [],
       "externalConsole": false,
       "MIMode": "gdb",
       "miDebuggerPath": "C:/mingw64/bin/gdb.exe",
-      "setupCommands": [
-        {
-          "description": "Enable pretty-printing for gdb",
-          "text": "-enable-pretty-printing",
-          "ignoreFailures": true
-        }
-      ],
-      "preLaunchTask": "Build"
+      "preLaunchTask": "Build (Windows)"
     }
   ]
 }

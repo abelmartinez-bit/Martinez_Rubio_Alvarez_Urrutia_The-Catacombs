@@ -2,6 +2,7 @@
 #include "Relic.h"
 #include "Player.h"
 
+//los stats que el jugador puede boostear 
 enum class StatType {
     HP,
     ATK,
@@ -11,6 +12,7 @@ enum class StatType {
     SPD
 };
 
+//relic que boostea un stat específico del jugador
 class StatRelic : public Relic {
 private:
     StatType stat;

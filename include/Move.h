@@ -30,21 +30,23 @@ enum class MoveTarget {
     ENEMY    // damage, debuffs
 };
 
+//Moviemiento, turno, o accion en combate 
 class Move {
 private:
     std::string name;
     MoveType type;
     MoveEffect effect;
     MoveTarget target;
-    int power;      // base damage, 0 si effect
+    int power;      // daño base, 0 si es un efecto sin daño directo
     int accuracy;   // 0-100
 
 public:
-    //default effect NONE y default target ENEMY
+    //efecto default NONE y target default ENEMY
     Move(std::string name, MoveType type, int power, int accuracy, 
          MoveEffect effect = MoveEffect::NONE, 
          MoveTarget target = MoveTarget::ENEMY);
-
+         
+    // Getters
     std::string getName() const;
     MoveType getType() const;
     MoveEffect getEffect() const;
