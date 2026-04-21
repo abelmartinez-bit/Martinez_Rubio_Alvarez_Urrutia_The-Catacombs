@@ -1,9 +1,8 @@
 #include "../include/Player.h"
 #include <iostream>
 
-Player::Player(std::string name, int hp, int atk, int def, int spAtk, int spDef, int spd)
-    : Entity(name, hp, atk, def, spAtk, spDef, spd), 
-      level(1), exp(0), expToNextLevel(100), potionSlots(2) {}
+Player::Player(std::string name, int hp, int atk, int def, int spAtk, int spDef, int spd, PlayerType playerType)
+    : Entity(name, hp, atk, def, spAtk, spDef, spd), type(playerType), level(1), exp(0), expToNextLevel(100), potionSlots(2) {}
 
 // Getters
 int Player::getLevel() const { return level; }
@@ -91,4 +90,80 @@ void Player::displayStats() const {
     std::cout << "Level: " << level << " | EXP: " << exp << "/" << expToNextLevel << "\n";
     std::cout << "Relics: " << relics.size() << "\n";
     std::cout << "Potions: " << potions.size() << "/" << potionSlots << "\n";
+}
+
+void Player::initializeMovePool() {
+    switch (type) {
+        case PlayerType::WARRIOR:
+            movePool = {
+                // Name, Type, Power, Accuracy, Effect, Target (los non effects no ocupan los ultimos 2 parametros)
+                Move("Crush", MoveType::PHYSICAL, 80, 90),
+                Move("Shield Bash", MoveType::PHYSICAL, 70, 95),
+                Move("Fortify", MoveType::EFFECT, 0, 100, MoveEffect::DEF_UP, MoveTarget::SELF),
+                Move("Slam", MoveType::PHYSICAL, 90, 80),
+                Move("Iron Wall", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::SELF),
+                Move("Overhead Strike", MoveType::PHYSICAL, 75, 90)
+            };
+            break;
+        case PlayerType::ROGUE:
+            movePool = {
+                Move("Quick Strike", MoveType::PHYSICAL, 60, 100),
+                Move("Backstab", MoveType::PHYSICAL, 90, 75),
+                Move("Stealth", MoveType::EFFECT, 0, 100, MoveEffect::SPD_UP, MoveTarget::SELF),
+                Move("Stab", MoveType::PHYSICAL, 85, 80),
+                Move("Cripple", MoveType::EFFECT, 0, 100, MoveEffect::SPD_DOWN, MoveTarget::ENEMY),
+                Move("Flurry", MoveType::PHYSICAL, 70, 95)
+            };
+            break;
+        case PlayerType::MAGE:
+            movePool = {
+                Move("Soul Drain", MoveType::SPECIAL, 80, 90),
+                Move("Curse", MoveType::EFFECT, 0, 100, MoveEffect::SPATK_DOWN, MoveTarget::ENEMY),
+                Move("Thunderbolt", MoveType::SPECIAL, 90, 80),
+                Move("Weaken", MoveType::EFFECT, 0, 100, MoveEffect::SPDEF_DOWN, MoveTarget::ENEMY),
+                Move("Ethereal Blast", MoveType::SPECIAL, 95, 75),
+                Move("Arcane Shot", MoveType::SPECIAL, 75, 95)
+            };
+            break;
+        case PlayerType::ARCHER:
+            movePool = {
+                Move("Cripple", MoveType::EFFECT, 0, 100, MoveEffect::ATK_DOWN, MoveTarget::ENEMY),
+                Move("Clean Shot", MoveType::SPECIAL, 70, 100),
+                Move("Trap", MoveType::EFFECT, 0, 100, MoveEffect::SPDEF_DOWN, MoveTarget::ENEMY),
+                Move("Arrow Storm", MoveType::SPECIAL, 75, 85),
+                Move("Weaken", MoveType::EFFECT, 0, 100, MoveEffect::SPATK_DOWN, MoveTarget::ENEMY),
+                Move("Armored", MoveType::EFFECT, 0, 100, MoveEffect::DEF_UP, MoveTarget::SELF),
+                Move("Piercing Shot", MoveType::SPECIAL, 85, 80)
+            };
+            break;
+    }
+}
+
+ void Player::selectMovesFromPool() {
+
+    std::vector<int> indices;
+
+
+    // se crea un indice que a traves de un for por rango guarda numeros del 0 al tamaño del movePool(por ahora 5 para todos)
+    //y se van agregando a indices hasta tener 4 numeros distintos, que seran los moves que se le asignen al enemigo
+    while (indices.size() < 4) {
+        int idx = rand() % movePool.size();
+        bool already = false;
+        for (int i : indices)
+            if (i == idx) { already = true; break; }
+        if (!already)
+            indices.push_back(idx);
+    }
+
+    //se asignan los moves al enemigo segun los indices obtenidos
+    for (int i = 0; i < 4; i++)
+        setMove(i, movePool[indices[i]]);
+}
+
+Player::~Player() {
+    // Limpiar todos los pointers de relics
+    for (Relic* relic : relics) {
+        delete relic;
+    }
+    relics.clear();
 }

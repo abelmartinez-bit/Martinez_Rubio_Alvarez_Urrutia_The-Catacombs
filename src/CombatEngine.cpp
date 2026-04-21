@@ -10,9 +10,11 @@ CombatEngine::CombatEngine(Player* p, Entity* e)
     // asi se pueden resetear despues con resetStats() sin perder el valor original
 }
 
-void CombatEngine::executeTurn(int playerMoveIndex, int enemyMoveIndex) {
+void CombatEngine::executeTurn(int playerMoveIndex) {
     clearLog();
     
+    int enemyMoveIndex = rand() % 3; // random move for enemy, se puede mejorar con IA mas adelante, por ahora es random
+
     // "->"" ya que tenemos entity como pointer, cant use "."
     Move playerMove = player->getMoves()[playerMoveIndex];
     Move enemyMove = enemy->getMoves()[enemyMoveIndex];
@@ -178,8 +180,5 @@ void CombatEngine::setBaseStats() {
 
 void CombatEngine::endReset(Entity* entity, Entity* entity2) {
     if (entity) entity->resetStats();
-    if (entity2) {
-        entity2->resetStats();
-        entity2->~Entity();
-    }
+    if (entity2) entity2->resetStats();
 }

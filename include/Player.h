@@ -4,6 +4,13 @@
 #include "Potion.h" //para el vector
 #include <vector>
 
+enum class PlayerType {
+    ARCHER, 
+    MAGE,
+    WARRIOR,
+    ROGUE,
+};
+
 //igual que enemy pero con más adiciones
 class Player : public Entity { 
 //ahora si private porque son propias del jugador
@@ -11,15 +18,20 @@ private:
     int level;
     int exp;
     int expToNextLevel;
+    PlayerType type;
     //vector de pointers ya que no podemos guardar objetos Relic directamente en el vector 
     //ya que no pueden exsistir porque la clase Relic es abstracta
     // y asi apuntamos a objetos de clases hijas de Relic que implementen applyEffect
     std::vector<Relic*> relics;
     int potionSlots;
     std::vector<Potion> potions;
+    std::vector<Move> movePool; // banco de movimientos de donde se seleccionan  
+
+
 
 public:
-    Player(std::string name, int hp, int atk, int def, int spAtk, int spDef, int spd);
+    Player(std::string name, int hp, int atk, int def, int spAtk, int spDef, int spd, 
+        PlayerType playerType);
 
     // Getters
     int getLevel() const;
@@ -28,6 +40,7 @@ public:
     int getPotionSlots() const;
     std::vector<Relic*> getRelics() const;
     std::vector<Potion> getPotions() const;
+    
 
     //acciones por ahora, adicionales a las heredadas
     void gainExp(int amount);
@@ -40,4 +53,10 @@ public:
 
     //override para el virtual para mostrar stats del jugador, incluyendo nivel, exp, relics y potions
     void displayStats() const override;
+    void initializeMovePool();
+    void selectMovesFromPool();
+    
+    // Destructor para limpiar
+    ~Player();
+
 };

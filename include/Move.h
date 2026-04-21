@@ -46,7 +46,7 @@ public:
     Move(std::string name, MoveType type, int power, int accuracy, 
          MoveEffect effect = MoveEffect::NONE, 
          MoveTarget target = MoveTarget::ENEMY,
-         int effectPotency = 10); 
+         int effectPotency = 40); 
     
          
     int getEffectPotency() const;

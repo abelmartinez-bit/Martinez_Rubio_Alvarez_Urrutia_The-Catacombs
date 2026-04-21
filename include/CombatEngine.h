@@ -14,7 +14,7 @@ private:
 public:
     CombatEngine(Player* p, Entity* e);
 
-    void executeTurn(int playerMoveIndex, int enemyMoveIndex);
+    void executeTurn(int playerMoveIndex);
     int calculateDamage(Entity* attacker, Entity* defender, Move move);
     void applyMoveEffect(Move move, Entity* user, Entity* target);
     bool isBattleOver();
