@@ -2,12 +2,13 @@
 #include <string>
 #include "Move.h"
 
+//objetos que el jugador puede usar durante el combate para efectos como curar o subir stats
 class Potion {
 private:
     std::string name;
     MoveEffect effect;
     MoveTarget target;
-    int potency;  // 10 for weak, 20 for strong
+    int potency;  // 10 para debil, 20 para fuerte
 
 public:
     Potion(std::string name, MoveEffect effect, MoveTarget target, int potency);

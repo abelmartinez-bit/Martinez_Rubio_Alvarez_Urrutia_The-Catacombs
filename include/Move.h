@@ -30,13 +30,14 @@ enum class MoveTarget {
     ENEMY    // damage, debuffs
 };
 
+//Moviemiento, turno, o accion en combate 
 class Move {
 private:
     std::string name;
     MoveType type;
     MoveEffect effect;
     MoveTarget target;
-    int power;      // base damage, 0 si effect
+    int power;      // daño base, 0 si es un efecto sin daño directo
     int accuracy;   // 0-100
     int effectPotency; // para efectos, determina la cantidad de curacion o el grado de buff/debuff
 

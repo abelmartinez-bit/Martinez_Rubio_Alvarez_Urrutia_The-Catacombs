@@ -2,6 +2,7 @@
 #include "Relic.h"
 #include "Player.h"
 
+//tipos de mejoras de utlidad
 enum class UtilityType {
     EXPAND_POTION_SLOTS,  
     HEAL_ON_FLOOR,        
@@ -9,6 +10,7 @@ enum class UtilityType {
     RESTORE_ON_LEVEL_UP   // mas hp al subir de nivel, los demas se explican solos
 };
 
+//clase para relics com efectos de utilidad general
 class UtilityRelic : public Relic { 
 private:
     UtilityType utilityType;

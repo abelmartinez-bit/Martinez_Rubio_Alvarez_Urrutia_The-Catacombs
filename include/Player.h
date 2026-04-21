@@ -1,15 +1,18 @@
 #pragma once
-#include "Entity.h"
-#include "Relic.h"
-#include "Potion.h"
+#include "Entity.h" //porque heredamos de
+#include "Relic.h" //para el vector
+#include "Potion.h" //para el vector
 #include <vector>
 
-class Player : public Entity {
-private:
+//igual que enemy pero con más adiciones
+class Player : public Entity { 
+//ahora si private porque son propias del jugador
+private: 
     int level;
     int exp;
     int expToNextLevel;
-    //pointers ya que no podemos guardar objetos Relic directamente en el vector ya que no pueden exsistir
+    //vector de pointers ya que no podemos guardar objetos Relic directamente en el vector 
+    //ya que no pueden exsistir porque la clase Relic es abstracta
     // y asi apuntamos a objetos de clases hijas de Relic que implementen applyEffect
     std::vector<Relic*> relics;
     int potionSlots;
@@ -26,7 +29,7 @@ public:
     std::vector<Relic*> getRelics() const;
     std::vector<Potion> getPotions() const;
 
-    // Actions por ahora
+    //acciones por ahora, adicionales a las heredadas
     void gainExp(int amount);
     void levelUp();
     void boostStat(int statChoice);
