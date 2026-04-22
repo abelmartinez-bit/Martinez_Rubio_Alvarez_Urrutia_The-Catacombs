@@ -33,7 +33,8 @@ void Enemy::initializeMovePool() {
                 Move("Fortify", MoveType::EFFECT, 0, 100, MoveEffect::DEF_UP, MoveTarget::SELF),
                 Move("Slam", MoveType::PHYSICAL, 90, 80),
                 Move("Iron Wall", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::SELF),
-                Move("Overhead Strike", MoveType::PHYSICAL, 75, 90)
+                Move("Overhead Strike", MoveType::PHYSICAL, 75, 90),
+                Move("Berserk", MoveType::EFFECT, 0, 100, MoveEffect::ATK_UP, MoveTarget::SELF)
             };
             break;
         case EnemyType::SHADE:
@@ -43,7 +44,8 @@ void Enemy::initializeMovePool() {
                 Move("Shadowstep", MoveType::EFFECT, 0, 100, MoveEffect::SPD_UP, MoveTarget::SELF),
                 Move("Eviscerate", MoveType::PHYSICAL, 85, 80),
                 Move("Cripple", MoveType::EFFECT, 0, 90, MoveEffect::SPD_DOWN, MoveTarget::ENEMY),
-                Move("Flurry", MoveType::PHYSICAL, 70, 95)
+                Move("Flurry", MoveType::PHYSICAL, 70, 95),
+                Move("Evasion", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::SELF)
             };
             break;
         case EnemyType::WRAITH:
@@ -53,7 +55,8 @@ void Enemy::initializeMovePool() {
                 Move("Phantom Bolt", MoveType::SPECIAL, 90, 80),
                 Move("Wail", MoveType::EFFECT, 0, 90, MoveEffect::SPDEF_DOWN, MoveTarget::ENEMY),
                 Move("Ethereal Blast", MoveType::SPECIAL, 95, 75),
-                Move("Dark Pulse", MoveType::SPECIAL, 75, 95)
+                Move("Dark Pulse", MoveType::SPECIAL, 75, 95),
+                Move("Mana Shield", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::SELF)
             };
             break;
         case EnemyType::GOLEM:
@@ -63,7 +66,8 @@ void Enemy::initializeMovePool() {
                 Move("Earthquake", MoveType::PHYSICAL, 95, 75),
                 Move("Rock Shield", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::SELF),
                 Move("Petrify", MoveType::EFFECT, 0, 85, MoveEffect::SPD_DOWN, MoveTarget::ENEMY),
-                Move("Boulder Toss", MoveType::PHYSICAL, 85, 80)
+                Move("Boulder Toss", MoveType::PHYSICAL, 85, 80),
+                Move("Stone Slam", MoveType::PHYSICAL, 80, 90)
             };
             break;
         case EnemyType::SHAMAN:
@@ -73,7 +77,8 @@ void Enemy::initializeMovePool() {
                 Move("Enfeeble", MoveType::EFFECT, 0, 85, MoveEffect::DEF_DOWN, MoveTarget::ENEMY),
                 Move("Ritual Bolt", MoveType::SPECIAL, 75, 85),
                 Move("Weaken", MoveType::EFFECT, 0, 90, MoveEffect::SPATK_DOWN, MoveTarget::ENEMY),
-                Move("Dark Ritual", MoveType::EFFECT, 0, 100, MoveEffect::SPDEF_UP, MoveTarget::SELF)
+                Move("Dark Ritual", MoveType::EFFECT, 0, 100, MoveEffect::SPDEF_UP, MoveTarget::SELF),
+                Move("Dark Empowerment", MoveType::EFFECT, 0, 100, MoveEffect::SPATK_UP, MoveTarget::SELF, 20),
             };
             break;
         case EnemyType::SPECTER:
@@ -83,7 +88,8 @@ void Enemy::initializeMovePool() {
                 Move("Incorporeal", MoveType::EFFECT, 0, 100, MoveEffect::SPD_UP, MoveTarget::SELF),
                 Move("Soul Rend", MoveType::SPECIAL, 90, 85),
                 Move("Spectral Slash", MoveType::SPECIAL, 80, 90),
-                Move("Haunt", MoveType::EFFECT, 0, 90, MoveEffect::SPDEF_DOWN, MoveTarget::ENEMY)
+                Move("Haunt", MoveType::EFFECT, 0, 90, MoveEffect::SPDEF_DOWN, MoveTarget::ENEMY),
+                Move("Spectral Curse", MoveType::EFFECT, 0, 95, MoveEffect::SPDEF_DOWN, MoveTarget::ENEMY, 35),
             };
             break;
     }

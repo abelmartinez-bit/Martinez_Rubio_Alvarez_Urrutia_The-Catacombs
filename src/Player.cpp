@@ -102,7 +102,8 @@ void Player::initializeMovePool() {
                 Move("Fortify", MoveType::EFFECT, 0, 100, MoveEffect::DEF_UP, MoveTarget::SELF),
                 Move("Slam", MoveType::PHYSICAL, 90, 80),
                 Move("Iron Wall", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::SELF),
-                Move("Overhead Strike", MoveType::PHYSICAL, 75, 90)
+                Move("Overhead Strike", MoveType::PHYSICAL, 75, 90),
+                Move("Berserk", MoveType::EFFECT, 0, 100, MoveEffect::ATK_UP, MoveTarget::SELF)
             };
             break;
         case PlayerType::ROGUE:
@@ -112,7 +113,8 @@ void Player::initializeMovePool() {
                 Move("Stealth", MoveType::EFFECT, 0, 100, MoveEffect::SPD_UP, MoveTarget::SELF),
                 Move("Stab", MoveType::PHYSICAL, 85, 80),
                 Move("Cripple", MoveType::EFFECT, 0, 100, MoveEffect::SPD_DOWN, MoveTarget::ENEMY),
-                Move("Flurry", MoveType::PHYSICAL, 70, 95)
+                Move("Flurry", MoveType::PHYSICAL, 70, 95),
+                Move("Evasion", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::SELF)
             };
             break;
         case PlayerType::MAGE:
@@ -122,7 +124,8 @@ void Player::initializeMovePool() {
                 Move("Thunderbolt", MoveType::SPECIAL, 90, 80),
                 Move("Weaken", MoveType::EFFECT, 0, 100, MoveEffect::SPDEF_DOWN, MoveTarget::ENEMY),
                 Move("Ethereal Blast", MoveType::SPECIAL, 95, 75),
-                Move("Arcane Shot", MoveType::SPECIAL, 75, 95)
+                Move("Arcane Shot", MoveType::SPECIAL, 75, 95),
+                Move("Mana Shield", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::SELF),
             };
             break;
         case PlayerType::ARCHER:
