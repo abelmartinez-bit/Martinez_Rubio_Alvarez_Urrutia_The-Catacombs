@@ -43,3 +43,4 @@
 
 # Project specific
 build/
+.DS_Store
