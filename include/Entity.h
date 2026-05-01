@@ -24,31 +24,31 @@ protected:
 public:
     Entity(std::string name, int hp, int atk, int def, int spAtk, int spDef, int spd);
 
+    
     // Getters
-    std::string getName() const;
-    int getHp() const;
-    int getMaxHp() const;
-    int getAtk() const;
-    int getDef() const;
-    int getSpAtk() const;
-    int getSpDef() const;
-    int getSpd() const;
-    bool getIsBlocking() const;
-    std::vector<Move> getMoves() const;
+    std::string getName() const { return name; }
+    int getHp() const { return hp; }
+    int getMaxHp() const { return maxHp; }
+    int getAtk() const { return atk; }
+    int getDef() const { return def; }
+    int getSpAtk() const { return spAtk; }
+    int getSpDef() const { return spDef; }
+    int getSpd() const { return spd; }
+    bool getIsBlocking() const { return isBlocking; }
+    std::vector<Move> getMoves() const { return moves; }
 
-    // Setters
-    void setMaxHp(int amount);
-    void setAtk(int amount);
-    void setDef(int amount);
-    void setSpAtk(int amount);
-    void setSpDef(int amount);
-    void setSpd(int amount);
-
-    void setBaseAtk(int amount);
-    void setBaseDef(int amount);
-    void setBaseSpAtk(int amount);
-    void setBaseSpDef(int amount);
-    void setBaseSpd(int amount);
+    //Setters
+    void setMaxHp(int amount) { maxHp = amount; }
+    void setAtk(int amount) { atk = amount; }
+    void setDef(int amount) { def = amount; }
+    void setSpAtk(int amount) { spAtk = amount; }
+    void setSpDef(int amount) { spDef = amount; }
+    void setSpd(int amount) { spd = amount; }
+    void setBaseAtk(int amount) { baseAtk = amount; }
+    void setBaseDef(int amount) { baseDef = amount; }
+    void setBaseSpAtk(int amount) { baseSpAtk = amount; }
+    void setBaseSpDef(int amount) { baseSpDef = amount; }
+    void setBaseSpd(int amount) { baseSpd = amount; }
 
     //acciones por ahora
     void takeDamage(int amount);

@@ -4,13 +4,7 @@
 Player::Player(std::string name, int hp, int atk, int def, int spAtk, int spDef, int spd, PlayerType playerType)
     : Entity(name, hp, atk, def, spAtk, spDef, spd), type(playerType), level(1), exp(0), expToNextLevel(100), potionSlots(2) {}
 
-// Getters
-int Player::getLevel() const { return level; }
-int Player::getExp() const { return exp; }
-int Player::getExpToNextLevel() const { return expToNextLevel; }
-int Player::getPotionSlots() const { return potionSlots; }
-std::vector<Relic*> Player::getRelics() const { return relics; }
-std::vector<Potion> Player::getPotions() const { return potions; }
+
 
 void Player::gainExp(int amount) {
     exp += amount;

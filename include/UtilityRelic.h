@@ -20,8 +20,8 @@ public:
     UtilityRelic(std::string name, std::string description, RelicRarity rarity,
                  UtilityType utilityType, int value);
 
-    UtilityType getUtilityType() const;
-    int getValue() const;
+    UtilityType getUtilityType() const { return utilityType; }
+    int getValue() const { return value; }
 
     void applyEffect(Player& player) override;
 };

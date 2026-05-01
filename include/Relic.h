@@ -20,9 +20,9 @@ protected:
 public:
     Relic(std::string name, std::string description, RelicRarity rarity);
 
-    std::string getName() const;
-    std::string getDescription() const;
-    RelicRarity getRarity() const;
+    std::string getName() const { return name; }
+    std::string getDescription() const { return description; }
+    RelicRarity getRarity() const { return rarity; }
 
     // virtual = 0 para que no existan objetos normales Relic, solo de sus hijos que implementen applyEffect
     // con los que usaremos con pointers

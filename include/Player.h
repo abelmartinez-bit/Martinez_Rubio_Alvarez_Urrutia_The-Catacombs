@@ -33,13 +33,13 @@ public:
     Player(std::string name, int hp, int atk, int def, int spAtk, int spDef, int spd, 
         PlayerType playerType);
 
-    // Getters
-    int getLevel() const;
-    int getExp() const;
-    int getExpToNextLevel() const;
-    int getPotionSlots() const;
-    std::vector<Relic*> getRelics() const;
-    std::vector<Potion> getPotions() const;
+   // Getters
+    int getLevel() const { return level; }
+    int getExp() const { return exp; }
+    int getExpToNextLevel() const { return expToNextLevel; }
+    int getPotionSlots() const { return potionSlots; }
+    std::vector<Relic*> getRelics() const { return relics; }
+    std::vector<Potion> getPotions() const { return potions; }
     
 
     //acciones por ahora, adicionales a las heredadas
