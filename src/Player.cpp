@@ -4,7 +4,7 @@
 Player::Player(std::string name, int hp, int atk, int def, int spAtk, int spDef, int spd, PlayerType playerType)
     : Entity(name, hp, atk, def, spAtk, spDef, spd), type(playerType), level(1), exp(0), expToNextLevel(100), potionSlots(2) {}
 
-
+class Potion; // Forward declaration to avoid circular include
 
 void Player::gainExp(int amount) {
     exp += amount;
