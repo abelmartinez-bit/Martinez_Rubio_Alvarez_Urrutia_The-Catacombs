@@ -49,13 +49,14 @@ public:
          int effectPotency = 40); 
     
          
-    int getEffectPotency() const;
-    std::string getName() const;
-    MoveType getType() const;
-    MoveEffect getEffect() const;
-    MoveTarget getTarget() const;
-    int getPower() const;
-    int getAccuracy() const;
+    //getters
+   int getEffectPotency() const { return effectPotency; }
+    std::string getName() const { return name; }
+    MoveType getType() const { return type; }
+    MoveEffect getEffect() const { return effect; }
+    MoveTarget getTarget() const { return target; }
+    int getPower() const { return power; }
+    int getAccuracy() const { return accuracy; }
 
     void boostPower(int amount);
     void addAccuracy(int amount);

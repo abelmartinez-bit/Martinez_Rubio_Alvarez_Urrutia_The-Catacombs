@@ -5,8 +5,6 @@ UtilityRelic::UtilityRelic(std::string name, std::string description, RelicRarit
                             UtilityType utilityType, int value)
             : Relic(name, description, rarity), utilityType(utilityType), value(value) {}
 
-UtilityType UtilityRelic::getUtilityType() const { return utilityType; }
-int UtilityRelic::getValue() const { return value; }
 
 void UtilityRelic::applyEffect(Player& player) {
     switch (utilityType) {
@@ -20,7 +18,7 @@ void UtilityRelic::applyEffect(Player& player) {
             std::cout << "Healed " << value << " HP on entering floor!\n";
             break;
         case UtilityType::EXP_BOOST:
-            // Trabajo del combatEngine para dar mas exp al ganar
+            // Trabajo del combatEngine o futuro PlayerManager para dar mas exp al ganar
             std::cout << "EXP gain increased by " << value << "%!\n";
             break;
         case UtilityType::RESTORE_ON_LEVEL_UP:

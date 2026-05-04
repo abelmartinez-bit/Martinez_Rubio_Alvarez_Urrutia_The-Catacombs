@@ -13,7 +13,7 @@ CombatEngine::CombatEngine(Player* p, Entity* e)
 void CombatEngine::executeTurn(int playerMoveIndex) {
     clearLog();
     
-    int enemyMoveIndex = rand() % 3; // random move for enemy, se puede mejorar con IA mas adelante, por ahora es random
+    int enemyMoveIndex = rand() % 4; // random move for enemy, se puede mejorar con IA mas adelante, por ahora es random
 
     // "->"" ya que tenemos entity como pointer, cant use "."
     Move playerMove = player->getMoves()[playerMoveIndex];
@@ -78,7 +78,7 @@ int CombatEngine::calculateDamage(Entity* attacker, Entity* defender, Move move)
     
     // Apply blocking bonus, static por int
     if (defender->getIsBlocking()) {
-        defenseStat = static_cast<int>(defenseStat * 1.5);
+        defenseStat = static_cast<int>(defenseStat * 2.5);
     }
     
     // Simple damage formula
