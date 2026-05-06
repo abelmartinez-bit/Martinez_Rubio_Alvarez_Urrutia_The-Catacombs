@@ -148,7 +148,6 @@ void CombatEngine::applyMoveEffect(Move move, Entity* user, Entity* target) {
 
 void CombatEngine::usePotion(Potion potion, Entity& target) {
     player->usePotion(0, target); // por ahora siempre usa la primera pocion, se puede mejorar para seleccionar cual usar (solo borra la usada)
-    potion.applyEffect(target); // en algun punto juntar estos
     combatLog += "Used " + potion.getName() + " on " + target.getName() + "!\n";
 }
 
