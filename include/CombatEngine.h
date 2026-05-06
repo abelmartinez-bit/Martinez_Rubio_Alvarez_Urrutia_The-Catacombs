@@ -18,6 +18,8 @@ public:
     void executeTurn(int playerMoveIndex);
     int calculateDamage(Entity* attacker, Entity* defender, Move move);
     void applyMoveEffect(Move move, Entity* user, Entity* target);
+    void usePotion(Potion potion, Entity& target);
+    std::string potionList(const Player& player) const;
     bool isBattleOver();
     std::string getWinner();
     std::string getCombatLog();

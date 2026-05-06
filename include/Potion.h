@@ -1,8 +1,9 @@
 #pragma once
 #include <string>
 #include "Move.h"   //mismo enum class
-#include "Entity.h" // para usar applyEffect en el uso de pociones
 //objetos que el jugador puede usar durante el combate para efectos como curar o subir stats
+
+class Entity; // Declaracion para no tener un include circular
 
 class Potion {
 private:

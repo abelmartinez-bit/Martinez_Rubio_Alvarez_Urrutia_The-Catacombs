@@ -24,4 +24,4 @@ void StatRelic::applyEffect(Player& player) {
             player.setSpd(player.getSpd() + boostAmount); 
             break;
     }
-}
+}   

@@ -1,4 +1,8 @@
 #include "../include/Potion.h"
+#include "../include/Entity.h" 
+// could lead to circular include but we only need the declaration of Entity for the applyEffect function 
+// so we can just do a forward declaration in Potion.h and include Entity.h here in the cpp file
+
 
 Potion::Potion(std::string name, MoveEffect effect, MoveTarget target, int potency)
     : name(name), effect(effect), target(target), potency(potency) {}
