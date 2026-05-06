@@ -67,22 +67,31 @@ void Player::addPotion(Potion potion) {
         std::cout << "No potion slots available!\n";
 }
 
+// aplica el efecto de la pocion antes de ser eliminada.
+
 void Player::usePotion(int index, Entity& target) {
     if (index >= 0 && index < potions.size()) {
+        potions[index].applyEffect(target);
         potions.erase(potions.begin() + index);
     } else {
         std::cout << "Invalid potion slot!\n";
     }
 }
 
+
 void Player::expandPotionSlots(int amount) {
     potionSlots += amount;
 }
 
+// funcion modificada, aparte de decir cuantas relics hay, tambien dira la descripcion de las reliquias.
 void Player::displayStats() const {
     Entity::displayStats();
     std::cout << "Level: " << level << " | EXP: " << exp << "/" << expToNextLevel << "\n";
     std::cout << "Relics: " << relics.size() << "\n";
+
+        for (Relic* relic : relics) {
+        std::cout << "- " << relic->getName() << ": " << relic->getDescription() << "\n";
+    }
     std::cout << "Potions: " << potions.size() << "/" << potionSlots << "\n";
 }
 
