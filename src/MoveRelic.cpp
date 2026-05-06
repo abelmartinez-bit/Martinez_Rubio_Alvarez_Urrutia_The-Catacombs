@@ -21,7 +21,7 @@ void MoveRelic::applyEffect(Player& player) {
     std::cout << "Choose a move to replace with " << move.getName() << ":\n";
     for (int i = 0; i < 4; i++) {
         std::cout << i + 1 << ". " << moves[i].getName() << "\n";
-    }
+    } 
 
     int choice;
     std::cin >> choice;
