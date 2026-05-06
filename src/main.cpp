@@ -1,8 +1,82 @@
-#include <SFML/Graphics.hpp>
+ #include <SFML/Graphics.hpp>
 #include <iostream>
 #include "Player.h"
 #include "Enemy.h"
 #include "CombatEngine.h"
+#include "StatRelic.h"
+#include "UtilityRelic.h"
+#include "ProbabilityRelic.h"
+#include "MoveRelic.h"
+#include <cstdlib>
+
+Relic* createRandomRelic() {
+    int roll = rand() % 7;
+
+    switch (roll) {
+        case 0:
+            return new StatRelic(
+                "Heart Stone",
+                "Increases max HP by 20.",
+                RelicRarity::COMMON,
+                StatType::HP,
+                20
+            );
+
+        case 1:
+            return new StatRelic(
+                "Warrior Fang",
+                "Increases ATK by 5.",
+                RelicRarity::COMMON,
+                StatType::ATK,
+                5
+            );
+
+        case 2:
+            return new StatRelic(
+                "Hunter Boots",
+                "Increases SPD by 4.",
+                RelicRarity::RARE,
+                StatType::SPD,
+                4
+            );
+
+        case 3:
+            return new UtilityRelic(
+                "Potion Belt",
+                "Adds 1 extra potion slot.",
+                RelicRarity::COMMON,
+                UtilityType::EXPAND_POTION_SLOTS,
+                1
+            );
+
+        case 4:
+            return new UtilityRelic(
+                "Healing Charm",
+                "Heals 15 HP when obtained.",
+                RelicRarity::COMMON,
+                UtilityType::HEAL_ON_FLOOR,
+                15
+            );
+
+        case 5:
+            return new ProbabilityRelic(
+                "Sharp Eye",
+                "Increases accuracy of all moves by 5.",
+                RelicRarity::RARE,
+                ProbabilityType::MOVE_ACCURACY,
+                5
+            );
+
+        default:
+            return new StatRelic(
+                "Golden Ring",
+                "Increases SP.ATK by 5.",
+                RelicRarity::RARE,
+                StatType::SPATK,
+                5
+            );
+    }
+}
 
 int main() {
     // Crear ventana
@@ -30,6 +104,9 @@ int main() {
     enemy.initialize();
 
     CombatEngine combat(&player, &enemy);
+
+    // flag para saber si la recomensa de el combate ya se entrego para no ser dada varias veces
+        bool rewardGiven = false;
 
     // Textos
     sf::Text titleText(font, "THE CATACOMBS", 36);
@@ -94,10 +171,19 @@ int main() {
 
         logText.setString("Log:\n" + combat.getCombatLog());
 
+        // verificar si el combate termino para mostrar el resultado y entregar la 
+        //recompensa si el jugador gano y no se ha entregado ya
+
         if (combat.isBattleOver()) {
             resultText.setString(combat.getWinner() + " wins!");
-            instructionText.setString("Combat finished. Close the window to exit.");
+            instructionText.setString("Combat Finished. Close the window to exit.");
+
+              if (player.isAlive() && !rewardGiven) {
+                player.gainExp(enemy.getExpReward());
+                player.addRelic(createRandomRelic());
+                rewardGiven = true;
         }
+    }
 
         // Dibujar
         window.clear(sf::Color(20, 20, 40)); // fondo azul oscuro
