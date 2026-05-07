@@ -3,22 +3,23 @@
 #include "UtilityRelic.h"
 #include "ProbabilityRelic.h"
 #include "MoveRelic.h"
+#include "Move.h"
 #include <cstdlib>
 
 Relic* RelicPool::getRandomRelic() {
     int rarityRoll = rand() % 100;
 
     if (rarityRoll < 70) {
-        return getRandomCommonRelic();
+        return getRandomCommonRelic();      // 70%
     } else if (rarityRoll < 95) {
-        return getRandomRareRelic();
+        return getRandomRareRelic();        // 25%
     } else {
-        return getRandomLegendaryRelic();
+        return getRandomLegendaryRelic();   // 5%
     }
 }
 
 Relic* RelicPool::getRandomCommonRelic() {
-    int roll = rand() % 8;
+    int roll = rand() % 16;
 
     switch (roll) {
         case 0:
@@ -84,7 +85,7 @@ Relic* RelicPool::getRandomCommonRelic() {
                 1
             );
 
-        default:
+        case 7:
             return new UtilityRelic(
                 "Healing Charm",
                 "Heals 15 HP when obtained.",
@@ -92,11 +93,83 @@ Relic* RelicPool::getRandomCommonRelic() {
                 UtilityType::HEAL_ON_FLOOR,
                 15
             );
+
+        case 8:
+            return new StatRelic(
+                "Iron Helmet",
+                "Increases DEF by 3.",
+                RelicRarity::COMMON,
+                StatType::DEF,
+                3
+            );
+
+        case 9:
+            return new StatRelic(
+                "Small Ruby",
+                "Increases ATK by 3.",
+                RelicRarity::COMMON,
+                StatType::ATK,
+                3
+            );
+
+        case 10:
+            return new StatRelic(
+                "Blue Crystal",
+                "Increases SP.ATK by 3.",
+                RelicRarity::COMMON,
+                StatType::SPATK,
+                3
+            );
+
+        case 11:
+            return new StatRelic(
+                "Silver Thread",
+                "Increases SP.DEF by 3.",
+                RelicRarity::COMMON,
+                StatType::SPDEF,
+                3
+            );
+
+        case 12:
+            return new StatRelic(
+                "Light Sandals",
+                "Increases SPD by 2.",
+                RelicRarity::COMMON,
+                StatType::SPD,
+                2
+            );
+
+        case 13:
+            return new StatRelic(
+                "Old Medal",
+                "Increases max HP by 10.",
+                RelicRarity::COMMON,
+                StatType::HP,
+                10
+            );
+
+        case 14:
+            return new ProbabilityRelic(
+                "Steady Hand",
+                "Increases accuracy of all moves by 3.",
+                RelicRarity::COMMON,
+                ProbabilityType::MOVE_ACCURACY,
+                3
+            );
+
+        default:
+            return new UtilityRelic(
+                "Minor Scholar Coin",
+                "Increases EXP gained by 5%.",
+                RelicRarity::COMMON,
+                UtilityType::EXP_BOOST,
+                5
+            );
     }
 }
 
 Relic* RelicPool::getRandomRareRelic() {
-    int roll = rand() % 4;
+    int roll = rand() % 8;
 
     switch (roll) {
         case 0:
@@ -126,7 +199,34 @@ Relic* RelicPool::getRandomRareRelic() {
                 5
             );
 
-        default:
+        case 3:
+            return new UtilityRelic(
+                "Scholar Coin",
+                "Increases EXP gained by 20%.",
+                RelicRarity::RARE,
+                UtilityType::EXP_BOOST,
+                20
+            );
+
+        case 4:
+            return new StatRelic(
+                "Knight Armor",
+                "Increases DEF by 10.",
+                RelicRarity::RARE,
+                StatType::DEF,
+                10
+            );
+
+        case 5:
+            return new StatRelic(
+                "Mystic Cape",
+                "Increases SP.DEF by 10.",
+                RelicRarity::RARE,
+                StatType::SPDEF,
+                10
+            );
+
+        case 6:
             return new UtilityRelic(
                 "Large Potion Belt",
                 "Adds 2 extra potion slots.",
@@ -134,11 +234,27 @@ Relic* RelicPool::getRandomRareRelic() {
                 UtilityType::EXPAND_POTION_SLOTS,
                 2
             );
+
+        default:
+            return new MoveRelic(
+                "Flame Scroll",
+                "Adds Flame Burst or boosts it if already owned.",
+                RelicRarity::RARE,
+                Move(
+                    "Flame Burst",
+                    MoveType::SPECIAL,
+                    55,
+                    90,
+                    MoveEffect::NONE,
+                    MoveTarget::ENEMY
+                ),
+                10
+            );
     }
 }
 
 Relic* RelicPool::getRandomLegendaryRelic() {
-    int roll = rand() % 2;
+    int roll = rand() % 4;
 
     switch (roll) {
         case 0:
@@ -150,13 +266,38 @@ Relic* RelicPool::getRandomLegendaryRelic() {
                 50
             );
 
-        default:
+        case 1:
+            return new UtilityRelic(
+                "Phoenix Feather",
+                "Restores 15% extra HP when leveling up.",
+                RelicRarity::LEGENDARY,
+                UtilityType::RESTORE_ON_LEVEL_UP,
+                15
+            );
+
+        case 2:
             return new StatRelic(
                 "Ancient Blade",
                 "Increases ATK by 15.",
                 RelicRarity::LEGENDARY,
                 StatType::ATK,
                 15
+            );
+
+        default:
+            return new MoveRelic(
+                "Thunder Tome",
+                "Adds Thunder Strike or boosts it if already owned.",
+                RelicRarity::LEGENDARY,
+                Move(
+                    "Thunder Strike",
+                    MoveType::SPECIAL,
+                    80,
+                    85,
+                    MoveEffect::NONE,
+                    MoveTarget::ENEMY
+                ),
+                20
             );
     }
 }

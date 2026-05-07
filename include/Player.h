@@ -26,6 +26,9 @@ private:
     int potionSlots;
     std::vector<Potion> potions;
     std::vector<Move> movePool; // banco de movimientos de donde se seleccionan  
+    // nuevos atributos para efectos de reliquias
+    int expBoostPercent;
+    int restoreOnLevelUpPercent;
 
 
 
@@ -50,6 +53,9 @@ public:
     void addPotion(Potion potion);
     void usePotion(int index, Entity& target);
     void expandPotionSlots(int amount); // con relics
+    // Nuevas funciones para los efectos de las reliquias
+    void addExpBoost(int percent);
+    void addRestoreOnLevelUp(int percent);
 
     //override para el virtual para mostrar stats del jugador, incluyendo nivel, exp, relics y potions
     void displayStats() const override;
