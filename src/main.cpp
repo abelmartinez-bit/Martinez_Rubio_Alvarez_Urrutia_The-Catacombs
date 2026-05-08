@@ -35,12 +35,19 @@ int main() {
         std::cerr << "Error: no se pudo cargar el fondo\n";
         return 1;
     }
+
+    sf::Texture combatTexture;
+    if (!combatTexture.loadFromFile("assets/images/Corridor.jpeg")) {
+    std::cerr << "Error: no se pudo cargar el fondo de combate\n";
+    return 1;
+    }
  
     // sf::Sprite es el objeto que DIBUJA la textura en pantalla
     // Texture = los datos de la imagen, Sprite = como y donde se dibuja
     sf::Sprite bgSprite(bgTexture);
     sf::Sprite csSprite(csTexture);
- 
+    sf::Sprite combatSprite(combatTexture);
+
     // Escala para cubrir toda la ventana 800x600 porque la imagen original es 686x386
     float scaleX = 800.f / bgTexture.getSize().x;
     float scaleY = 600.f / bgTexture.getSize().y;
@@ -50,6 +57,10 @@ int main() {
     float csScaleX = 800.f / csTexture.getSize().x;
     float csScaleY = 600.f / csTexture.getSize().y;
     csSprite.setScale({csScaleX, csScaleY});
+
+    float combatScaleX = 800.f / combatTexture.getSize().x;
+    float combatScaleY = 600.f / combatTexture.getSize().y;
+    combatSprite.setScale({combatScaleX, combatScaleY});
  
     //empezar la pantalla actual en el menu principal
     GameScreen currentScreen = GameScreen::MAIN_MENU;
@@ -182,7 +193,8 @@ int main() {
  
         else if (currentScreen == GameScreen::COMBAT && player && combat)
             drawCombat(window, player, enemy, combat, playerText, enemyText,
-                       logText, resultText, instructionText, combatTitleText, rewardGiven);
+                       logText, resultText, instructionText, combatTitleText, 
+                       rewardGiven, combatSprite);
  
         window.display();
     }

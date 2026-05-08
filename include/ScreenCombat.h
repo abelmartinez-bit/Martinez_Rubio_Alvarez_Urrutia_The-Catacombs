@@ -14,4 +14,4 @@ void drawCombat(sf::RenderWindow& window,
                 sf::Text& playerText, sf::Text& enemyText,
                 sf::Text& logText, sf::Text& resultText,
                 sf::Text& instructionText, sf::Text& combatTitleText,
-                bool& rewardGiven);
+                bool& rewardGiven, const sf::Sprite& combatSprite);

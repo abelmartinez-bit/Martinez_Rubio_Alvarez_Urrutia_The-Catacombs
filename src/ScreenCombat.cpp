@@ -23,7 +23,7 @@ void drawCombat(sf::RenderWindow& window,
                 sf::Text& playerText, sf::Text& enemyText,
                 sf::Text& logText, sf::Text& resultText,
                 sf::Text& instructionText, sf::Text& combatTitleText,
-                bool& rewardGiven) {
+                bool& rewardGiven, const sf::Sprite& combatSprite) {
 
     // Actualizar textos con estado actual
     playerText.setString(
@@ -56,7 +56,8 @@ void drawCombat(sf::RenderWindow& window,
     }
 
     // Dibujar
-    window.clear(sf::Color(20, 20, 40)); // fondo azul oscuro
+    window.clear(sf::Color(0, 0, 0));
+    window.draw(combatSprite);
     window.draw(combatTitleText);
     window.draw(playerText);
     window.draw(enemyText);
