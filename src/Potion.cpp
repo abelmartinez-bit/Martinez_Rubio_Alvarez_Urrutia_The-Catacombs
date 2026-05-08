@@ -31,3 +31,28 @@ void Potion::applyEffect(Entity& targetEntity) {
             break;
     }
 }
+
+Potion Potion::createPotion(int index) {
+    switch (index) {
+        case 0: return Potion("Health Potion",    MoveEffect::HEAL,      MoveTarget::SELF, 25);
+        case 1: return Potion("Greater Healing",  MoveEffect::HEAL,      MoveTarget::SELF, 50);
+        case 2: return Potion("Strength Potion",  MoveEffect::ATK_UP,    MoveTarget::SELF, 30);
+        case 3: return Potion("Iron Skin Potion", MoveEffect::DEF_UP,    MoveTarget::SELF, 30);
+        case 4: return Potion("Mage's Brew",      MoveEffect::SPATK_UP,  MoveTarget::SELF, 30);
+        case 5: return Potion("Mystic Ward",      MoveEffect::SPDEF_UP,  MoveTarget::SELF, 30);
+        case 6: return Potion("Swiftness Potion", MoveEffect::SPD_UP,    MoveTarget::SELF, 25);
+        case 7: return Potion("Elixir of Power",  MoveEffect::ATK_UP,    MoveTarget::SELF, 50);
+        default: return Potion("Health Potion",   MoveEffect::HEAL,      MoveTarget::SELF, 25);
+    }
+}
+
+// Genera una pocion random del catalogo
+Potion Potion::createRandomPotion() {
+    int idx = rand() % getPotionCount();
+    return createPotion(idx);
+}
+
+// Cuenta total de pociones en el catalogo
+int Potion::getPotionCount() {
+    return 8;
+}
