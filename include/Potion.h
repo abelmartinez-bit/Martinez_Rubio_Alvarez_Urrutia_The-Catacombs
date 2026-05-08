@@ -22,4 +22,8 @@ public:
     int getPotency() const { return potency; }
 
     void applyEffect(Entity& target);
+
+    static Potion createPotion(int index);
+    static Potion createRandomPotion();
+    static int getPotionCount();
 };
