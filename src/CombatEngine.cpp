@@ -13,7 +13,7 @@ CombatEngine::CombatEngine(Player* p, Entity* e)
 void CombatEngine::executeTurn(int playerMoveIndex) {
     clearLog();
     
-    int enemyMoveIndex = rand() % 3; // random move for enemy, se puede mejorar con IA mas adelante, por ahora es random
+    int enemyMoveIndex = rand() % 4; // random move for enemy, se puede mejorar con IA mas adelante, por ahora es random
 
     // "->"" ya que tenemos entity como pointer, cant use "."
     Move playerMove = player->getMoves()[playerMoveIndex];
@@ -78,7 +78,7 @@ int CombatEngine::calculateDamage(Entity* attacker, Entity* defender, Move move)
     
     // Apply blocking bonus, static por int
     if (defender->getIsBlocking()) {
-        defenseStat = static_cast<int>(defenseStat * 1.5);
+        defenseStat = static_cast<int>(defenseStat * 2.5);
     }
     
     // Simple damage formula
@@ -144,6 +144,22 @@ void CombatEngine::applyMoveEffect(Move move, Entity* user, Entity* target) {
         default:
             break;
     }
+}
+
+void CombatEngine::usePotion(Potion potion, Entity& target) {
+    player->usePotion(0, target); // por ahora siempre usa la primera pocion, se puede mejorar para seleccionar cual usar (solo borra la usada)
+    combatLog += "Used " + potion.getName() + " on " + target.getName() + "!\n";
+}
+
+    std::string CombatEngine::potionList(const Player& player) const {
+    std::vector<Potion> potions = player.getPotions();
+    std::string potionList = "Potions: ";
+    for (size_t i = 0; i < potions.size(); i++) {
+        potionList += potions[i].getName();
+        if (i < potions.size() - 1) potionList += ", ";
+    }
+    if (potions.empty()) potionList += "None";
+    return potionList;
 }
 
 bool CombatEngine::isBattleOver() {

@@ -1,8 +1,11 @@
-#include <SFML/Graphics.hpp>
+ #include <SFML/Graphics.hpp>
 #include <iostream>
 #include "Player.h"
 #include "Enemy.h"
 #include "CombatEngine.h"
+#include "RelicPool.h"
+#include <cstdlib>
+
 
 int main() {
     // Crear ventana
@@ -16,15 +19,23 @@ int main() {
         return 1;
     }
 
-    // Crear jugador y enemigo
+    // Crear jugador, enemigo y potions
     Player player("Archer", 100, 10, 15, 25, 15, 25, PlayerType::ARCHER);
     Enemy enemy("Sentinel", EnemyType::SENTINEL, 50, 10, 10, 10, 15, 8);
+
+    Potion healthPotion("Health Potion", MoveEffect::HEAL, MoveTarget::SELF, 30);
+    Potion spatkUpPotion("SpAtk Up Potion", MoveEffect::SPATK_UP, MoveTarget::SELF, 20);
+    player.addPotion(healthPotion);
+    player.addPotion(spatkUpPotion);
 
     player.initializeMovePool();
     player.selectMovesFromPool();
     enemy.initialize();
 
     CombatEngine combat(&player, &enemy);
+
+    // flag para saber si la recomensa de el combate ya se entrego para no ser dada varias veces
+        bool rewardGiven = false;
 
     // Textos
     sf::Text titleText(font, "THE CATACOMBS", 36);
@@ -43,7 +54,7 @@ int main() {
     logText.setFillColor(sf::Color::Yellow);
     logText.setPosition({50.f, 350.f});
 
-    sf::Text instructionText(font, "Presiona ESPACIO para avanzar turno", 16);
+    sf::Text instructionText(font, "Press SPACE to advance turn, P to use potion", 16);
     instructionText.setFillColor(sf::Color::White);
     instructionText.setPosition({200.f, 550.f});
 
@@ -64,31 +75,44 @@ int main() {
                         int playerMove = rand() % 4;
                         combat.executeTurn(playerMove);
                     }
+                } else if (keyEvent && keyEvent->code == sf::Keyboard::Key::P) {
+                    if (!combat.isBattleOver() && !player.getPotions().empty()) {
+                        combat.usePotion(player.getPotions()[0], player);
+                    }
                 }
             }
         }
 
         // Actualizar textos con estado actual
         playerText.setString(
-            player.getName() + "\n" +
+            player.getName() + " | " + combat.potionList(player) + "\n" +
             "HP: " + std::to_string(player.getHp()) + "/" + std::to_string(player.getMaxHp()) + "\n" +
-            "ATK: " + std::to_string(player.getAtk()) + " | DEF: " + std::to_string(player.getDef()) + "\n" +
+            "SPATK: " + std::to_string(player.getSpAtk()) + " | DEF: " + std::to_string(player.getDef()) + "\n" +
             "SPD: " + std::to_string(player.getSpd())
         );
 
         enemyText.setString(
             enemy.getName() + "\n" +
             "HP: " + std::to_string(enemy.getHp()) + "/" + std::to_string(enemy.getMaxHp()) + "\n" +
-            "ATK: " + std::to_string(enemy.getAtk()) + " | DEF: " + std::to_string(enemy.getDef()) + "\n" +
+            "ATK: " + std::to_string(enemy.getAtk()) + " | SPDEF: " + std::to_string(enemy.getSpDef()) + "\n" +
             "SPD: " + std::to_string(enemy.getSpd())
         );
 
         logText.setString("Log:\n" + combat.getCombatLog());
 
+        // verificar si el combate termino para mostrar el resultado y entregar la 
+        //recompensa si el jugador gano y no se ha entregado ya
+
         if (combat.isBattleOver()) {
             resultText.setString(combat.getWinner() + " wins!");
-            instructionText.setString("Combate terminado");
+            instructionText.setString("Combat Finished. Close the window to exit.");
+
+              if (player.isAlive() && !rewardGiven) {
+                player.gainExp(enemy.getExpReward());
+                player.addRelic(RelicPool::getRandomRelic());
+                rewardGiven = true;
         }
+    }
 
         // Dibujar
         window.clear(sf::Color(20, 20, 40)); // fondo azul oscuro

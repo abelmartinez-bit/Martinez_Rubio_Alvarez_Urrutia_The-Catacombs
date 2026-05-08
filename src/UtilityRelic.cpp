@@ -5,8 +5,6 @@ UtilityRelic::UtilityRelic(std::string name, std::string description, RelicRarit
                             UtilityType utilityType, int value)
             : Relic(name, description, rarity), utilityType(utilityType), value(value) {}
 
-UtilityType UtilityRelic::getUtilityType() const { return utilityType; }
-int UtilityRelic::getValue() const { return value; }
 
 void UtilityRelic::applyEffect(Player& player) {
     switch (utilityType) {
@@ -19,12 +17,14 @@ void UtilityRelic::applyEffect(Player& player) {
             player.heal(value);
             std::cout << "Healed " << value << " HP on entering floor!\n";
             break;
+ // funciones ya aplicadas en Player para los efectos de las reliquias, solo se llaman desde applyEffect segun el tipo de reliquia
         case UtilityType::EXP_BOOST:
-            // Trabajo del combatEngine para dar mas exp al ganar
+            player.addExpBoost(value);
             std::cout << "EXP gain increased by " << value << "%!\n";
             break;
+
         case UtilityType::RESTORE_ON_LEVEL_UP:
-            // aun no se donde se trabajara pero probablemente en el levelUp del Player, aumentando el restore base de 5% del maxHp
+            player.addRestoreOnLevelUp(value);
             std::cout << "HP restore on level up increased by " << value << "%!\n";
             break;
     }

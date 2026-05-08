@@ -2,20 +2,25 @@
 #include <iostream>
 
 Player::Player(std::string name, int hp, int atk, int def, int spAtk, int spDef, int spd, PlayerType playerType)
-    : Entity(name, hp, atk, def, spAtk, spDef, spd), type(playerType), level(1), exp(0), expToNextLevel(100), potionSlots(2) {}
+    : Entity(name, hp, atk, def, spAtk, spDef, spd), type(playerType), level(1), exp(0), expToNextLevel(100), potionSlots(2), expBoostPercent(0), restoreOnLevelUpPercent(0) {}
 
-// Getters
-int Player::getLevel() const { return level; }
-int Player::getExp() const { return exp; }
-int Player::getExpToNextLevel() const { return expToNextLevel; }
-int Player::getPotionSlots() const { return potionSlots; }
-std::vector<Relic*> Player::getRelics() const { return relics; }
-std::vector<Potion> Player::getPotions() const { return potions; }
+class Potion; // Forward declaration to avoid circular include
 
+// funcion modificada para aplicar el efecto de las reliquias que modifican la experiencia ganada y la curacion al subir de nivel
 void Player::gainExp(int amount) {
-    exp += amount;
-    if (exp >= expToNextLevel)
+    int boostedAmount = amount + (amount * expBoostPercent / 100);
+
+    exp += boostedAmount;
+
+    std::cout << name << " gained " << boostedAmount << " EXP";
+    if (expBoostPercent > 0) {
+        std::cout << " (" << expBoostPercent << "% bonus applied)";
+    }
+    std::cout << "!\n";
+
+    while (exp >= expToNextLevel) {
         levelUp();
+    }
 }
 
 void Player::levelUp() {
@@ -23,10 +28,19 @@ void Player::levelUp() {
     exp -= expToNextLevel;
     expToNextLevel = 100 * level; // scales w level
 
-    // 5% heal al subir de nivel (base), mas lo que den los relics. Tal vez sea aqui o en 
-    //un futuro GameEngine o algo asi
-   int restore = maxHp * 0.05;
+     // 5% heal base al subir de nivel + bonus de relics RESTORE_ON_LEVEL_UP
+    int totalRestorePercent = 5 + restoreOnLevelUpPercent;
+    int restore = maxHp * totalRestorePercent / 100;
+
     heal(restore);
+
+    std::cout << "Restored " << restore << " HP on level up";
+    if (restoreOnLevelUpPercent > 0) {
+        std::cout << " (" << totalRestorePercent << "% total restore)";
+    }
+    std::cout << "!\n";
+
+    //-----------------------------------------------------------------
 
     std::cout << name << " leveled up to level " << level << "!\n";
     std::cout << "Choose 2 stats to boost:\n";
@@ -52,11 +66,11 @@ void Player::levelUp() {
 void Player::boostStat(int statChoice) {
     switch (statChoice) {
         case 1: maxHp += 10; hp += 10; break;
-        case 2: atk += 5; break;
-        case 3: def += 5; break;
-        case 4: spAtk += 5; break;
-        case 5: spDef += 5; break;
-        case 6: spd += 3; break;
+        case 2: atk += 5; baseAtk += 5; break;
+        case 3: def += 5; baseDef += 5; break;
+        case 4: spAtk += 5; baseSpAtk += 5; break;
+        case 5: spDef += 5; baseSpDef += 5; break;
+        case 6: spd += 3; baseSpd += 3; break;
         default: std::cout << "Invalid choice!\n"; break;
     }
 }
@@ -73,22 +87,40 @@ void Player::addPotion(Potion potion) {
         std::cout << "No potion slots available!\n";
 }
 
+// aplica el efecto de la pocion antes de ser eliminada.
+
 void Player::usePotion(int index, Entity& target) {
     if (index >= 0 && index < potions.size()) {
+        potions[index].applyEffect(target);
         potions.erase(potions.begin() + index);
     } else {
         std::cout << "Invalid potion slot!\n";
     }
 }
 
+
 void Player::expandPotionSlots(int amount) {
     potionSlots += amount;
 }
+// funciones para los efectos de las reliquias
+void Player::addExpBoost(int percent) {
+    expBoostPercent += percent;
+}
+// para reliquias que curan al subir de nivel, se suma el porcentaje a restoreOnLevelUpPercent, que se usa en levelUp para calcular la curacion total   
+void Player::addRestoreOnLevelUp(int percent) {
+    restoreOnLevelUpPercent += percent;
+}
 
+
+// funcion modificada, aparte de decir cuantas relics hay, tambien dira la descripcion de las reliquias.
 void Player::displayStats() const {
     Entity::displayStats();
     std::cout << "Level: " << level << " | EXP: " << exp << "/" << expToNextLevel << "\n";
     std::cout << "Relics: " << relics.size() << "\n";
+
+        for (Relic* relic : relics) {
+        std::cout << "- " << relic->getName() << ": " << relic->getDescription() << "\n";
+    }
     std::cout << "Potions: " << potions.size() << "/" << potionSlots << "\n";
 }
 

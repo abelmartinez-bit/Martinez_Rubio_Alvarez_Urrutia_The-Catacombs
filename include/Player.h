@@ -26,6 +26,9 @@ private:
     int potionSlots;
     std::vector<Potion> potions;
     std::vector<Move> movePool; // banco de movimientos de donde se seleccionan  
+    // nuevos atributos para efectos de reliquias
+    int expBoostPercent;
+    int restoreOnLevelUpPercent;
 
 
 
@@ -33,13 +36,13 @@ public:
     Player(std::string name, int hp, int atk, int def, int spAtk, int spDef, int spd, 
         PlayerType playerType);
 
-    // Getters
-    int getLevel() const;
-    int getExp() const;
-    int getExpToNextLevel() const;
-    int getPotionSlots() const;
-    std::vector<Relic*> getRelics() const;
-    std::vector<Potion> getPotions() const;
+   // Getters
+    int getLevel() const { return level; }
+    int getExp() const { return exp; }
+    int getExpToNextLevel() const { return expToNextLevel; }
+    int getPotionSlots() const { return potionSlots; }
+    std::vector<Relic*> getRelics() const { return relics; }
+    std::vector<Potion> getPotions() const { return potions; }
     
 
     //acciones por ahora, adicionales a las heredadas
@@ -50,6 +53,9 @@ public:
     void addPotion(Potion potion);
     void usePotion(int index, Entity& target);
     void expandPotionSlots(int amount); // con relics
+    // Nuevas funciones para los efectos de las reliquias
+    void addExpBoost(int percent);
+    void addRestoreOnLevelUp(int percent);
 
     //override para el virtual para mostrar stats del jugador, incluyendo nivel, exp, relics y potions
     void displayStats() const override;
