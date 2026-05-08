@@ -1,5 +1,6 @@
 #include "../include/Floor.h"
 #include "../include/RelicPool.h"
+#include "../include/Potion.h"
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
@@ -48,12 +49,12 @@ void Floor::generateDoors(const Player& player) {
 
 void Floor::scaleEnemyStats(int& hp, int& atk, int& def, int& spAtk, int& spDef, int& spd) const {
     // Scale stats based on floor number
-    hp = static_cast<int>(hp * (1.0 + floorNumber * floorNumber * 0.15));       // HP scales faster
-    atk = static_cast<int>(atk * (1.0 + floorNumber * floorNumber * 0.1));
-    def = static_cast<int>(def * (1.0 + floorNumber * floorNumber * 0.1));
-    spAtk = static_cast<int>(spAtk * (1.0 + floorNumber * floorNumber * 0.1));
-    spDef = static_cast<int>(spDef * (1.0 + floorNumber * floorNumber * 0.1));
-    spd = static_cast<int>(spd * (1.0 + floorNumber * floorNumber * 0.08));     // Speed scales slower
+    hp = static_cast<int>(hp * (1.0 + floorNumber * .45));       // HP scales faster
+    atk = static_cast<int>(atk * (1.0 + floorNumber * 0.3));
+    def = static_cast<int>(def * (1.0 + floorNumber * 0.3));
+    spAtk = static_cast<int>(spAtk * (1.0 + floorNumber * 0.3));
+    spDef = static_cast<int>(spDef * (1.0 + floorNumber * 0.3));
+    spd = static_cast<int>(spd * (1.0 + floorNumber * 0.24));     // Speed scales slower
     // Needs balancing
 }
 
@@ -120,9 +121,7 @@ void Floor::triggerEvent(Player& player, const Door& door) {
         std::cout << "You found a healing shrine! Restored " << healAmount << " HP.\n";
     } else if (eventType < 70) {
         // Potion event (40% chance)
-        // Todavia falta crear random potions generation, por ahora siempre da la misma pocion de heal
-        Potion healthPotion("Health Potion", MoveEffect::HEAL, MoveTarget::SELF, 30);
-        player.addPotion(healthPotion);
+        player.addPotion(Potion::createRandomPotion());
         std::cout << "You found a potion!\n";
     } else {
         // Relic event (30% chance por default)
@@ -137,6 +136,13 @@ void Floor::giveRewards(Player& player, Entity* enemy, bool isMiniBoss) {
     if (e) {
         player.gainExp(e->getExpReward());
     }
+
+    // Potion drop
+    // 30% chance de drop
+    if (rand() % 100 < 30) {
+        player.addPotion(Potion::createRandomPotion());
+        std::cout << "You now have " << player.getPotions().size() << " potions!\n";
+    } 
 
     // Relic drop
     // La rareza del drop sube segun los modificadores del jugador.
@@ -167,17 +173,17 @@ void Floor::giveRewards(Player& player, Entity* enemy, bool isMiniBoss) {
         // enemyDropModifier sube la chance de Rara por algo de Comun
         float mod = player.getEnemyDropModifier();
         int legendaryThreshold = static_cast<int>(5  + mod / 2);
-        int rareThreshold      = static_cast<int>(30 + mod);
+        int rareThreshold = static_cast<int>(30 + mod);
 
         if (roll < legendaryThreshold) {
-            player.addRelic(RelicPool::getRandomLegendaryRelic());
             std::cout << "You received a LEGENDARY relic!\n";
+            player.addRelic(RelicPool::getRandomLegendaryRelic());
         } else if (roll < rareThreshold) {
-            player.addRelic(RelicPool::getRandomRareRelic());
             std::cout << "You received a RARE relic!\n";
+            player.addRelic(RelicPool::getRandomRareRelic());
         } else {
-            player.addRelic(RelicPool::getRandomCommonRelic());
             std::cout << "You received a COMMON relic.\n";
+            player.addRelic(RelicPool::getRandomCommonRelic());
         }
     }
 }

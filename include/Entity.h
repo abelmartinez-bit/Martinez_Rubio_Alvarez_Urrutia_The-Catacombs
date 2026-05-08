@@ -34,6 +34,9 @@ public:
     int getSpAtk() const { return spAtk; }
     int getSpDef() const { return spDef; }
     int getSpd() const { return spd; }
+
+    int getBaseDef() const { return baseDef; }
+    int getBaseSpDef() const { return baseSpDef; }
     bool getIsBlocking() const { return isBlocking; }
     std::vector<Move> getMoves() const { return moves; }
 
