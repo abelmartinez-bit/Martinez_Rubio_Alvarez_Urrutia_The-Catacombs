@@ -2,7 +2,7 @@
 #include <iostream>
 
 Player::Player(std::string name, int hp, int atk, int def, int spAtk, int spDef, int spd, PlayerType playerType)
-    : Entity(name, hp, atk, def, spAtk, spDef, spd), type(playerType), level(1), exp(0), expToNextLevel(100), potionSlots(2), expBoostPercent(0), restoreOnLevelUpPercent(0) {}
+    : Entity(name, hp, atk, def, spAtk, spDef, spd), type(playerType), level(1), exp(0), expToNextLevel(100), potionSlots(2), expBoostPercent(0), restoreOnLevelUpPercent(0), corruptDoorModifier(0.f), minibossDropModifier(0.f), enemyDropModifier(0.f) {}
 
 class Potion; // Forward declaration to avoid circular include
 
@@ -109,6 +109,16 @@ void Player::addExpBoost(int percent) {
 // para reliquias que curan al subir de nivel, se suma el porcentaje a restoreOnLevelUpPercent, que se usa en levelUp para calcular la curacion total   
 void Player::addRestoreOnLevelUp(int percent) {
     restoreOnLevelUpPercent += percent;
+}
+
+void Player::addCorruptDoorModifier(float amount) {
+    corruptDoorModifier += amount;
+}
+void Player::addMinibossDropModifier(float amount) {
+    minibossDropModifier += amount;
+}
+void Player::addEnemyDropModifier(float amount) {
+    enemyDropModifier += amount;
 }
 
 

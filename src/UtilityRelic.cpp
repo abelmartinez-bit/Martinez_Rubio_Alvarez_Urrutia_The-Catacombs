@@ -17,7 +17,7 @@ void UtilityRelic::applyEffect(Player& player) {
             player.heal(value);
             std::cout << "Healed " << value << " HP on entering floor!\n";
             break;
- // funciones ya aplicadas en Player para los efectos de las reliquias, solo se llaman desde applyEffect segun el tipo de reliquia
+        // funciones ya aplicadas en Player para los efectos de las reliquias, solo se llaman desde applyEffect segun el tipo de reliquia
         case UtilityType::EXP_BOOST:
             player.addExpBoost(value);
             std::cout << "EXP gain increased by " << value << "%!\n";

@@ -3,11 +3,14 @@
 #include "Player.h"
 #include "Enemy.h"
 #include "CombatEngine.h"
-#include "RelicPool.h"
+#include "Floor.h"
 #include <cstdlib>
-
+#include <ctime>
 
 int main() {
+
+    srand(static_cast<unsigned int>(time(nullptr))); // semilla aleatoria con el tiempo actual
+
     // Crear ventana
     sf::RenderWindow window(sf::VideoMode({800, 600}), "The Catacombs");
     window.setFramerateLimit(60);
@@ -31,6 +34,10 @@ int main() {
     player.initializeMovePool();
     player.selectMovesFromPool();
     enemy.initialize();
+
+    // Floor 1, genera las puertas usando los modifiers actuales del jugador
+    Floor floor(1);
+    floor.generateDoors(player);
 
     CombatEngine combat(&player, &enemy);
 
@@ -108,8 +115,8 @@ int main() {
             instructionText.setString("Combat Finished. Close the window to exit.");
 
               if (player.isAlive() && !rewardGiven) {
-                player.gainExp(enemy.getExpReward());
-                player.addRelic(RelicPool::getRandomRelic());
+                // Floor decide el exp y la rareza del relic segun los modifiers del jugador
+                floor.giveRewards(player, &enemy, false);
                 rewardGiven = true;
         }
     }
