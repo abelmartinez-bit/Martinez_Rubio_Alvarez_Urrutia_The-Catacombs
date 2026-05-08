@@ -1,5 +1,4 @@
 #include "ScreenCombat.h"
-#include "RelicPool.h"
 #include <cstdlib>
 
 void handleCombatKey(sf::Keyboard::Key key, Player* player, CombatEngine* combat) {
@@ -23,7 +22,8 @@ void drawCombat(sf::RenderWindow& window,
                 sf::Text& playerText, sf::Text& enemyText,
                 sf::Text& logText, sf::Text& resultText,
                 sf::Text& instructionText, sf::Text& combatTitleText,
-                bool& rewardGiven, const sf::Sprite& combatSprite) {
+                bool& rewardGiven, const sf::Sprite& combatSprite,
+                Floor* floor, bool isMiniBoss) {
 
     // Actualizar textos con estado actual
     playerText.setString(
@@ -49,8 +49,8 @@ void drawCombat(sf::RenderWindow& window,
         instructionText.setString("Combate Finalizado. Cierra la ventana para salir.");
 
         if (player->isAlive() && !rewardGiven) {
-            player->gainExp(enemy->getExpReward());
-            player->addRelic(RelicPool::getRandomRelic());
+            // Floor decide exp + rareza del relic segun los modifiers del jugador
+            floor->giveRewards(*player, enemy, isMiniBoss);
             rewardGiven = true;
         }
     }

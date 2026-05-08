@@ -66,11 +66,11 @@ void Player::levelUp() {
 void Player::boostStat(int statChoice) {
     switch (statChoice) {
         case 1: maxHp += 10; hp += 10; break;
-        case 2: atk += 5; baseAtk += 5; break;
-        case 3: def += 5; baseDef += 5; break;
-        case 4: spAtk += 5; baseSpAtk += 5; break;
-        case 5: spDef += 5; baseSpDef += 5; break;
-        case 6: spd += 3; baseSpd += 3; break;
+        case 2: atk += 5; break;
+        case 3: def += 5; break;
+        case 4: spAtk += 5; break;
+        case 5: spDef += 5; break;
+        case 6: spd += 3; break;
         default: std::cout << "Invalid choice!\n"; break;
     }
 }
