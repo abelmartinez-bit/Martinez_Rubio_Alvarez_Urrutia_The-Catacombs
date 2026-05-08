@@ -1,5 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include "Floor.h"
 #include "Player.h"
 #include "Enemy.h"
 #include "CombatEngine.h"
@@ -14,4 +15,5 @@ void drawCombat(sf::RenderWindow& window,
                 sf::Text& playerText, sf::Text& enemyText,
                 sf::Text& logText, sf::Text& resultText,
                 sf::Text& instructionText, sf::Text& combatTitleText,
-                bool& rewardGiven, const sf::Sprite& combatSprite);
+                bool& rewardGiven, const sf::Sprite& combatSprite,
+                Floor* floor, bool isMiniBoss);

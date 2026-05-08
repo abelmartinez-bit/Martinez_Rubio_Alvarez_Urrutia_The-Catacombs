@@ -3,14 +3,16 @@
 #include "Player.h"
 #include "Enemy.h"
 #include "CombatEngine.h"
-#include "RelicPool.h"
+#include "Floor.h"
 #include <cstdlib>
+#include <ctime>
 #include "MainMenu.h"
 #include "CharacterSelect.h"
 #include "ScreenCombat.h"
 
 //main, abre la ventana, carga recursos, maneja eventos y dibuja todo
 int main() {
+    srand(static_cast<unsigned int>(time(nullptr))); // seed para aleatoriedad
     //creacion de la ventana, con titulo y tamano 800x600
     sf::RenderWindow window(sf::VideoMode({800, 600}), "The Catacombs");
     window.setFramerateLimit(60);
@@ -111,6 +113,8 @@ int main() {
     Player* player = nullptr;
     Enemy* enemy = nullptr;
     CombatEngine* combat = nullptr;
+    Floor* floor = nullptr;
+    bool isMiniBoss = false;
     bool rewardGiven = false;
  
     // Textos de combate
@@ -173,8 +177,15 @@ int main() {
             // Si se presiono una tecla
             if (const auto* keyEvent = event->getIf<sf::Event::KeyPressed>()) {
                 if (currentScreen == GameScreen::CHARACTER_SELECT) {
-                    if (handleCharacterSelectKey(keyEvent->code, selectedCard, cards, player, enemy, combat))
+                    if (handleCharacterSelectKey(keyEvent->code, selectedCard, cards, player, enemy, combat)) {
+                        // Crear el Floor y generar puertas con los modifiers del jugador
+                        floor = new Floor(1);
+                        floor->generateDoors(*player);
+                        // el enemigo hardcodeado de CharacterSelect es siempre normal (no miniboss)
+                        isMiniBoss = false;
+                        rewardGiven = false;
                         currentScreen = GameScreen::COMBAT;
+                    }
                 }
                 else if (currentScreen == GameScreen::COMBAT) {
                     handleCombatKey(keyEvent->code, player, combat);
@@ -191,10 +202,10 @@ int main() {
         else if (currentScreen == GameScreen::CHARACTER_SELECT)
             drawCharacterSelect(window, font, csSprite, cards, selectedCard, cardW, cardH, cardTop);
  
-        else if (currentScreen == GameScreen::COMBAT && player && combat)
+        else if (currentScreen == GameScreen::COMBAT && player && combat && floor)
             drawCombat(window, player, enemy, combat, playerText, enemyText,
-                       logText, resultText, instructionText, combatTitleText, 
-                       rewardGiven, combatSprite);
+                       logText, resultText, instructionText, combatTitleText,
+                       rewardGiven, combatSprite, floor, isMiniBoss);
  
         window.display();
     }
@@ -203,6 +214,7 @@ int main() {
     delete combat;
     delete enemy;
     delete player;
+    delete floor;
  
     return 0;
 }

@@ -30,6 +30,11 @@ private:
     int expBoostPercent;
     int restoreOnLevelUpPercent;
 
+    // modificadores de probabilidad para Floor de ProbabilityRelics
+    float corruptDoorModifier;   // suma a la chance de puerta corrupta
+    float minibossDropModifier;  // sube la rareza del drop al ganarle a un miniboss
+    float enemyDropModifier;     // sube la rareza del drop al ganarle a un enemigo normal
+
 
 
 public:
@@ -56,6 +61,15 @@ public:
     // Nuevas funciones para los efectos de las reliquias
     void addExpBoost(int percent);
     void addRestoreOnLevelUp(int percent);
+    // Probabilidad relics
+    void addCorruptDoorModifier(float amount);
+    void addMinibossDropModifier(float amount);
+    void addEnemyDropModifier(float amount);
+    
+    // sus getters para que Floor los lea
+    float getCorruptDoorModifier()  const { return corruptDoorModifier; }
+    float getMinibossDropModifier() const { return minibossDropModifier; }
+    float getEnemyDropModifier()    const { return enemyDropModifier; }
 
     //override para el virtual para mostrar stats del jugador, incluyendo nivel, exp, relics y potions
     void displayStats() const override;
@@ -65,4 +79,9 @@ public:
     // Destructor para limpiar
     ~Player();
 
+    // Player no se puede copiar porque maneja memoria con raw pointers (relics)
+    // (Por el momento nunca se copia pero si en algun momento se quisiera copiar, esto previene bugs al intentar copiar sin querer y que ambos objetos apunten a las mismas reliquias)
+    // Si se copiara, ambas copias intentarian hacer delete a los mismos pointers = crash
+    Player(const Player&) = delete;
+    Player& operator=(const Player&) = delete;
 };
