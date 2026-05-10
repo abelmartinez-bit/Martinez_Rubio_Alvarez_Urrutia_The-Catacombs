@@ -75,6 +75,20 @@ void CombatEngine::executeTurn(int playerMoveIndex) {
 int CombatEngine::calculateDamage(Entity* attacker, Entity* defender, Move move) {
     int attackStat = (move.getType() == MoveType::PHYSICAL) ? attacker->getAtk() : attacker->getSpAtk();
     int defenseStat = (move.getType() == MoveType::PHYSICAL) ? defender->getDef() : defender->getSpDef();
+
+    int critChance = 5 + (attacker->getSpd() / 10); // base crit chance 5%, scales con SPD
+    int roll = rand() % 100;
+
+    if (roll < critChance) {
+        int defenseStat = (move.getType() == MoveType::PHYSICAL) ? defender->getBaseDef() : defender->getBaseSpDef(); // crits ignore buffs/debuffs
+        
+        if (defender->getIsBlocking()) {
+            defenseStat = static_cast<int>(defenseStat / 2.5); // cancelamos el mult de block para crits
+        }
+
+        attackStat *= 2; // crits hacen el doble de dmg 
+        combatLog += attacker->getName() + " landed a critical hit!\n";
+    }
     
     // Apply blocking bonus, static por int
     if (defender->getIsBlocking()) {

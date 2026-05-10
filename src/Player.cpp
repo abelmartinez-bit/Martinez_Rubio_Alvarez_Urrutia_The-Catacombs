@@ -40,7 +40,6 @@ void Player::levelUp() {
     }
     std::cout << "!\n";
 
-    //-----------------------------------------------------------------
 
     std::cout << name << " leveled up to level " << level << "!\n";
     std::cout << "Choose 2 stats to boost:\n";
@@ -56,7 +55,7 @@ void Player::levelUp() {
         std::cout << "Choice " << i + 1 << ": ";
         std::cin >> choice;
         if (!(choice >= 1 && choice <= 6)) {
-            std::cout << "Invalid choice = HP boost.\n";
+            std::cout << "Invalid choice = default HP boost.\n";
             choice = 1; // default HP boost
         }
         boostStat(choice);
@@ -84,7 +83,7 @@ void Player::addPotion(Potion potion) {
     if (potions.size() < potionSlots)
         potions.push_back(potion);
     else
-        std::cout << "No potion slots available!\n";
+        std::cout << "Gained potion, but no potion slots available!\n";
 }
 
 // aplica el efecto de la pocion antes de ser eliminada.

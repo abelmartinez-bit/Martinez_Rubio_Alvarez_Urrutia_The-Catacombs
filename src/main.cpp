@@ -66,7 +66,7 @@ int main() {
  
     //empezar la pantalla actual en el menu principal
     GameScreen currentScreen = GameScreen::MAIN_MENU;
- 
+
     //Main menu
  
     //textos de la pantalla inicial
@@ -95,10 +95,10 @@ int main() {
  
     // Datos de los 4 personajes
     CharacterCard cards[4] = {
-        {  90.f, "Warrior", PlayerType::WARRIOR, 130, 20, 15, 10, 10, 10 },
+        {  90.f, "Warrior", PlayerType::WARRIOR, 130, 20, 15, 10, 15, 10 },
         { 290.f, "Mage",    PlayerType::MAGE,    100, 10, 10, 25, 20, 15 },
-        { 490.f, "Rogue",   PlayerType::ROGUE,   110, 15, 10, 10, 10, 25 },
-        { 690.f, "Archer",  PlayerType::ARCHER,  100, 10, 15, 25, 15, 25 }
+        { 490.f, "Rogue",   PlayerType::ROGUE,   110, 15, 10, 10, 10, 30 },
+        { 690.f, "Archer",  PlayerType::ARCHER,  100, 10, 10, 25, 15, 20 }
     };
  
     // ancho y alto clickeable de cada carta
