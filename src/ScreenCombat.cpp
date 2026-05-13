@@ -1,5 +1,6 @@
 #include "ScreenCombat.h"
 #include <cstdlib>
+#include <iostream>
 
 void handleCombatKey(sf::Keyboard::Key key, Player* player, CombatEngine* combat) {
     // SPACE avanza turno con un move random
@@ -51,6 +52,7 @@ void drawCombat(sf::RenderWindow& window,
         if (player->isAlive() && !rewardGiven) {
             // Floor decide exp + rareza del relic segun los modifiers del jugador
             floor->giveRewards(*player, enemy, isMiniBoss);
+            std::cout << combat->relicList(player) << std::endl; // mostrar los relics obtenidos en el log por ahora, se puede mejorar con una pantalla de recompensa despues
             rewardGiven = true;
         }
     }

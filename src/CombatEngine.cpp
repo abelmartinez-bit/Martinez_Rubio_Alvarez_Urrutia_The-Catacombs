@@ -176,6 +176,17 @@ void CombatEngine::usePotion(Potion potion, Entity& target) {
     return potionList;
 }
 
+    std::string CombatEngine::relicList(const Player* player) const {
+    std::vector<Relic*> relics = player->getRelics();
+    std::string relicList = "Relics: ";
+    for (size_t i = 0; i < relics.size(); i++) {
+        relicList += relics[i]->getName();
+        if (i < relics.size() - 1) relicList += ", ";
+    }
+    if (relics.empty()) relicList += "None";
+    return relicList;
+}
+
 bool CombatEngine::isBattleOver() {
     return !player->isAlive() || !enemy->isAlive();
 }

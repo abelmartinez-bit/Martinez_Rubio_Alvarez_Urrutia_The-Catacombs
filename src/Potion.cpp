@@ -34,29 +34,29 @@ void Potion::applyEffect(Entity& targetEntity) {
 
 Potion Potion::createPotion(int index) {
     switch (index) {
-        case 0: return Potion("Minor Healing Potion", MoveEffect::HEAL, MoveTarget::SELF, 20);
-        case 1: return Potion("Major Healing Potion", MoveEffect::HEAL, MoveTarget::SELF, 45);
-        case 2: return Potion("Weak Strength Potion", MoveEffect::ATK_UP, MoveTarget::SELF, 10);
-        case 3: return Potion("Greater Strength Potion", MoveEffect::ATK_UP, MoveTarget::SELF, 25);
-        case 4: return Potion("Potion of Weakness", MoveEffect::ATK_DOWN, MoveTarget::ENEMY, 15);
-        case 5: return Potion("Cursed Strength Drain", MoveEffect::ATK_DOWN, MoveTarget::ENEMY, 30);
-        case 6: return Potion("Small Defense Potion", MoveEffect::DEF_UP, MoveTarget::SELF, 10);
-        case 7: return Potion("Iron Skin Potion", MoveEffect::DEF_UP, MoveTarget::SELF, 25);
-        case 8: return Potion("Shattered Armor Potion", MoveEffect::DEF_DOWN, MoveTarget::ENEMY, 15);
-        case 9: return Potion("Corrosion Flask", MoveEffect::DEF_DOWN, MoveTarget::ENEMY, 30);
-        case 10: return Potion("Small Mana Brew", MoveEffect::SPATK_UP, MoveTarget::SELF, 10);
-        case 11: return Potion("Arcane Elixir", MoveEffect::SPATK_UP, MoveTarget::SELF, 25);
-        case 12: return Potion("Mind Fog Potion", MoveEffect::SPATK_DOWN, MoveTarget::ENEMY, 15);
-        case 13: return Potion("Cursed Mana Flask", MoveEffect::SPATK_DOWN, MoveTarget::ENEMY, 30);
-        case 14: return Potion("Weak Mystic Ward", MoveEffect::SPDEF_UP, MoveTarget::SELF, 10);
-        case 15: return Potion("Greater Mystic Ward", MoveEffect::SPDEF_UP, MoveTarget::SELF, 25);
-        case 16: return Potion("Hexed Resistance Potion", MoveEffect::SPDEF_DOWN, MoveTarget::ENEMY, 15);
-        case 17: return Potion("Soul Fracture Flask", MoveEffect::SPDEF_DOWN, MoveTarget::ENEMY, 30);
-        case 18: return Potion("Minor Swiftness Potion", MoveEffect::SPD_UP, MoveTarget::SELF, 10);
-        case 19: return Potion("Lightning Potion", MoveEffect::SPD_UP, MoveTarget::SELF, 25);
-        case 20: return Potion("Heavy Feet Potion", MoveEffect::SPD_DOWN, MoveTarget::ENEMY, 15);
-        case 21: return Potion("Paralyzing Mixture", MoveEffect::SPD_DOWN, MoveTarget::ENEMY, 30);
-        default: return Potion("Minor Healing Potion", MoveEffect::HEAL, MoveTarget::SELF, 20);
+        case 0: return Potion("Healing Potion", MoveEffect::HEAL, MoveTarget::SELF, 20);
+        case 1: return Potion("Healing+ Potion", MoveEffect::HEAL, MoveTarget::SELF, 45);
+        case 2: return Potion("Strength Potion", MoveEffect::ATK_UP, MoveTarget::SELF, 10);
+        case 3: return Potion("Strength+ Potion", MoveEffect::ATK_UP, MoveTarget::SELF, 25);
+        case 4: return Potion("Weakness Flask", MoveEffect::ATK_DOWN, MoveTarget::ENEMY, 15);
+        case 5: return Potion("Weakness+ Flask", MoveEffect::ATK_DOWN, MoveTarget::ENEMY, 30);
+        case 6: return Potion("Defense Potion", MoveEffect::DEF_UP, MoveTarget::SELF, 10);
+        case 7: return Potion("Defense+ Potion", MoveEffect::DEF_UP, MoveTarget::SELF, 25);
+        case 8: return Potion("Vulnerability Flask", MoveEffect::DEF_DOWN, MoveTarget::ENEMY, 15);
+        case 9: return Potion("Vulnerability+ Flask", MoveEffect::DEF_DOWN, MoveTarget::ENEMY, 30);
+        case 10: return Potion("Dexterity Potion", MoveEffect::SPATK_UP, MoveTarget::SELF, 10);
+        case 11: return Potion("Dexterity+ Potion", MoveEffect::SPATK_UP, MoveTarget::SELF, 25);
+        case 12: return Potion("Brainfog Flask", MoveEffect::SPATK_DOWN, MoveTarget::ENEMY, 15);
+        case 13: return Potion("Brainfog+ Flask", MoveEffect::SPATK_DOWN, MoveTarget::ENEMY, 30);
+        case 14: return Potion("Soul Shield Potion", MoveEffect::SPDEF_UP, MoveTarget::SELF, 10);
+        case 15: return Potion("Soul Shield+ Potion", MoveEffect::SPDEF_UP, MoveTarget::SELF, 25);
+        case 16: return Potion("Soul Fracture Flask", MoveEffect::SPDEF_DOWN, MoveTarget::ENEMY, 15);
+        case 17: return Potion("Soul Fracture+ Flask", MoveEffect::SPDEF_DOWN, MoveTarget::ENEMY, 30);
+        case 18: return Potion("Swiftness Potion", MoveEffect::SPD_UP, MoveTarget::SELF, 10);
+        case 19: return Potion("Swiftness+ Potion", MoveEffect::SPD_UP, MoveTarget::SELF, 25);
+        case 20: return Potion("Slowness Flask", MoveEffect::SPD_DOWN, MoveTarget::ENEMY, 15);
+        case 21: return Potion("Slowness+ Flask", MoveEffect::SPD_DOWN, MoveTarget::ENEMY, 30);
+        default: return Potion("Healing Potion", MoveEffect::HEAL, MoveTarget::SELF, 20);
     }
 }
 
