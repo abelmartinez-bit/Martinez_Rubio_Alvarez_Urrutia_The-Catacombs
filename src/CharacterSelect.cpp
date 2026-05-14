@@ -21,11 +21,7 @@ bool handleCharacterSelectKey(sf::Keyboard::Key key, int selectedCard,
         CharacterCard& chosen = cards[selectedCard];
         player = new Player(chosen.name, chosen.hp, chosen.atk, chosen.def,
                             chosen.spAtk, chosen.spDef, chosen.spd, chosen.type);
-
-        Potion healthPotion("Health Potion", MoveEffect::HEAL, MoveTarget::SELF, 30);
-        Potion spatkUpPotion("SpAtk Up Potion", MoveEffect::SPATK_UP, MoveTarget::SELF, 20);
-        player->addPotion(healthPotion);
-        player->addPotion(spatkUpPotion);
+        player->addPotion(Potion::createRandomPotion()); // pociones random para probar
         player->initializeMovePool();
         player->selectMovesFromPool();
 

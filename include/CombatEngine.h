@@ -20,6 +20,7 @@ public:
     void applyMoveEffect(Move move, Entity* user, Entity* target);
     void usePotion(Potion potion, Entity& target);
     std::string potionList(const Player& player) const;
+    std::string relicList(const Player* player) const;
     bool isBattleOver();
     std::string getWinner();
     std::string getCombatLog();
