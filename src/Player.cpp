@@ -77,6 +77,127 @@ void Player::boostStat(int statChoice) {
 void Player::addRelic(Relic* relic) {
     relics.push_back(relic);
     relic->applyEffect(*this);
+    checkRelicSynergies(); // revisar sinergias cada vez que se agrega una reliquia
+}
+// funciones para sinergias     
+bool Player::hasRelic(const std::string& relicName) const {
+    for (Relic* relic : relics) {
+        if (relic->getName() == relicName) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Player::hasSynergy(const std::string& synergyName) const {
+    for (const std::string& synergy : activeSynergies) {
+        if (synergy == synergyName) {
+            return true;
+        }
+    }
+    return false;
+}
+
+void Player::checkRelicSynergies() {
+    if (hasRelic("Dragon Heart") && hasRelic("Golden Ring") && !hasSynergy("Dragon Wisdom")) {
+        setMaxHp(getMaxHp() + 20);
+        setSpAtk(getSpAtk() + 10);
+        activeSynergies.push_back("Dragon Wisdom");
+        std::cout << "Synergy activated: Dragon Wisdom! Max HP +20 and SP.ATK +10.\n";
+    }
+
+    if (hasRelic("Ancient Blade") && hasRelic("Warrior Fang") && !hasSynergy("Warrior Legacy")) {
+        setAtk(getAtk() + 10);
+        activeSynergies.push_back("Warrior Legacy");
+        std::cout << "Synergy activated: Warrior Legacy! ATK +10.\n";
+    }
+
+    if (hasRelic("Phoenix Feather") && hasRelic("Healing Charm") && !hasSynergy("Rebirth Blessing")) {
+        addRestoreOnLevelUp(10);
+        activeSynergies.push_back("Rebirth Blessing");
+        std::cout << "Synergy activated: Rebirth Blessing! Extra level-up restore +10%.\n";
+    }
+
+    if (hasRelic("Sharp Eye") && hasRelic("Steady Hand") && !hasSynergy("Perfect Aim")) {
+        std::vector<Move> moves = getMoves();
+
+        for (int i = 0; i < 4; i++) {
+            moves[i].addAccuracy(5);
+            setMove(i, moves[i]);
+        }
+
+        activeSynergies.push_back("Perfect Aim");
+        std::cout << "Synergy activated: Perfect Aim! All moves accuracy +5.\n";
+    }
+
+    if (hasRelic("Stone Shield") && hasRelic("Iron Helmet") && !hasSynergy("Iron Defense")) {
+        setDef(getDef() + 8);
+        activeSynergies.push_back("Iron Defense");
+        std::cout << "Synergy activated: Iron Defense! DEF +8.\n";
+    }
+
+    if (hasRelic("Cloth Mantle") && hasRelic("Silver Thread") && !hasSynergy("Mystic Protection")) {
+        setSpDef(getSpDef() + 8);
+        activeSynergies.push_back("Mystic Protection");
+        std::cout << "Synergy activated: Mystic Protection! SP.DEF +8.\n";
+    }
+
+    if (hasRelic("Traveler Boots") && hasRelic("Light Sandals") && !hasSynergy("Swift Step")) {
+        setSpd(getSpd() + 5);
+        activeSynergies.push_back("Swift Step");
+        std::cout << "Synergy activated: Swift Step! SPD +5.\n";
+    }
+
+    if (hasRelic("Heart Stone") && hasRelic("Old Medal") && !hasSynergy("Vital Core")) {
+        setMaxHp(getMaxHp() + 15);
+        heal(15);
+        activeSynergies.push_back("Vital Core");
+        std::cout << "Synergy activated: Vital Core! Max HP +15 and healed 15 HP.\n";
+    }
+
+    if (hasRelic("Potion Belt") && hasRelic("Large Potion Belt") && !hasSynergy("Alchemist Pack")) {
+        expandPotionSlots(1);
+        activeSynergies.push_back("Alchemist Pack");
+        std::cout << "Synergy activated: Alchemist Pack! Extra potion slot +1.\n";
+    }
+
+    if (hasRelic("Minor Scholar Coin") && hasRelic("Scholar Coin") && !hasSynergy("Scholar Fortune")) {
+        addExpBoost(10);
+        activeSynergies.push_back("Scholar Fortune");
+        std::cout << "Synergy activated: Scholar Fortune! Extra EXP boost +10%.\n";
+    }
+
+    if (hasRelic("Small Ruby") && hasRelic("Ancient Blade") && !hasSynergy("Crimson Edge")) {
+        setAtk(getAtk() + 8);
+        activeSynergies.push_back("Crimson Edge");
+        std::cout << "Synergy activated: Crimson Edge! ATK +8.\n";
+    }
+    if (hasRelic("Blue Crystal") && hasRelic("Golden Ring") && !hasSynergy("Arcane Focus")) {
+        setSpAtk(getSpAtk() + 8);
+        activeSynergies.push_back("Arcane Focus");
+        std::cout << "Synergy activated: Arcane Focus! SP.ATK +8.\n";
+    }
+
+    if (hasRelic("Knight Armor") && hasRelic("Mystic Cape") && !hasSynergy("Guardian Balance")) {
+        setDef(getDef() + 6);
+        setSpDef(getSpDef() + 6);
+        activeSynergies.push_back("Guardian Balance");
+        std::cout << "Synergy activated: Guardian Balance! DEF +6 and SP.DEF +6.\n";
+    }
+
+    if (hasRelic("Hunter Boots") && hasRelic("Sharp Eye") && !hasSynergy("Predator Instinct")) {
+        setSpd(getSpd() + 4);
+
+        std::vector<Move> moves = getMoves();
+
+        for (int i = 0; i < 4; i++) {
+            moves[i].addAccuracy(3);
+            setMove(i, moves[i]);
+        }
+
+        activeSynergies.push_back("Predator Instinct");
+        std::cout << "Synergy activated: Predator Instinct! SPD +4 and all moves accuracy +3.\n";
+    }
 }
 
 void Player::addPotion(Potion potion) {

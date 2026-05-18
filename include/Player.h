@@ -34,8 +34,7 @@ private:
     float corruptDoorModifier;   // suma a la chance de puerta corrupta
     float minibossDropModifier;  // sube la rareza del drop al ganarle a un miniboss
     float enemyDropModifier;     // sube la rareza del drop al ganarle a un enemigo normal
-
-
+    std::vector<std::string> activeSynergies;
 
 public:
     Player(std::string name, int hp, int atk, int def, int spAtk, int spDef, int spd, 
@@ -55,6 +54,11 @@ public:
     void levelUp();
     void boostStat(int statChoice);
     void addRelic(Relic* relic);
+    // funciones para sinergias
+    bool hasRelic(const std::string& relicName) const;
+    bool hasSynergy(const std::string& synergyName) const;
+    void checkRelicSynergies();
+    //
     void addPotion(Potion potion);
     void usePotion(int index, Entity& target);
     void expandPotionSlots(int amount); // con relics
