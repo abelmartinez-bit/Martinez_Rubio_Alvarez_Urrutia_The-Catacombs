@@ -77,6 +77,58 @@ void Player::boostStat(int statChoice) {
 void Player::addRelic(Relic* relic) {
     relics.push_back(relic);
     relic->applyEffect(*this);
+    checkRelicSynergies(); // revisar sinergias cada vez que se agrega una reliquia
+}
+// funciones para sinergias     
+bool Player::hasRelic(const std::string& relicName) const {
+    for (Relic* relic : relics) {
+        if (relic->getName() == relicName) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Player::hasSynergy(const std::string& synergyName) const {
+    for (const std::string& synergy : activeSynergies) {
+        if (synergy == synergyName) {
+            return true;
+        }
+    }
+    return false;
+}
+
+void Player::checkRelicSynergies() {
+    if (hasRelic("Dragon Heart") && hasRelic("Golden Ring") && !hasSynergy("Dragon Wisdom")) {
+        setMaxHp(getMaxHp() + 20);
+        setSpAtk(getSpAtk() + 10);
+        activeSynergies.push_back("Dragon Wisdom");
+        std::cout << "Synergy activated: Dragon Wisdom! Max HP +20 and SP.ATK +10.\n";
+    }
+
+    if (hasRelic("Ancient Blade") && hasRelic("Warrior Fang") && !hasSynergy("Warrior Legacy")) {
+        setAtk(getAtk() + 10);
+        activeSynergies.push_back("Warrior Legacy");
+        std::cout << "Synergy activated: Warrior Legacy! ATK +10.\n";
+    }
+
+    if (hasRelic("Phoenix Feather") && hasRelic("Healing Charm") && !hasSynergy("Rebirth Blessing")) {
+        addRestoreOnLevelUp(10);
+        activeSynergies.push_back("Rebirth Blessing");
+        std::cout << "Synergy activated: Rebirth Blessing! Extra level-up restore +10%.\n";
+    }
+
+    if (hasRelic("Sharp Eye") && hasRelic("Steady Hand") && !hasSynergy("Perfect Aim")) {
+        std::vector<Move> moves = getMoves();
+
+        for (int i = 0; i < 4; i++) {
+            moves[i].addAccuracy(5);
+            setMove(i, moves[i]);
+        }
+
+        activeSynergies.push_back("Perfect Aim");
+        std::cout << "Synergy activated: Perfect Aim! All moves accuracy +5.\n";
+    }
 }
 
 void Player::addPotion(Potion potion) {
