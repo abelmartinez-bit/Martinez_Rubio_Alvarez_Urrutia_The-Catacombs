@@ -15,6 +15,8 @@ private:
 public:
     CombatEngine(Player* p, Entity* e);
 
+    Entity* getEnemy() const { return enemy; }
+
     void executeTurn(int playerMoveIndex);
     int calculateDamage(Entity* attacker, Entity* defender, Move move);
     void applyMoveEffect(Move move, Entity* user, Entity* target);

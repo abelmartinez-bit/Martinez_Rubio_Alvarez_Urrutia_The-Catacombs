@@ -2,6 +2,8 @@
 #include <cstdlib>
 #include <iostream>
 
+
+
 void handleCombatKey(sf::Keyboard::Key key, Player* player, CombatEngine* combat) {
     // SPACE avanza turno con un move random
     if (key == sf::Keyboard::Key::Space) {
@@ -13,7 +15,7 @@ void handleCombatKey(sf::Keyboard::Key key, Player* player, CombatEngine* combat
     // P usa la primera potion disponible
     else if (key == sf::Keyboard::Key::P) {
         if (!combat->isBattleOver() && !player->getPotions().empty()) {
-            combat->usePotion(player->getPotions()[0], *player);
+            combat->usePotion(player->getPotions()[0], player->getPotions()[0].getTarget() == MoveTarget::SELF ? (Entity&)*player : (Entity&)*combat->getEnemy());
         }
     }
 }
