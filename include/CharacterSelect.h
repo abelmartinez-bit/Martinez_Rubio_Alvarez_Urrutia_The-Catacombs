@@ -15,7 +15,7 @@ struct CharacterCard {
 };
 
 // Maneja el click en las cartas y devuelve el indice seleccionado
-int handleCharacterSelectClick(sf::Vector2i mouse, CharacterCard cards[4],
+int handleCharacterSelectClick(sf::Vector2f mouse, CharacterCard cards[4],
                                float cardW, float cardH, float cardTop);
 
 // Al presionar C con personaje elegido, crea el player, enemy y combat

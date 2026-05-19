@@ -13,9 +13,12 @@
 //main, abre la ventana, carga recursos, maneja eventos y dibuja todo
 int main() {
     srand(static_cast<unsigned int>(time(nullptr))); // seed para aleatoriedad
-    //creacion de la ventana, con titulo y tamano 800x600
-    sf::RenderWindow window(sf::VideoMode({800, 600}), "The Catacombs");
+    //creacion de la ventana, ahora abre en fullscreen con la resolucion del monitor, pero se puede cambiar a 800x600 para pruebas
+    sf::RenderWindow window(sf::VideoMode::getFullscreenModes()[0], "The Catacombs", sf::State::Fullscreen);
     window.setFramerateLimit(60);
+    //config de la vista para coordenadas 800x600, asi es mas facil posicionar los elementos en pantalla
+    sf::View view(sf::FloatRect({0.f, 0.f}, {800.f, 600.f}));
+    window.setView(view);
  
     //cargar la fuente de los textos
     sf::Font font;
@@ -89,16 +92,18 @@ int main() {
     // Posicion y tamanio de los botones del main menu
     float btnW = 220.f, btnH = 55.f;
     float btnX = (800.f - btnW) / 2.f;
-    float playY = 310.f, quitY = 390.f;
+    float playY = 250.f, relicsY = 330.f, quitY = 410.f; 
+    //nuevo relicsY para el boton de reliquias proximamente, por ahora no hace nada
  
     //Seleccion de personaje 
  
-    // Datos de los 4 personajes
-    CharacterCard cards[4] = {
-        {  90.f, "Warrior", PlayerType::WARRIOR, 130, 20, 15, 10, 15, 10 },
-        { 290.f, "Mage",    PlayerType::MAGE,    100, 10, 10, 25, 20, 15 },
-        { 490.f, "Rogue",   PlayerType::ROGUE,   110, 15, 10, 10, 10, 30 },
-        { 690.f, "Archer",  PlayerType::ARCHER,  100, 10, 10, 25, 15, 20 }
+    //Datos de los 4 personajes
+    CharacterCard cards[4] = { 
+        // centerX, name, PlayerType, hp, atk, def, spAtk, spDef, spd
+        { 117.f, "Warrior", PlayerType::WARRIOR, 130, 20, 15, 10, 15, 10 },
+        { 306.f, "Mage",    PlayerType::MAGE,    100, 10, 10, 25, 20, 15 },
+        { 498.f, "Rogue",   PlayerType::ROGUE,   110, 15, 10, 10, 10, 30 },
+        { 689.f, "Archer",  PlayerType::ARCHER,  100, 10, 10, 25, 15, 20 }
     };
  
     // ancho y alto clickeable de cada carta
@@ -147,13 +152,15 @@ int main() {
  
         //eventos, como clicks o cerrar la ventana
         while (const std::optional event = window.pollEvent()) {
+            
             if (event->is<sf::Event::Closed>())
                 window.close();
  
-            // Si se hizo click
+            // Si se hizo click con el mouse
             if (const auto* click = event->getIf<sf::Event::MouseButtonPressed>()) {
-                if (click->button == sf::Mouse::Button::Left) {
-                    sf::Vector2i mouse = sf::Mouse::getPosition(window);
+                if (click->button == sf::Mouse::Button::Left) { //click izquierdo
+                    //mapPixelToCoords toma el pixel de la pantalla y lo convierte a la coordenada
+                    sf::Vector2f mouse = window.mapPixelToCoords(sf::Mouse::getPosition(window));
  
                     if (currentScreen == GameScreen::MAIN_MENU) {
                         // Play, cambia a la pantalla de seleccion de personaje
@@ -176,6 +183,11 @@ int main() {
  
             // Si se presiono una tecla
             if (const auto* keyEvent = event->getIf<sf::Event::KeyPressed>()) {
+
+                //escape cierra el juego desde cualquier pantalla
+                if (keyEvent->code == sf::Keyboard::Key::Escape)
+                    window.close();
+            
                 if (currentScreen == GameScreen::CHARACTER_SELECT) {
                     if (handleCharacterSelectKey(keyEvent->code, selectedCard, cards, player, enemy, combat)) {
                         // Crear el Floor y generar puertas con los modifiers del jugador
@@ -197,7 +209,7 @@ int main() {
         window.clear(sf::Color(10, 5, 0));
  
         if (currentScreen == GameScreen::MAIN_MENU)
-            drawMainMenu(window, font, bgSprite, titleText, subtitleText, btnX, playY, quitY, btnW, btnH);
+            drawMainMenu(window, font, bgSprite, titleText, subtitleText, btnX, playY, relicsY, quitY, btnW, btnH);
  
         else if (currentScreen == GameScreen::CHARACTER_SELECT)
             drawCharacterSelect(window, font, csSprite, cards, selectedCard, cardW, cardH, cardTop);

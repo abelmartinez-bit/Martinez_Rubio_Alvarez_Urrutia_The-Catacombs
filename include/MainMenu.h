@@ -18,11 +18,11 @@ void drawButton(sf::RenderWindow& window, sf::Font& font,
 GameScreen updateMainMenu(sf::RenderWindow& window, sf::Font& font,
                           const sf::Sprite& bgSprite,
                           const sf::Text& titleText, const sf::Text& subtitleText,
-                          float btnX, float playY, float quitY, float btnW, float btnH,
+                          float btnX, float playY, float relicsY, float quitY, float btnW, float btnH,
                           const std::optional<sf::Event>& event);
 
 // Solo dibuja el main menu (sin manejar eventos)
 void drawMainMenu(sf::RenderWindow& window, sf::Font& font,
                   const sf::Sprite& bgSprite,
                   const sf::Text& titleText, const sf::Text& subtitleText,
-                  float btnX, float playY, float quitY, float btnW, float btnH);
+                  float btnX, float playY, float relicsY, float quitY, float btnW, float btnH);
