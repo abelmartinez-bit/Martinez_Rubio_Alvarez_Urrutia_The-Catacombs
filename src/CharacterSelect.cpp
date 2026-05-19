@@ -1,7 +1,7 @@
 #include "..\include\CharacterSelect.h"
 #include "..\include\Potion.h"
 
-int handleCharacterSelectClick(sf::Vector2i mouse, CharacterCard cards[4],
+int handleCharacterSelectClick(sf::Vector2f mouse, CharacterCard cards[4],
                                float cardW, float cardH, float cardTop) {
     for (int i = 0; i < 4; i++) {
         float cardX = cards[i].centerX - cardW / 2.f;
@@ -57,31 +57,32 @@ void drawCharacterSelect(sf::RenderWindow& window, sf::Font& font,
 
         // Nombre del personaje debajo de la carta
         sf::Text nameText(font, cards[i].name, 20);
-        nameText.setFillColor(sf::Color::White);
+        nameText.setFillColor(sf::Color::Black); //ahora negro para que se vea mejor con el fondo claro
         sf::FloatRect nb = nameText.getLocalBounds();
         nameText.setPosition({
             cards[i].centerX - nb.size.x / 2.f - nb.position.x,
-            cardTop + cardH + 5.f
+            //ahora para que quede en el slot de nombre de la carta y no abajo
+            cardTop + cardH + -40.f
         });
         window.draw(nameText);
     }
 
     // Texto de seleccion
     sf::Text tempText(font, "SELECCIONA TU PERSONAJE", 26);
-    tempText.setFillColor(sf::Color::White);
+    tempText.setFillColor(sf::Color::Black);
     sf::FloatRect tb = tempText.getLocalBounds();
     tempText.setPosition({
         (800.f - tb.size.x) / 2.f - tb.position.x,
-        560.f
+        545.f
     });
     window.draw(tempText);
 
     sf::Text hintText(font, selectedCard == -1 ? "Haz click en un personaje" : "Presiona C para continuar", 18);
-    hintText.setFillColor(sf::Color::White);
+    hintText.setFillColor(sf::Color::Black);
     sf::FloatRect hb = hintText.getLocalBounds();
     hintText.setPosition({
         (800.f - hb.size.x) / 2.f - hb.position.x,
-        585.f
+        575.f
     });
     window.draw(hintText);
 }

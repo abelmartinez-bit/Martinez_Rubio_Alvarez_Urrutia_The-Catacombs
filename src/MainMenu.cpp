@@ -18,7 +18,7 @@ void drawButton(sf::RenderWindow& window, sf::Font& font,
 
     // Texto centrado dentro del boton
     sf::Text text(font, label, 26);
-    text.setFillColor(sf::Color(210, 160, 60));
+    text.setFillColor(sf::Color(210, 160, 60)); 
     sf::FloatRect bounds = text.getLocalBounds();
     text.setPosition({
         x + (w - bounds.size.x) / 2.f - bounds.position.x,
@@ -30,7 +30,7 @@ void drawButton(sf::RenderWindow& window, sf::Font& font,
 void drawMainMenu(sf::RenderWindow& window, sf::Font& font,
                   const sf::Sprite& bgSprite,
                   const sf::Text& titleText, const sf::Text& subtitleText,
-                  float btnX, float playY, float quitY, float btnW, float btnH) {
+                  float btnX, float playY, float relicsY, float quitY, float btnW, float btnH) {
 
     //imagen de fondo
     window.draw(bgSprite);
@@ -64,11 +64,12 @@ void drawMainMenu(sf::RenderWindow& window, sf::Font& font,
 
     // Botones
     drawButton(window, font, btnX, playY, btnW, btnH, "PLAY");
+    drawButton(window, font, btnX, relicsY, btnW, btnH, "RELICS"); //nuevo boton de reliquias, por ahora no hace nada
     drawButton(window, font, btnX, quitY, btnW, btnH, "QUIT");
 
     //Creditos hasta abajo
     sf::Text creditsText(font, "CETYS Universidad  |  ICC C2  |  2026", 13);
-    creditsText.setFillColor(sf::Color(100, 75, 30));
+    creditsText.setFillColor(sf::Color(210, 160, 60));
     sf::FloatRect credBounds = creditsText.getLocalBounds();
     creditsText.setPosition({
         (800.f - credBounds.size.x) / 2.f - credBounds.position.x,
