@@ -83,16 +83,16 @@ int CombatEngine::calculateDamage(Entity* attacker, Entity* defender, Move move)
         int defenseStat = (move.getType() == MoveType::PHYSICAL) ? defender->getBaseDef() : defender->getBaseSpDef(); // crits ignore buffs/debuffs
         
         if (defender->getIsBlocking()) {
-            defenseStat = static_cast<int>(defenseStat / 2.5); // cancelamos el mult de block para crits
+            defenseStat = static_cast<int>(defenseStat / 3.5); // cancelamos el mult de block para crits
         }
 
-        attackStat *= 2; // crits hacen el doble de dmg 
+        attackStat *= 3; // crits hacen el doble de dmg 
         combatLog += attacker->getName() + " landed a critical hit!\n";
     }
     
     // Apply blocking bonus, static por int
     if (defender->getIsBlocking()) {
-        defenseStat = static_cast<int>(defenseStat * 2.5);
+        defenseStat = static_cast<int>(defenseStat * 3.5);
     }
     
     // Simple damage formula

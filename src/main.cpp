@@ -70,15 +70,11 @@ int main() {
     srand(static_cast<unsigned int>(time(nullptr))); // seed para aleatoriedad
     //creacion de la ventana, ahora abre en fullscreen con la resolucion del monitor, pero se puede cambiar a 800x600 para pruebas
     sf::RenderWindow window(sf::VideoMode::getFullscreenModes()[0], "The Catacombs", sf::State::Fullscreen);
-    srand(static_cast<unsigned int>(time(nullptr)));
-
-    sf::RenderWindow window(sf::VideoMode({800, 600}), "The Catacombs");
     window.setFramerateLimit(60);
+
     //config de la vista para coordenadas 800x600, asi es mas facil posicionar los elementos en pantalla
     sf::View view(sf::FloatRect({0.f, 0.f}, {800.f, 600.f}));
     window.setView(view);
- 
-    //cargar la fuente de los textos
 
     sf::Font font;
     if (!font.openFromFile("assets/fonts/Arial.ttf")) {
@@ -138,27 +134,6 @@ int main() {
 
     sf::Text subtitleText(font, "- Roguelike Dungeon Crawler -", 17);
     subtitleText.setFillColor(sf::Color(160, 120, 50));
-    sf::FloatRect subBounds = subtitleText.getLocalBounds();
-    subtitleText.setPosition({
-        (800.f - subBounds.size.x) / 2.f - subBounds.position.x,
-        205.f
-    });
- 
-    // Posicion y tamanio de los botones del main menu
-    float btnW = 220.f, btnH = 55.f;
-    float btnX = (800.f - btnW) / 2.f;
-    float playY = 250.f, relicsY = 330.f, quitY = 410.f; 
-    //nuevo relicsY para el boton de reliquias proximamente, por ahora no hace nada
- 
-    //Seleccion de personaje 
- 
-    //Datos de los 4 personajes
-    CharacterCard cards[4] = { 
-        // centerX, name, PlayerType, hp, atk, def, spAtk, spDef, spd
-        { 117.f, "Warrior", PlayerType::WARRIOR, 130, 20, 15, 10, 15, 10 },
-        { 306.f, "Mage",    PlayerType::MAGE,    100, 10, 10, 25, 20, 15 },
-        { 498.f, "Rogue",   PlayerType::ROGUE,   110, 15, 10, 10, 10, 30 },
-        { 689.f, "Archer",  PlayerType::ARCHER,  100, 10, 10, 25, 15, 20 }
     {
         sf::FloatRect b = subtitleText.getLocalBounds();
         subtitleText.setPosition({(800.f - b.size.x) / 2.f - b.position.x, 205.f});
@@ -166,16 +141,16 @@ int main() {
 
     const float btnW = 220.f, btnH = 55.f;
     const float btnX = (800.f - btnW) / 2.f;
-    const float playY = 310.f, quitY = 390.f;
+    const float playY = 250.f, relicsY = 330.f, quitY = 410.f; // por ahora no hace nada
 
 
     // Character Select, char data (needs tweaking too weak)
 
     CharacterCard cards[4] = {
-        {  90.f, "Warrior", PlayerType::WARRIOR, 1300, 30, 25, 10, 15, 10 },
-        { 290.f, "Mage",    PlayerType::MAGE,    100, 10, 15, 30, 25, 15 },
-        { 490.f, "Rogue",   PlayerType::ROGUE,   110, 40, 12, 15, 12, 40 },
-        { 690.f, "Archer",  PlayerType::ARCHER,  100, 15, 20, 30, 15, 25 }
+        {  117.f, "Warrior", PlayerType::WARRIOR, 1300, 30, 25, 10, 15, 10 }, // testing
+        { 306.f, "Mage",    PlayerType::MAGE,    100, 10, 15, 30, 25, 15 },
+        { 498.f, "Rogue",   PlayerType::ROGUE,   110, 40, 12, 15, 12, 40 },
+        { 689.f, "Archer",  PlayerType::ARCHER,  100, 15, 20, 30, 15, 25 }
     };
     const float cardW = 160.f, cardH = 480.f, cardTop = 60.f;
     int selectedCard = -1;
@@ -213,22 +188,16 @@ int main() {
     while (window.isOpen()) {
 
         while (const std::optional event = window.pollEvent()) {
-            
 
             // Cerrar ventana
             if (event->is<sf::Event::Closed>())
                 window.close();
- 
-            // Si se hizo click con el mouse
 
             // Mouse clicks
             if (const auto* click = event->getIf<sf::Event::MouseButtonPressed>()) {
-                if (click->button == sf::Mouse::Button::Left) { //click izquierdo
+                if (click->button == sf::Mouse::Button::Left) {//click izquierdo
                     //mapPixelToCoords toma el pixel de la pantalla y lo convierte a la coordenada
                     sf::Vector2f mouse = window.mapPixelToCoords(sf::Mouse::getPosition(window));
- 
-                if (click->button == sf::Mouse::Button::Left) {
-                    sf::Vector2i mouse = sf::Mouse::getPosition(window);
 
                     if (currentScreen == GameScreen::MAIN_MENU) {
                         // Boton PLAY
@@ -251,11 +220,9 @@ int main() {
 
             // Teclas
             if (const auto* keyEvent = event->getIf<sf::Event::KeyPressed>()) {
-
                 //escape cierra el juego desde cualquier pantalla
                 if (keyEvent->code == sf::Keyboard::Key::Escape)
                     window.close();
-            
 
                 // char select
                 if (currentScreen == GameScreen::CHARACTER_SELECT) {
@@ -320,23 +287,11 @@ int main() {
   
         
         window.clear(sf::Color(10, 5, 0));
- 
-        if (currentScreen == GameScreen::MAIN_MENU)
-            drawMainMenu(window, font, bgSprite, titleText, subtitleText, btnX, playY, relicsY, quitY, btnW, btnH);
- 
-        else if (currentScreen == GameScreen::CHARACTER_SELECT)
-            drawCharacterSelect(window, font, csSprite, cards, selectedCard, cardW, cardH, cardTop);
- 
-        else if (currentScreen == GameScreen::COMBAT && player && combat && floor)
-            drawCombat(window, player, enemy, combat, playerText, enemyText,
-                       logText, resultText, instructionText, combatTitleText,
-                       rewardGiven, combatSprite, floor, isMiniBoss);
- 
 
         if (currentScreen == GameScreen::MAIN_MENU) {
             drawMainMenu(window, font, bgSprite,
                          titleText, subtitleText,
-                         btnX, playY, quitY, btnW, btnH);
+                         btnX, playY, relicsY, quitY, btnW, btnH);
         }
         else if (currentScreen == GameScreen::CHARACTER_SELECT) {
             drawCharacterSelect(window, font, csSprite,

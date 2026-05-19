@@ -49,12 +49,12 @@ void Floor::generateDoors(const Player& player) {
 
 void Floor::scaleEnemyStats(int& hp, int& atk, int& def, int& spAtk, int& spDef, int& spd) const {
     // Scale stats based on floor number
-    hp = static_cast<int>(hp * (.6 + floorNumber * .45));       // HP scales faster
-    atk = static_cast<int>(atk * (.6 + floorNumber * 0.3));
-    def = static_cast<int>(def * (.6 + floorNumber * 0.3));
-    spAtk = static_cast<int>(spAtk * (.6 + floorNumber * 0.3));
-    spDef = static_cast<int>(spDef * (.6 + floorNumber * 0.3));
-    spd = static_cast<int>(spd * (.6 + floorNumber * 0.24));     // Speed scales slower
+    hp = static_cast<int>(hp * (.5 + floorNumber * .45));       // HP scales faster
+    atk = static_cast<int>(atk * (.5 + floorNumber * 0.3));
+    def = static_cast<int>(def * (.5 + floorNumber * 0.3));
+    spAtk = static_cast<int>(spAtk * (.5 + floorNumber * 0.3));
+    spDef = static_cast<int>(spDef * (.5 + floorNumber * 0.3));
+    spd = static_cast<int>(spd * (.5 + floorNumber * 0.24));     // Speed scales slower
     // Needs balancing
 }
 
