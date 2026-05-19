@@ -1,220 +1,334 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
-#include "Player.h"
-#include "Enemy.h"
-#include "CombatEngine.h"
-#include "Floor.h"
 #include <cstdlib>
 #include <ctime>
+// normal libraries 
+
+// our headers
+#include "Player.h"
 #include "MainMenu.h"
 #include "CharacterSelect.h"
+#include "ScreenDoorSelect.h"
 #include "ScreenCombat.h"
+#include "GameLoop.h"
 
-//main, abre la ventana, carga recursos, maneja eventos y dibuja todo
+// gameover screen (podemos mover esto)
+
+static void drawGameOver(sf::RenderWindow& window, sf::Font& font) {
+    // Overlay oscuro semitransparente
+    sf::RectangleShape overlay({800.f, 600.f});
+    overlay.setFillColor(sf::Color(0, 0, 0, 200));
+    window.draw(overlay);
+
+    sf::Text title(font, "GAME OVER", 72);
+    title.setFillColor(sf::Color(200, 40, 40));
+    sf::FloatRect tb = title.getLocalBounds();
+    title.setPosition({(800.f - tb.size.x) / 2.f - tb.position.x, 180.f});
+    window.draw(title);
+
+    sf::Text sub(font, "The Catacombs claimed another soul.", 22);
+    sub.setFillColor(sf::Color(180, 130, 130));
+    sf::FloatRect sb = sub.getLocalBounds();
+    sub.setPosition({(800.f - sb.size.x) / 2.f - sb.position.x, 290.f});
+    window.draw(sub);
+
+    sf::Text hint(font, "Press  R  to return to the main menu.", 19);
+    hint.setFillColor(sf::Color(150, 150, 150));
+    sf::FloatRect hb = hint.getLocalBounds();
+    hint.setPosition({(800.f - hb.size.x) / 2.f - hb.position.x, 380.f});
+    window.draw(hint);
+}
+
+static void drawWin(sf::RenderWindow& window, sf::Font& font) {
+    sf::RectangleShape overlay({800.f, 600.f});
+    overlay.setFillColor(sf::Color(0, 0, 0, 190));
+    window.draw(overlay);
+
+    sf::Text title(font, "YOU ESCAPED!", 66);
+    title.setFillColor(sf::Color(210, 160, 60));
+    sf::FloatRect tb = title.getLocalBounds();
+    title.setPosition({(800.f - tb.size.x) / 2.f - tb.position.x, 170.f});
+    window.draw(title);
+
+    sf::Text sub(font, "You conquered all 5 floors of The Catacombs.", 20);
+    sub.setFillColor(sf::Color(180, 160, 100));
+    sf::FloatRect sb = sub.getLocalBounds();
+    sub.setPosition({(800.f - sb.size.x) / 2.f - sb.position.x, 285.f});
+    window.draw(sub);
+
+    sf::Text hint(font, "Press  R  to return to the main menu.", 19);
+    hint.setFillColor(sf::Color(150, 150, 150));
+    sf::FloatRect hb = hint.getLocalBounds();
+    hint.setPosition({(800.f - hb.size.x) / 2.f - hb.position.x, 375.f});
+    window.draw(hint);
+}
+
+
+// main
+
 int main() {
-    srand(static_cast<unsigned int>(time(nullptr))); // seed para aleatoriedad
-    //creacion de la ventana, con titulo y tamano 800x600
+    srand(static_cast<unsigned int>(time(nullptr)));
+
     sf::RenderWindow window(sf::VideoMode({800, 600}), "The Catacombs");
     window.setFramerateLimit(60);
- 
-    //cargar la fuente de los textos
+
     sf::Font font;
     if (!font.openFromFile("assets/fonts/Arial.ttf")) {
         std::cerr << "Error: no se pudo cargar la fuente\n";
         return 1;
     }
- 
-    //cargar la imagen de fondo para el menu principal
+
     sf::Texture bgTexture;
     if (!bgTexture.loadFromFile("assets/images/CTHomeScreen1.jpg")) {
-        std::cerr << "Error: no se pudo cargar el fondo\n";
+        std::cerr << "Error: no se pudo cargar el fondo del menu\n";
         return 1;
     }
- 
-    //cargar la imagen de fondo para la seleccion de player
+
     sf::Texture csTexture;
     if (!csTexture.loadFromFile("assets/images/CharacterSelect.jpeg")) {
-        std::cerr << "Error: no se pudo cargar el fondo\n";
+        std::cerr << "Error: no se pudo cargar el fondo de seleccion\n";
         return 1;
     }
 
     sf::Texture combatTexture;
     if (!combatTexture.loadFromFile("assets/images/Corridor.jpeg")) {
-    std::cerr << "Error: no se pudo cargar el fondo de combate\n";
-    return 1;
+        std::cerr << "Error: no se pudo cargar el fondo de combate\n";
+        return 1;
     }
- 
-    // sf::Sprite es el objeto que DIBUJA la textura en pantalla
-    // Texture = los datos de la imagen, Sprite = como y donde se dibuja
+
     sf::Sprite bgSprite(bgTexture);
+    bgSprite.setScale({800.f / bgTexture.getSize().x,
+                       600.f / bgTexture.getSize().y});
+
     sf::Sprite csSprite(csTexture);
+    csSprite.setScale({800.f / csTexture.getSize().x,
+                       600.f / csTexture.getSize().y});
+
     sf::Sprite combatSprite(combatTexture);
+    combatSprite.setScale({800.f / combatTexture.getSize().x,
+                           600.f / combatTexture.getSize().y});
 
-    // Escala para cubrir toda la ventana 800x600 porque la imagen original es 686x386
-    float scaleX = 800.f / bgTexture.getSize().x;
-    float scaleY = 600.f / bgTexture.getSize().y;
-    bgSprite.setScale({scaleX, scaleY});
- 
-    //Segunda escala para la imagen de seleccion de personaje, que es 764x434
-    float csScaleX = 800.f / csTexture.getSize().x;
-    float csScaleY = 600.f / csTexture.getSize().y;
-    csSprite.setScale({csScaleX, csScaleY});
 
-    float combatScaleX = 800.f / combatTexture.getSize().x;
-    float combatScaleY = 600.f / combatTexture.getSize().y;
-    combatSprite.setScale({combatScaleX, combatScaleY});
- 
-    //empezar la pantalla actual en el menu principal
+    // current game state
     GameScreen currentScreen = GameScreen::MAIN_MENU;
+    GameLoop   gameLoop;
+    Player*    player = nullptr;
 
-    //Main menu
- 
-    //textos de la pantalla inicial
+    // rewardGiven se pasa por referencia a drawCombat, que lo pone en true
+    // cuando entrega las recompensas. main.cpp lo usa para poder presionar ENTER.
+    bool rewardGiven = false;
+
+
+    // Main Menu — textos y botones
+
     sf::Text titleText(font, "THE CATACOMBS", 58);
     titleText.setFillColor(sf::Color(210, 160, 60));
-    sf::FloatRect titleBounds = titleText.getLocalBounds();
-    titleText.setPosition({
-        (800.f - titleBounds.size.x) / 2.f - titleBounds.position.x,
-        130.f
-    });
- 
+    {
+        sf::FloatRect b = titleText.getLocalBounds();
+        titleText.setPosition({(800.f - b.size.x) / 2.f - b.position.x, 130.f});
+    }
+
     sf::Text subtitleText(font, "- Roguelike Dungeon Crawler -", 17);
     subtitleText.setFillColor(sf::Color(160, 120, 50));
-    sf::FloatRect subBounds = subtitleText.getLocalBounds();
-    subtitleText.setPosition({
-        (800.f - subBounds.size.x) / 2.f - subBounds.position.x,
-        205.f
-    });
- 
-    // Posicion y tamanio de los botones del main menu
-    float btnW = 220.f, btnH = 55.f;
-    float btnX = (800.f - btnW) / 2.f;
-    float playY = 310.f, quitY = 390.f;
- 
-    //Seleccion de personaje 
- 
-    // Datos de los 4 personajes
+    {
+        sf::FloatRect b = subtitleText.getLocalBounds();
+        subtitleText.setPosition({(800.f - b.size.x) / 2.f - b.position.x, 205.f});
+    }
+
+    const float btnW = 220.f, btnH = 55.f;
+    const float btnX = (800.f - btnW) / 2.f;
+    const float playY = 310.f, quitY = 390.f;
+
+
+    // Character Select, char data (needs tweaking too weak)
+
     CharacterCard cards[4] = {
-        {  90.f, "Warrior", PlayerType::WARRIOR, 130, 20, 15, 10, 15, 10 },
-        { 290.f, "Mage",    PlayerType::MAGE,    100, 10, 10, 25, 20, 15 },
-        { 490.f, "Rogue",   PlayerType::ROGUE,   110, 15, 10, 10, 10, 30 },
-        { 690.f, "Archer",  PlayerType::ARCHER,  100, 10, 10, 25, 15, 20 }
+        {  90.f, "Warrior", PlayerType::WARRIOR, 1300, 30, 25, 10, 15, 10 },
+        { 290.f, "Mage",    PlayerType::MAGE,    100, 10, 15, 30, 25, 15 },
+        { 490.f, "Rogue",   PlayerType::ROGUE,   110, 40, 12, 15, 12, 40 },
+        { 690.f, "Archer",  PlayerType::ARCHER,  100, 15, 20, 30, 15, 25 }
     };
- 
-    // ancho y alto clickeable de cada carta
-    float cardW = 160.f, cardH = 480.f, cardTop = 60.f;
- 
-    // indice del personaje seleccionado (-1 = ninguno)
+    const float cardW = 160.f, cardH = 480.f, cardTop = 60.f;
     int selectedCard = -1;
- 
-    //Combate 
- 
-    // Pointers, se crean cuando el jugador elige personaje
-    Player* player = nullptr;
-    Enemy* enemy = nullptr;
-    CombatEngine* combat = nullptr;
-    Floor* floor = nullptr;
-    bool isMiniBoss = false;
-    bool rewardGiven = false;
- 
-    // Textos de combate
+
+
+    // Combat text
+
     sf::Text combatTitleText(font, "THE CATACOMBS", 36);
     combatTitleText.setFillColor(sf::Color::White);
     combatTitleText.setPosition({250.f, 20.f});
- 
+
     sf::Text playerText(font, "", 20);
     playerText.setFillColor(sf::Color::Green);
     playerText.setPosition({50.f, 100.f});
- 
+
     sf::Text enemyText(font, "", 20);
     enemyText.setFillColor(sf::Color::Red);
     enemyText.setPosition({500.f, 100.f});
- 
+
     sf::Text logText(font, "", 16);
     logText.setFillColor(sf::Color::Yellow);
     logText.setPosition({50.f, 350.f});
- 
-    sf::Text instructionText(font, "SPACE: avanzar turno  |  P: usar pocion", 16);
+
+    sf::Text instructionText(font, "SPACE: avanzar turno   |   P: usar pocion", 16);
     instructionText.setFillColor(sf::Color::White);
-    instructionText.setPosition({200.f, 550.f});
- 
+    instructionText.setPosition({160.f, 550.f});
+
     sf::Text resultText(font, "", 28);
     resultText.setFillColor(sf::Color::White);
     resultText.setPosition({250.f, 260.f});
- 
-    //Game loop
+
+
+    // main game while loop
+
     while (window.isOpen()) {
- 
-        //eventos, como clicks o cerrar la ventana
+
         while (const std::optional event = window.pollEvent()) {
+
+            // Cerrar ventana
             if (event->is<sf::Event::Closed>())
                 window.close();
- 
-            // Si se hizo click
+
+            // Mouse clicks
             if (const auto* click = event->getIf<sf::Event::MouseButtonPressed>()) {
                 if (click->button == sf::Mouse::Button::Left) {
                     sf::Vector2i mouse = sf::Mouse::getPosition(window);
- 
+
                     if (currentScreen == GameScreen::MAIN_MENU) {
-                        // Play, cambia a la pantalla de seleccion de personaje
+                        // Boton PLAY
                         if (mouse.x >= btnX && mouse.x <= btnX + btnW &&
-                            mouse.y >= playY  && mouse.y <= playY + btnH)
+                            mouse.y >= playY && mouse.y <= playY + btnH)
                             currentScreen = GameScreen::CHARACTER_SELECT;
-                        // Quit el juego, cierra la ventana
+
+                        // Boton QUIT
                         if (mouse.x >= btnX && mouse.x <= btnX + btnW &&
-                            mouse.y >= quitY  && mouse.y <= quitY + btnH)
+                            mouse.y >= quitY && mouse.y <= quitY + btnH)
                             window.close();
                     }
- 
-                    // En seleccion de personaje, detectar click en cada carta
                     else if (currentScreen == GameScreen::CHARACTER_SELECT) {
-                        int clicked = handleCharacterSelectClick(mouse, cards, cardW, cardH, cardTop);
+                        int clicked = handleCharacterSelectClick(
+                            mouse, cards, cardW, cardH, cardTop);
                         if (clicked != -1) selectedCard = clicked;
                     }
                 }
             }
- 
-            // Si se presiono una tecla
+
+            // Teclas
             if (const auto* keyEvent = event->getIf<sf::Event::KeyPressed>()) {
+
+                // char select
                 if (currentScreen == GameScreen::CHARACTER_SELECT) {
-                    if (handleCharacterSelectKey(keyEvent->code, selectedCard, cards, player, enemy, combat)) {
-                        // Crear el Floor y generar puertas con los modifiers del jugador
-                        floor = new Floor(1);
-                        floor->generateDoors(*player);
-                        // el enemigo hardcodeado de CharacterSelect es siempre normal (no miniboss)
-                        isMiniBoss = false;
+                    if (handleCharacterSelectKey(keyEvent->code, selectedCard,
+                                                 cards, player)) {
+                        // Jugador creado: iniciamos partida en piso 1
+                        gameLoop.startRun(player);
                         rewardGiven = false;
-                        currentScreen = GameScreen::COMBAT;
+                        currentScreen = GameScreen::DOOR_SELECT;
                     }
                 }
+
+                // simple door select con 1, 2, 3. needs visual tweaking
+                else if (currentScreen == GameScreen::DOOR_SELECT) {
+                    int doorIdx = -1;
+                    if      (keyEvent->code == sf::Keyboard::Key::Num1) doorIdx = 0;
+                    else if (keyEvent->code == sf::Keyboard::Key::Num2) doorIdx = 1;
+                    else if (keyEvent->code == sf::Keyboard::Key::Num3) doorIdx = 2;
+
+                    if (doorIdx != -1) {
+                        rewardGiven = false;
+                        currentScreen = gameLoop.selectDoor(doorIdx);
+                        // Si fue evento, selectDoor ya genero el siguiente piso
+                        // y devolvio DOOR_SELECT (o WIN/FINAL BOSS si era el ultimo piso)
+                    }
+                }
+
+                // main combat
                 else if (currentScreen == GameScreen::COMBAT) {
-                    handleCombatKey(keyEvent->code, player, combat);
+                    if (keyEvent->code == sf::Keyboard::Key::Space) {
+                        gameLoop.advanceTurn();
+                    }
+                    else if (keyEvent->code == sf::Keyboard::Key::P) {
+                        gameLoop.usePotionInCombat();
+                    }
+                    else if (keyEvent->code == sf::Keyboard::Key::Enter) {
+                        // Solo avanza si el combate ya termino y se entregaron recompensas
+                        CombatEngine* combat = gameLoop.getCombat();
+                        if (combat && combat->isBattleOver() && rewardGiven) {
+                            currentScreen = gameLoop.onCombatFinished();
+                            // Si el siguiente estado es DOOR_SELECT, rewardGiven
+                            // se reseteara al elegir la siguiente puerta
+                        }
+                    }
+                }
+
+                // Game Over / Win / Final Boss  R para volver al menu
+                else if (currentScreen == GameScreen::GAME_OVER ||
+                         currentScreen == GameScreen::WIN) {
+                    if (keyEvent->code == sf::Keyboard::Key::R) {
+                        gameLoop.reset();
+                        delete player;
+                        player       = nullptr;
+                        selectedCard = -1;
+                        rewardGiven  = false;
+                        currentScreen = GameScreen::MAIN_MENU;
+                    }
                 }
             }
         }
- 
-        //Dibujar, lo primero queda atras, lo ultimo queda adelante
+
+  
+        
         window.clear(sf::Color(10, 5, 0));
- 
-        if (currentScreen == GameScreen::MAIN_MENU)
-            drawMainMenu(window, font, bgSprite, titleText, subtitleText, btnX, playY, quitY, btnW, btnH);
- 
-        else if (currentScreen == GameScreen::CHARACTER_SELECT)
-            drawCharacterSelect(window, font, csSprite, cards, selectedCard, cardW, cardH, cardTop);
- 
-        else if (currentScreen == GameScreen::COMBAT && player && combat && floor)
-            drawCombat(window, player, enemy, combat, playerText, enemyText,
-                       logText, resultText, instructionText, combatTitleText,
-                       rewardGiven, combatSprite, floor, isMiniBoss);
- 
+
+        if (currentScreen == GameScreen::MAIN_MENU) {
+            drawMainMenu(window, font, bgSprite,
+                         titleText, subtitleText,
+                         btnX, playY, quitY, btnW, btnH);
+        }
+        else if (currentScreen == GameScreen::CHARACTER_SELECT) {
+            drawCharacterSelect(window, font, csSprite,
+                                cards, selectedCard, cardW, cardH, cardTop);
+        }
+        else if (currentScreen == GameScreen::DOOR_SELECT &&
+                 gameLoop.getCurrentFloor() && player) {
+            drawDoorSelect(window, font, bgSprite,
+                           gameLoop.getCurrentFloor(), player,
+                           gameLoop.getFloorNumber());
+        }
+        else if (currentScreen == GameScreen::COMBAT &&
+                 player && gameLoop.getCombat() &&
+                 gameLoop.getCurrentFloor() && gameLoop.getCurrentEnemy()) {
+            drawCombat(window, player,
+                       gameLoop.getCurrentEnemy(), gameLoop.getCombat(),
+                       playerText, enemyText, logText, resultText,
+                       instructionText, combatTitleText,
+                       rewardGiven, combatSprite,
+                       gameLoop.getCurrentFloor(), gameLoop.getIsMiniBoss());
+        }
+        else if (currentScreen == GameScreen::GAME_OVER) {
+            // Dibuja el ultimo frame de combate como fondo (si existe)
+            if (gameLoop.getCurrentFloor() && gameLoop.getCurrentEnemy() &&
+                gameLoop.getCombat() && player) {
+                drawCombat(window, player,
+                           gameLoop.getCurrentEnemy(), gameLoop.getCombat(),
+                           playerText, enemyText, logText, resultText,
+                           instructionText, combatTitleText,
+                           rewardGiven, combatSprite,
+                           gameLoop.getCurrentFloor(), gameLoop.getIsMiniBoss());
+            }
+            drawGameOver(window, font);
+        }
+        else if (currentScreen == GameScreen::WIN) {
+            drawWin(window, font);
+        }
+
         window.display();
     }
- 
-    // Limpiar memoria de los pointers al cerrar
-    delete combat;
-    delete enemy;
-    delete player;
-    delete floor;
- 
+
+    // memory cleanup
+    
+    gameLoop.reset();   // destruye Floor, Enemy, CombatEngine
+    delete player;      // main.cpp es el owner del Player
+
     return 0;
 }

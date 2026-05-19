@@ -3,8 +3,6 @@
 #include <string>
 #include "MainMenu.h"
 #include "Player.h"
-#include "Enemy.h"
-#include "CombatEngine.h"
 
 // Datos de cada personaje en la pantalla de seleccion
 struct CharacterCard {
@@ -14,18 +12,20 @@ struct CharacterCard {
     int hp, atk, def, spAtk, spDef, spd;
 };
 
-// Maneja el click en las cartas y devuelve el indice seleccionado
+// Maneja el click en las cartas y devuelve el indice seleccionado (-1 si ninguno)
 int handleCharacterSelectClick(sf::Vector2i mouse, CharacterCard cards[4],
                                float cardW, float cardH, float cardTop);
 
-// Al presionar C con personaje elegido, crea el player, enemy y combat
-// Devuelve true si se debe cambiar a COMBAT
+// Al presionar C con personaje elegido, crea el Player y devuelve true.
+// Enemy y CombatEngine ya no se crean aqui: GameLoop los maneja en selectDoor().
 bool handleCharacterSelectKey(sf::Keyboard::Key key, int selectedCard,
                               CharacterCard cards[4],
-                              Player*& player, Enemy*& enemy, CombatEngine*& combat);
+                              Player*& player);
 
 // Dibuja la pantalla de seleccion de personaje
 void drawCharacterSelect(sf::RenderWindow& window, sf::Font& font,
                          const sf::Sprite& csSprite,
                          CharacterCard cards[4], int selectedCard,
                          float cardW, float cardH, float cardTop);
+
+// hanles less things now

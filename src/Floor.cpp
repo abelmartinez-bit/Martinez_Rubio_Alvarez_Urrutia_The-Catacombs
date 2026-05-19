@@ -34,7 +34,7 @@ void Floor::generateDoors(const Player& player) {
         DoorType doorType = DoorType::NORMAL;
         
         // Check event
-        if (rand() % 100 < 5) {
+        if (rand() % 100 < 10) {
             doorType = DoorType::EVENT;
         }
         // Check corruption if not event
@@ -49,12 +49,12 @@ void Floor::generateDoors(const Player& player) {
 
 void Floor::scaleEnemyStats(int& hp, int& atk, int& def, int& spAtk, int& spDef, int& spd) const {
     // Scale stats based on floor number
-    hp = static_cast<int>(hp * (1.0 + floorNumber * .45));       // HP scales faster
-    atk = static_cast<int>(atk * (1.0 + floorNumber * 0.3));
-    def = static_cast<int>(def * (1.0 + floorNumber * 0.3));
-    spAtk = static_cast<int>(spAtk * (1.0 + floorNumber * 0.3));
-    spDef = static_cast<int>(spDef * (1.0 + floorNumber * 0.3));
-    spd = static_cast<int>(spd * (1.0 + floorNumber * 0.24));     // Speed scales slower
+    hp = static_cast<int>(hp * (.6 + floorNumber * .45));       // HP scales faster
+    atk = static_cast<int>(atk * (.6 + floorNumber * 0.3));
+    def = static_cast<int>(def * (.6 + floorNumber * 0.3));
+    spAtk = static_cast<int>(spAtk * (.6 + floorNumber * 0.3));
+    spDef = static_cast<int>(spDef * (.6 + floorNumber * 0.3));
+    spd = static_cast<int>(spd * (.6 + floorNumber * 0.24));     // Speed scales slower
     // Needs balancing
 }
 
@@ -96,13 +96,13 @@ Entity* Floor::spawnEnemyFromDoor(const Door& door) {
     // Spawn MiniBoss if corrupt, otherwise regular Enemy
     if (door.isCorrupt()) {
     name = "Corrupted " + name;
-    // Boost mini-boss stats by 1.5x
-    hp = static_cast<int>(hp * 1.5);
-    atk = static_cast<int>(atk * 1.5);
-    def = static_cast<int>(def * 1.5);
-    spAtk = static_cast<int>(spAtk * 1.5);
-    spDef = static_cast<int>(spDef * 1.5);
-    spd = static_cast<int>(spd * 1.5);
+    // Boost mini-boss stats by 1.3x
+    hp = static_cast<int>(hp * 1.3);
+    atk = static_cast<int>(atk * 1.3);
+    def = static_cast<int>(def * 1.3);
+    spAtk = static_cast<int>(spAtk * 1.3);
+    spDef = static_cast<int>(spDef * 1.3);
+    spd = static_cast<int>(spd * 1.3);
     return new MiniBoss(name, door.getEnemyType(), hp, atk, def, spAtk, spDef, spd);
     } else {
         Enemy* enemy = new Enemy(name, door.getEnemyType(), hp, atk, def, spAtk, spDef, spd);
@@ -114,13 +114,17 @@ Entity* Floor::spawnEnemyFromDoor(const Door& door) {
 void Floor::triggerEvent(Player& player, const Door& door) {
     int eventType = rand() % 100;
     
-    if (eventType < 30) {
-        // Heal event (30% chance)
-        int healAmount = player.getMaxHp() * 0.2;
+    std::cout << "You triggered an event behind the door...\n";
+    std::cout << "You were blessed by the dungeon gods!\n";
+    player.levelUp(); // subir de nivel al trigger un evento
+
+    if (eventType < 40) {
+        // Heal event (40% chance)
+        int healAmount = player.getMaxHp() * 0.4;
         player.heal(healAmount);
         std::cout << "You found a healing shrine! Restored " << healAmount << " HP.\n";
     } else if (eventType < 70) {
-        // Potion event (40% chance)
+        // Potion event (30% chance)
         player.addPotion(Potion::createRandomPotion());
         std::cout << "You found a potion!\n";
     } else {
@@ -186,4 +190,7 @@ void Floor::giveRewards(Player& player, Entity* enemy, bool isMiniBoss) {
             player.addRelic(RelicPool::getRandomCommonRelic());
         }
     }
+
+    player.displayStats(); // temp for testing
+
 }

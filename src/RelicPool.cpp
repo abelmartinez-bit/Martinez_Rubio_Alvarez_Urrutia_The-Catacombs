@@ -88,7 +88,7 @@ Relic* RelicPool::getRandomCommonRelic() {
         case 7:
             return new UtilityRelic(
                 "Healing Charm",
-                "Heals 15 HP when obtained.",
+                "Heals 15 HP when going up a floor.",
                 RelicRarity::COMMON,
                 UtilityType::HEAL_ON_FLOOR,
                 15

@@ -163,6 +163,44 @@ void CombatEngine::applyMoveEffect(Move move, Entity* user, Entity* target) {
 void CombatEngine::usePotion(Potion potion, Entity& target) {
     player->usePotion(0, target); // por ahora siempre usa la primera pocion, se puede mejorar para seleccionar cual usar (solo borra la usada)
     combatLog += "Used " + potion.getName() + " on " + target.getName() + "!\n";
+
+    switch(potion.getEffect()){
+        case MoveEffect::HEAL:
+            combatLog += target.getName() + " healed for " + std::to_string(potion.getPotency()) + "% HP!\n";
+            break;
+        case MoveEffect::ATK_UP:
+            combatLog += target.getName() + "'s ATK rose!\n";
+            break;
+        case MoveEffect::ATK_DOWN:
+            combatLog += target.getName() + "'s ATK fell!\n";
+            break;
+        case MoveEffect::DEF_UP:
+            combatLog += target.getName() + "'s DEF rose!\n";
+            break;
+        case MoveEffect::DEF_DOWN:
+            combatLog += target.getName() + "'s DEF fell!\n";
+            break;
+        case MoveEffect::SPATK_UP:
+            combatLog += target.getName() + "'s SP.ATK rose!\n";
+            break;
+        case MoveEffect::SPATK_DOWN:
+            combatLog += target.getName() + "'s SP.ATK fell!\n";
+            break;
+        case MoveEffect::SPDEF_UP:
+            combatLog += target.getName() + "'s SP.DEF rose!\n";
+            break;
+        case MoveEffect::SPDEF_DOWN:
+            combatLog += target.getName() + "'s SP.DEF fell!\n";
+            break;
+        case MoveEffect::SPD_UP:
+            combatLog += target.getName() + "'s SPD rose!\n";
+            break;
+        case MoveEffect::SPD_DOWN:
+            combatLog += target.getName() + "'s SPD fell!\n";
+            break;
+        default:
+            break;
+    } 
 }
 
     std::string CombatEngine::potionList(const Player& player) const {
