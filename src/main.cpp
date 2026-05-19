@@ -67,10 +67,14 @@ static void drawWin(sf::RenderWindow& window, sf::Font& font) {
 // main
 
 int main() {
-    srand(static_cast<unsigned int>(time(nullptr)));
-
-    sf::RenderWindow window(sf::VideoMode({800, 600}), "The Catacombs");
+    srand(static_cast<unsigned int>(time(nullptr))); // seed para aleatoriedad
+    //creacion de la ventana, ahora abre en fullscreen con la resolucion del monitor, pero se puede cambiar a 800x600 para pruebas
+    sf::RenderWindow window(sf::VideoMode::getFullscreenModes()[0], "The Catacombs", sf::State::Fullscreen);
     window.setFramerateLimit(60);
+
+    //config de la vista para coordenadas 800x600, asi es mas facil posicionar los elementos en pantalla
+    sf::View view(sf::FloatRect({0.f, 0.f}, {800.f, 600.f}));
+    window.setView(view);
 
     sf::Font font;
     if (!font.openFromFile("assets/fonts/Arial.ttf")) {
@@ -137,16 +141,16 @@ int main() {
 
     const float btnW = 220.f, btnH = 55.f;
     const float btnX = (800.f - btnW) / 2.f;
-    const float playY = 310.f, quitY = 390.f;
+    const float playY = 250.f, relicsY = 330.f, quitY = 410.f; // por ahora no hace nada
 
 
     // Character Select, char data (needs tweaking too weak)
 
     CharacterCard cards[4] = {
-        {  90.f, "Warrior", PlayerType::WARRIOR, 1300, 30, 25, 10, 15, 10 },
-        { 290.f, "Mage",    PlayerType::MAGE,    100, 10, 15, 30, 25, 15 },
-        { 490.f, "Rogue",   PlayerType::ROGUE,   110, 40, 12, 15, 12, 40 },
-        { 690.f, "Archer",  PlayerType::ARCHER,  100, 15, 20, 30, 15, 25 }
+        {  117.f, "Warrior", PlayerType::WARRIOR, 1300, 30, 25, 10, 15, 10 }, // testing
+        { 306.f, "Mage",    PlayerType::MAGE,    100, 10, 15, 30, 25, 15 },
+        { 498.f, "Rogue",   PlayerType::ROGUE,   110, 40, 12, 15, 12, 40 },
+        { 689.f, "Archer",  PlayerType::ARCHER,  100, 15, 20, 30, 15, 25 }
     };
     const float cardW = 160.f, cardH = 480.f, cardTop = 60.f;
     int selectedCard = -1;
@@ -191,8 +195,9 @@ int main() {
 
             // Mouse clicks
             if (const auto* click = event->getIf<sf::Event::MouseButtonPressed>()) {
-                if (click->button == sf::Mouse::Button::Left) {
-                    sf::Vector2i mouse = sf::Mouse::getPosition(window);
+                if (click->button == sf::Mouse::Button::Left) {//click izquierdo
+                    //mapPixelToCoords toma el pixel de la pantalla y lo convierte a la coordenada
+                    sf::Vector2f mouse = window.mapPixelToCoords(sf::Mouse::getPosition(window));
 
                     if (currentScreen == GameScreen::MAIN_MENU) {
                         // Boton PLAY
@@ -215,6 +220,9 @@ int main() {
 
             // Teclas
             if (const auto* keyEvent = event->getIf<sf::Event::KeyPressed>()) {
+                //escape cierra el juego desde cualquier pantalla
+                if (keyEvent->code == sf::Keyboard::Key::Escape)
+                    window.close();
 
                 // char select
                 if (currentScreen == GameScreen::CHARACTER_SELECT) {
@@ -283,7 +291,7 @@ int main() {
         if (currentScreen == GameScreen::MAIN_MENU) {
             drawMainMenu(window, font, bgSprite,
                          titleText, subtitleText,
-                         btnX, playY, quitY, btnW, btnH);
+                         btnX, playY, relicsY, quitY, btnW, btnH);
         }
         else if (currentScreen == GameScreen::CHARACTER_SELECT) {
             drawCharacterSelect(window, font, csSprite,

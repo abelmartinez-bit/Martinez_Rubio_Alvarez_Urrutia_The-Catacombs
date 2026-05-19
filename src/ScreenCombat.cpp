@@ -52,6 +52,7 @@ void drawCombat(sf::RenderWindow& window,
     } else {
         // Combate en curso
         instructionText.setString("SPACE: avanzar turno   |   P: usar pocion");
+        resultText.setString("");
     }
 
     // Dibujar

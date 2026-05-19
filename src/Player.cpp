@@ -26,7 +26,7 @@ void Player::gainExp(int amount) {
 void Player::levelUp() {
     level++;
     exp -= expToNextLevel;
-    expToNextLevel = 100 * level; // scales w level
+    expToNextLevel = 120 * level; // scales w level
 
      // 10% heal base al subir de nivel + bonus de relics RESTORE_ON_LEVEL_UP
     int totalRestorePercent = 10 + restoreOnLevelUpPercent;

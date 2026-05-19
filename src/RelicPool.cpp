@@ -248,7 +248,7 @@ Relic* RelicPool::getRandomRareRelic() {
                     MoveEffect::NONE,
                     MoveTarget::ENEMY
                 ),
-                10
+                50
             );
     }
 }
@@ -292,12 +292,12 @@ Relic* RelicPool::getRandomLegendaryRelic() {
                 Move(
                     "Thunder Strike",
                     MoveType::SPECIAL,
-                    80,
-                    85,
+                    90,
+                    90,
                     MoveEffect::NONE,
                     MoveTarget::ENEMY
                 ),
-                20
+                50
             );
     }
 }
