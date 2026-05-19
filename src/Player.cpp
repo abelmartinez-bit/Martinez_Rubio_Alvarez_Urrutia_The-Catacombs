@@ -28,8 +28,8 @@ void Player::levelUp() {
     exp -= expToNextLevel;
     expToNextLevel = 100 * level; // scales w level
 
-     // 5% heal base al subir de nivel + bonus de relics RESTORE_ON_LEVEL_UP
-    int totalRestorePercent = 5 + restoreOnLevelUpPercent;
+     // 10% heal base al subir de nivel + bonus de relics RESTORE_ON_LEVEL_UP
+    int totalRestorePercent = 10 + restoreOnLevelUpPercent;
     int restore = maxHp * totalRestorePercent / 100;
 
     heal(restore);

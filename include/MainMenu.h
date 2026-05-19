@@ -5,7 +5,11 @@
 enum class GameScreen {
     MAIN_MENU,
     CHARACTER_SELECT,
-    COMBAT
+    DOOR_SELECT,   // door select screen
+    COMBAT,        // regular combat
+    EVENT,         // combatless event (no hace nada aun)
+    GAME_OVER,     // died
+    WIN            // completo los 5 pisos
 };
 
 //Funcion para un boton de play y quit
