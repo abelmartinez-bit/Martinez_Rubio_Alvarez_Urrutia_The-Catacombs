@@ -1,5 +1,7 @@
 #include "../include/Player.h"
+#include "../include/RelicTracker.h"
 #include <iostream>
+
 
 Player::Player(std::string name, int hp, int atk, int def, int spAtk, int spDef, int spd, PlayerType playerType)
     : Entity(name, hp, atk, def, spAtk, spDef, spd), type(playerType), level(1), exp(0), expToNextLevel(100), potionSlots(2), expBoostPercent(0), restoreOnLevelUpPercent(0), corruptDoorModifier(0.f), minibossDropModifier(0.f), enemyDropModifier(0.f) {}
@@ -73,12 +75,14 @@ void Player::boostStat(int statChoice) {
         default: std::cout << "Invalid choice!\n"; break;
     }
 }
-
+// al agregar una reliquia, se aplica su efecto inmediatamente, se desbloquea en el tracker y se revisan sinergias
 void Player::addRelic(Relic* relic) {
     relics.push_back(relic);
     relic->applyEffect(*this);
-    checkRelicSynergies(); // revisar sinergias cada vez que se agrega una reliquia
+    RelicTracker::unlockRelic(relic->getName()); // desbloquea la reliquia en el tracker
+    checkRelicSynergies(); // revisar  sinergias cada vez que se agrega una reliquia
 }
+
 // funciones para sinergias     
 bool Player::hasRelic(const std::string& relicName) const {
     for (Relic* relic : relics) {
