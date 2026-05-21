@@ -3,12 +3,8 @@
 #include <iostream>
 
 
-void drawCombat(sf::RenderWindow& window,
-                Player* player, Enemy* enemy, CombatEngine* combat,
-                sf::Text& playerText, sf::Text& enemyText,
-                sf::Text& logText, sf::Text& resultText,
-                sf::Text& instructionText, sf::Text& combatTitleText,
-                bool& rewardGiven, const sf::Sprite& combatSprite,
+void drawCombat(sf::RenderWindow& window, Player* player, Enemy* enemy, CombatEngine* combat, sf::Text& playerText, sf::Text& enemyText,
+                sf::Text& logText, sf::Text& resultText, sf::Text& instructionText, sf::Text& combatTitleText, bool& rewardGiven, const sf::Sprite& combatSprite,
                 Floor* floor, bool isMiniBoss) {
 
     // Actualizar textos con estado actual
@@ -36,7 +32,6 @@ void drawCombat(sf::RenderWindow& window,
         // Entregar recompensa una sola vez si el jugador gano
         if (player->isAlive() && !rewardGiven) {
             floor->giveRewards(*player, enemy, isMiniBoss);
-            std::cout << combat->relicList(player) << std::endl; // mostrar reliquias obtenidas en la consola por ahora
             rewardGiven = true;
         } else if (!player->isAlive() && !rewardGiven) {
             // El jugador murio. no hay recompensa, solo marcamos para evitar re-entrar

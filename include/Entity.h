@@ -18,6 +18,7 @@ protected:
     int spd;
     bool isBlocking;
 
+    // base es solo para hacer copias de los normales durante combat
     int baseAtk, baseDef, baseSpAtk, baseSpDef, baseSpd;
     std::vector<Move> moves; // 4 moves por entidad
 
@@ -34,6 +35,15 @@ public:
     int getSpAtk() const { return spAtk; }
     int getSpDef() const { return spDef; }
     int getSpd() const { return spd; }
+
+    int getHighestStat() const {
+        int highest = atk;
+        if (def > highest) highest = def;
+        if (spAtk > highest) highest = spAtk;
+        if (spDef > highest) highest = spDef;
+        if (spd > highest) highest = spd;
+        return highest;
+    }
 
     int getBaseDef() const { return baseDef; }
     int getBaseSpDef() const { return baseSpDef; }

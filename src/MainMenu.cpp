@@ -1,8 +1,6 @@
 #include "MainMenu.h"
 
-void drawButton(sf::RenderWindow& window, sf::Font& font,
-                float x, float y, float w, float h,
-                const std::string& label) {
+void drawButton(sf::RenderWindow& window, sf::Font& font, float x, float y, float w, float h, const std::string& label) {
 
     //Crear exterior dorado oscuro
     sf::RectangleShape border({w + 4.f, h + 4.f});
@@ -20,16 +18,11 @@ void drawButton(sf::RenderWindow& window, sf::Font& font,
     sf::Text text(font, label, 26);
     text.setFillColor(sf::Color(210, 160, 60)); 
     sf::FloatRect bounds = text.getLocalBounds();
-    text.setPosition({
-        x + (w - bounds.size.x) / 2.f - bounds.position.x,
-        y + (h - bounds.size.y) / 2.f - bounds.position.y
-    });
+    text.setPosition({x + (w - bounds.size.x) / 2.f - bounds.position.x, y + (h - bounds.size.y) / 2.f - bounds.position.y});
     window.draw(text);
 }
 
-void drawMainMenu(sf::RenderWindow& window, sf::Font& font,
-                  const sf::Sprite& bgSprite,
-                  const sf::Text& titleText, const sf::Text& subtitleText,
+void drawMainMenu(sf::RenderWindow& window, sf::Font& font, const sf::Sprite& bgSprite, const sf::Text& titleText, const sf::Text& subtitleText,
                   float btnX, float playY, float relicsY, float quitY, float btnW, float btnH) {
 
     //imagen de fondo
@@ -71,9 +64,6 @@ void drawMainMenu(sf::RenderWindow& window, sf::Font& font,
     sf::Text creditsText(font, "CETYS Universidad  |  ICC C2  |  2026", 13);
     creditsText.setFillColor(sf::Color(210, 160, 60));
     sf::FloatRect credBounds = creditsText.getLocalBounds();
-    creditsText.setPosition({
-        (800.f - credBounds.size.x) / 2.f - credBounds.position.x,
-        565.f
-    });
+    creditsText.setPosition({(800.f - credBounds.size.x) / 2.f - credBounds.position.x, 565.f});
     window.draw(creditsText);
 }

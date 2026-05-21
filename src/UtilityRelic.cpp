@@ -14,8 +14,8 @@ void UtilityRelic::applyEffect(Player& player) {
             break;
         case UtilityType::HEAL_ON_FLOOR:
             // trabajado por el Floor system
-            player.heal(value); // first time heal
-            std::cout << "Now heals " << value << " HP on entering floor!\n";
+            player.heal(player.getMaxHp() * value / 100); // curacion base al conseguir relic
+            std::cout << "Now heals " << value << "% HP on entering floor!\n";
             break;
         // funciones ya aplicadas en Player para los efectos de las reliquias, solo se llaman desde applyEffect segun el tipo de reliquia
         case UtilityType::EXP_BOOST:

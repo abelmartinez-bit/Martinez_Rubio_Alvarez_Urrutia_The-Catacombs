@@ -17,7 +17,7 @@ private:
     int  currentFloorNumber;
     bool isMiniBoss;
 
-    static const int MAX_FLOORS = 5; // can be changed
+    static const int MAX_FLOORS = 10; // can be changed
 
     // helpers internos
     void       buildFloor();

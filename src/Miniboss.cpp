@@ -1,7 +1,6 @@
 #include "../include/Miniboss.h"
 
-MiniBoss::MiniBoss(std::string name, EnemyType type, int hp, int atk, int def,
-                   int spAtk, int spDef, int spd)
+MiniBoss::MiniBoss(std::string name, EnemyType type, int hp, int atk, int def, int spAtk, int spDef, int spd)
     : Enemy(name, type, hp, atk, def, spAtk, spDef, spd) {
     // Apply 2x exp multiplier (since already int, we static_cast to avoid data issues)
     expReward = static_cast<int>(expReward * 2);

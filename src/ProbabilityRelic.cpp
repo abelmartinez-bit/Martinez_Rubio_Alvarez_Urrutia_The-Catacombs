@@ -1,8 +1,7 @@
 #include "../include/ProbabilityRelic.h"
 #include <iostream>
 
-ProbabilityRelic::ProbabilityRelic(std::string name, std::string description, RelicRarity rarity,
-                                   ProbabilityType probabilityType, float modifier)
+ProbabilityRelic::ProbabilityRelic(std::string name, std::string description, RelicRarity rarity, ProbabilityType probabilityType, float modifier)
                 : Relic(name, description, rarity), probabilityType(probabilityType), modifier(modifier) {}
 
 ProbabilityType ProbabilityRelic::getProbabilityType() const { return probabilityType; }

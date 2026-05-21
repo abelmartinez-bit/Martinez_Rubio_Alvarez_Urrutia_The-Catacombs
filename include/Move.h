@@ -42,9 +42,8 @@ private:
     int effectPotency; // para efectos, determina la cantidad de curacion o el grado de buff/debuff
 
 public:
-    //default effect NONE y default target ENEMY, default effect potency 10%
-    Move(std::string name, MoveType type, int power, int accuracy, 
-         MoveEffect effect = MoveEffect::NONE, 
+    //default effect NONE y default target ENEMY, default effect potency 25%
+    Move(std::string name, MoveType type, int power, int accuracy,  MoveEffect effect = MoveEffect::NONE, 
          MoveTarget target = MoveTarget::ENEMY,
          int effectPotency = 25); 
     

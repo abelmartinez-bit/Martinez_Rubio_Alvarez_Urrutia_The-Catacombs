@@ -37,8 +37,7 @@ private:
     std::vector<std::string> activeSynergies;
 
 public:
-    Player(std::string name, int hp, int atk, int def, int spAtk, int spDef, int spd, 
-        PlayerType playerType);
+    Player(std::string name, int hp, int atk, int def, int spAtk, int spDef, int spd, PlayerType playerType);
 
    // Getters
     int getLevel() const { return level; }

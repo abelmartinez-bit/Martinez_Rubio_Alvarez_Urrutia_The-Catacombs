@@ -34,46 +34,46 @@ Relic* RelicPool::getRandomCommonRelic() {
         case 1:
             return new StatRelic(
                 "Warrior Fang",
-                "Increases ATK by 5.",
+                "Increases ATK by 10.",
                 RelicRarity::COMMON,
                 StatType::ATK,
-                5
+                10
             );
 
         case 2:
             return new StatRelic(
                 "Stone Shield",
-                "Increases DEF by 5.",
+                "Increases DEF by 10.",
                 RelicRarity::COMMON,
                 StatType::DEF,
-                5
+                10
             );
 
         case 3:
             return new StatRelic(
                 "Apprentice Ring",
-                "Increases SP.ATK by 5.",
+                "Increases SP.ATK by 10.",
                 RelicRarity::COMMON,
                 StatType::SPATK,
-                5
+                10
             );
 
         case 4:
             return new StatRelic(
                 "Cloth Mantle",
-                "Increases SP.DEF by 5.",
+                "Increases SP.DEF by 10.",
                 RelicRarity::COMMON,
                 StatType::SPDEF,
-                5
+                10
             );
 
         case 5:
             return new StatRelic(
                 "Traveler Boots",
-                "Increases SPD by 3.",
+                "Increases SPD by 6.",
                 RelicRarity::COMMON,
                 StatType::SPD,
-                3
+                6
             );
 
         case 6:
@@ -88,16 +88,16 @@ Relic* RelicPool::getRandomCommonRelic() {
         case 7:
             return new UtilityRelic(
                 "Healing Charm",
-                "Heals 15 HP when going up a floor.",
+                "Heals 10% HP when going up a floor.",
                 RelicRarity::COMMON,
                 UtilityType::HEAL_ON_FLOOR,
-                15
+                10
             );
 
         case 8:
             return new StatRelic(
                 "Iron Helmet",
-                "Increases DEF by 3.",
+                "Increases DEF by 6.",
                 RelicRarity::COMMON,
                 StatType::DEF,
                 3
@@ -106,37 +106,37 @@ Relic* RelicPool::getRandomCommonRelic() {
         case 9:
             return new StatRelic(
                 "Small Ruby",
-                "Increases ATK by 3.",
+                "Increases ATK by 6.",
                 RelicRarity::COMMON,
                 StatType::ATK,
-                3
+                6
             );
 
         case 10:
             return new StatRelic(
                 "Blue Crystal",
-                "Increases SP.ATK by 3.",
+                "Increases SP.ATK by 6.",
                 RelicRarity::COMMON,
                 StatType::SPATK,
-                3
+                6
             );
 
         case 11:
             return new StatRelic(
                 "Silver Thread",
-                "Increases SP.DEF by 3.",
+                "Increases SP.DEF by 6.",
                 RelicRarity::COMMON,
                 StatType::SPDEF,
-                3
+                6
             );
 
         case 12:
             return new StatRelic(
                 "Light Sandals",
-                "Increases SPD by 2.",
+                "Increases SPD by 4.",
                 RelicRarity::COMMON,
                 StatType::SPD,
-                2
+                4
             );
 
         case 13:
@@ -151,19 +151,19 @@ Relic* RelicPool::getRandomCommonRelic() {
         case 14:
             return new ProbabilityRelic(
                 "Steady Hand",
-                "Increases accuracy of all moves by 3.",
+                "Increases accuracy of all moves by 5.",
                 RelicRarity::COMMON,
                 ProbabilityType::MOVE_ACCURACY,
-                3
+                5
             );
 
         default:
             return new UtilityRelic(
                 "Minor Scholar Coin",
-                "Increases EXP gained by 5%.",
+                "Increases EXP gained by 10%.",
                 RelicRarity::COMMON,
                 UtilityType::EXP_BOOST,
-                5
+                10
             );
     }
 }
@@ -175,28 +175,28 @@ Relic* RelicPool::getRandomRareRelic() {
         case 0:
             return new StatRelic(
                 "Hunter Boots",
-                "Increases SPD by 6.",
+                "Increases SPD by 12.",
                 RelicRarity::RARE,
                 StatType::SPD,
-                6
+                12
             );
 
         case 1:
             return new StatRelic(
                 "Golden Ring",
-                "Increases SP.ATK by 8.",
+                "Increases SP.ATK by 16.",
                 RelicRarity::RARE,
                 StatType::SPATK,
-                8
+                16
             );
 
         case 2:
             return new ProbabilityRelic(
                 "Sharp Eye",
-                "Increases accuracy of all moves by 5.",
+                "Increases accuracy of all moves by 10.",
                 RelicRarity::RARE,
                 ProbabilityType::MOVE_ACCURACY,
-                5
+                10
             );
 
         case 3:
@@ -211,19 +211,19 @@ Relic* RelicPool::getRandomRareRelic() {
         case 4:
             return new StatRelic(
                 "Knight Armor",
-                "Increases DEF by 10.",
+                "Increases DEF by 20.",
                 RelicRarity::RARE,
                 StatType::DEF,
-                10
+                20
             );
 
         case 5:
             return new StatRelic(
                 "Mystic Cape",
-                "Increases SP.DEF by 10.",
+                "Increases SP.DEF by 20.",
                 RelicRarity::RARE,
                 StatType::SPDEF,
-                10
+                20
             );
 
         case 6:
@@ -243,7 +243,7 @@ Relic* RelicPool::getRandomRareRelic() {
                 Move(
                     "Flame Burst",
                     MoveType::SPECIAL,
-                    55,
+                    110,
                     90,
                     MoveEffect::NONE,
                     MoveTarget::ENEMY
@@ -269,19 +269,19 @@ Relic* RelicPool::getRandomLegendaryRelic() {
         case 1:
             return new UtilityRelic(
                 "Phoenix Feather",
-                "Restores 15% extra HP when leveling up.",
+                "Restores 30% extra HP when leveling up.",
                 RelicRarity::LEGENDARY,
                 UtilityType::RESTORE_ON_LEVEL_UP,
-                15
+                30
             );
 
         case 2:
             return new StatRelic(
                 "Ancient Blade",
-                "Increases ATK by 15.",
+                "Increases ATK by 30.",
                 RelicRarity::LEGENDARY,
                 StatType::ATK,
-                15
+                30
             );
 
         default:
@@ -292,8 +292,8 @@ Relic* RelicPool::getRandomLegendaryRelic() {
                 Move(
                     "Thunder Strike",
                     MoveType::SPECIAL,
-                    90,
-                    90,
+                    100,
+                    100,
                     MoveEffect::NONE,
                     MoveTarget::ENEMY
                 ),

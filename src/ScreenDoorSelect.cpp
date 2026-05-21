@@ -12,13 +12,10 @@ void drawDoorSelect(sf::RenderWindow& window, sf::Font& font,const sf::Sprite& b
     window.draw(overlay);
 
     // Floor title
-    sf::Text floorTitle(font, "FLOOR " + std::to_string(floorNumber) + "  /  5", 44);
+    sf::Text floorTitle(font, "FLOOR " + std::to_string(floorNumber) + "  /  10", 44);
     floorTitle.setFillColor(sf::Color(210, 160, 60));
     sf::FloatRect ftb = floorTitle.getLocalBounds();
-    floorTitle.setPosition({
-        (800.f - ftb.size.x) / 2.f - ftb.position.x,
-        38.f
-    });
+    floorTitle.setPosition({(800.f - ftb.size.x) / 2.f - ftb.position.x, 38.f});
     window.draw(floorTitle);
 
     // title decor
@@ -31,10 +28,7 @@ void drawDoorSelect(sf::RenderWindow& window, sf::Font& font,const sf::Sprite& b
     sf::Text subtitle(font, "Choose your path  |  Press  1   2   3", 19);
     subtitle.setFillColor(sf::Color(160, 120, 50));
     sf::FloatRect stb = subtitle.getLocalBounds();
-    subtitle.setPosition({
-        (800.f - stb.size.x) / 2.f - stb.position.x,
-        113.f
-    });
+    subtitle.setPosition({(800.f - stb.size.x) / 2.f - stb.position.x, 113.f});
     window.draw(subtitle);
 
     // Player stats
@@ -48,19 +42,16 @@ void drawDoorSelect(sf::RenderWindow& window, sf::Font& font,const sf::Sprite& b
     sf::Text playerStats(font, statsStr, 16);
     playerStats.setFillColor(sf::Color(100, 200, 100));
     sf::FloatRect psb = playerStats.getLocalBounds();
-    playerStats.setPosition({
-        (800.f - psb.size.x) / 2.f - psb.position.x,
-        148.f
-    });
+    playerStats.setPosition({(800.f - psb.size.x) / 2.f - psb.position.x, 148.f});
     window.draw(playerStats);
 
     // Doors cards
     std::vector<Door> doors = floor->getDoors();
-    const float DOOR_W   = 190.f;
-    const float DOOR_H   = 140.f;
-    const float GAP      = 35.f;
-    const float TOTAL_W  = DOOR_W * 3.f + GAP * 2.f;
-    const float START_X  = (800.f - TOTAL_W) / 2.f;
+    const float DOOR_W = 190.f;
+    const float DOOR_H = 140.f;
+    const float GAP = 35.f;
+    const float TOTAL_W = DOOR_W * 3.f + GAP * 2.f;
+    const float START_X = (800.f - TOTAL_W) / 2.f;
     const float DOOR_TOP = 220.f;
 
     for (int i = 0; i < static_cast<int>(doors.size()); i++) {
@@ -85,10 +76,7 @@ void drawDoorSelect(sf::RenderWindow& window, sf::Font& font,const sf::Sprite& b
         sf::Text doorNum(font, "Door " + std::to_string(i + 1), 24);
         doorNum.setFillColor(sf::Color(210, 160, 60));
         sf::FloatRect dnb = doorNum.getLocalBounds();
-        doorNum.setPosition({
-            dx + (DOOR_W - dnb.size.x) / 2.f - dnb.position.x,
-            DOOR_TOP + 16.f
-        });
+        doorNum.setPosition({dx + (DOOR_W - dnb.size.x) / 2.f - dnb.position.x, DOOR_TOP + 16.f});
         window.draw(doorNum);
 
         // Tipo de puerta
@@ -98,10 +86,7 @@ void drawDoorSelect(sf::RenderWindow& window, sf::Font& font,const sf::Sprite& b
         sf::Text typeLabel(font, typeStr, 17);
         typeLabel.setFillColor(typeCol);
         sf::FloatRect tlb = typeLabel.getLocalBounds();
-        typeLabel.setPosition({
-            dx + (DOOR_W - tlb.size.x) / 2.f - tlb.position.x,
-            DOOR_TOP + 58.f
-        });
+        typeLabel.setPosition({dx + (DOOR_W - tlb.size.x) / 2.f - tlb.position.x, DOOR_TOP + 58.f});
         window.draw(typeLabel);
 
         // corrupt hint indicator
@@ -109,20 +94,14 @@ void drawDoorSelect(sf::RenderWindow& window, sf::Font& font,const sf::Sprite& b
         sf::Text hint(font, hintStr, 14);
         hint.setFillColor(sf::Color(130, 110, 80));
         sf::FloatRect hb = hint.getLocalBounds();
-        hint.setPosition({
-            dx + (DOOR_W - hb.size.x) / 2.f - hb.position.x,
-            DOOR_TOP + 88.f
-        });
+        hint.setPosition({dx + (DOOR_W - hb.size.x) / 2.f - hb.position.x, DOOR_TOP + 88.f});
         window.draw(hint);
 
         // Tecla a presionar p/ hint (resaltada)
         sf::Text keyHint(font, "Press  " + std::to_string(i + 1), 18);
         keyHint.setFillColor(sf::Color::White);
         sf::FloatRect kb = keyHint.getLocalBounds();
-        keyHint.setPosition({
-            dx + (DOOR_W - kb.size.x) / 2.f - kb.position.x,
-            DOOR_TOP + DOOR_H + 16.f
-        });
+        keyHint.setPosition({dx + (DOOR_W - kb.size.x) / 2.f - kb.position.x, DOOR_TOP + DOOR_H + 16.f});
         window.draw(keyHint);
     }
 }

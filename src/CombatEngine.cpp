@@ -2,8 +2,7 @@
 #include <cstdlib> //rand
 #include <ctime> //time for seeding rand
 
-CombatEngine::CombatEngine(Player* p, Entity* e)
-    : player(p), enemy(e) {
+CombatEngine::CombatEngine(Player* p, Entity* e) : player(p), enemy(e) {
     srand(time(0)); // seed random for accuracy checks y despues para crit chance
     // set base stats of player and enemy at the start of combat
     setBaseStats();
@@ -36,6 +35,12 @@ void CombatEngine::executeTurn(int playerMoveIndex) {
             int damage = calculateDamage(first, second, firstMove);
             second->takeDamage(damage);
             combatLog += first->getName() + " used " + firstMove.getName() + " for " + std::to_string(damage) + " damage!\n";
+
+            if (firstMove.getEffect() != MoveEffect::NONE) {
+                combatLog +=  first->getName() + "'s " + firstMove.getName() + " had an additional effect!\n";
+                applyMoveEffect(firstMove, first, second); // para movimientos de dmg con efectos secundarios
+            }
+
         } else {
             combatLog += first->getName() + "'s " + firstMove.getName() + " missed!\n";
         }
@@ -56,7 +61,13 @@ void CombatEngine::executeTurn(int playerMoveIndex) {
         if (roll < secondMove.getAccuracy()) {
             int damage = calculateDamage(second, first, secondMove);
             first->takeDamage(damage);
-            combatLog += second->getName() + " used " + secondMove.getName() + " for " + std::to_string(damage) + " damage!\n";
+            combatLog += second->getName() + " used " + secondMove.getName() + " for " + std::to_string(damage) + " damage!\n"; 
+            
+            if (secondMove.getEffect() != MoveEffect::NONE) {
+                combatLog +=  second->getName() + "'s " + secondMove.getName() + " had an additional effect!\n";
+                applyMoveEffect(secondMove, second, first); // para movimientos de dmg con efectos secundarios
+            }
+
         } else {
             combatLog += second->getName() + "'s " + secondMove.getName() + " missed!\n";
         }
@@ -84,6 +95,7 @@ int CombatEngine::calculateDamage(Entity* attacker, Entity* defender, Move move)
         
         if (defender->getIsBlocking()) {
             defenseStat = static_cast<int>(defenseStat / 3.5); // cancelamos el mult de block para crits
+            combatLog += attacker->getName() + " broke through " + defender->getName() + "'s block!\n";
         }
 
         attackStat *= 3; // crits hacen el doble de dmg 
@@ -96,7 +108,7 @@ int CombatEngine::calculateDamage(Entity* attacker, Entity* defender, Move move)
     }
     
     // Simple damage formula
-    int damage = static_cast<int>(((attackStat * move.getPower()) / defenseStat) / 3);
+    int damage = static_cast<int>(((attackStat * move.getPower()) / defenseStat) / 5);
     
     if (damage < 1) damage = 1; // minimum 1 damage
     
