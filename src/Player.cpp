@@ -89,7 +89,7 @@ bool Player::hasRelic(const std::string& relicName) const {
         if (relic->getName() == relicName) {
             return true;
         }
-    }
+    }   
     return false;
 }
 

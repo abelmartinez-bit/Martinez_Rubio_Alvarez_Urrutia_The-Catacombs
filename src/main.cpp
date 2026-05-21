@@ -11,6 +11,7 @@
 #include "ScreenDoorSelect.h"
 #include "ScreenCombat.h"
 #include "GameLoop.h"
+#include "RelicTracker.h"
 
 // gameover screen (podemos mover esto)
 
@@ -69,7 +70,7 @@ static void drawWin(sf::RenderWindow& window, sf::Font& font) {
 int main() {
     srand(static_cast<unsigned int>(time(nullptr))); // seed para aleatoriedad
     //creacion de la ventana, ahora abre en fullscreen con la resolucion del monitor, pero se puede cambiar a 800x600 para pruebas
-    sf::RenderWindow window(sf::VideoMode::getFullscreenModes()[0], "The Catacombs", sf::State::Fullscreen);
+    sf::RenderWindow window(sf::VideoMode({800, 600}), "The Catacombs");
     window.setFramerateLimit(60);
 
     //config de la vista para coordenadas 800x600, asi es mas facil posicionar los elementos en pantalla
@@ -201,6 +202,9 @@ int main() {
                         if (mouse.x >= btnX && mouse.x <= btnX + btnW && mouse.y >= playY && mouse.y <= playY + btnH)
                             currentScreen = GameScreen::CHARACTER_SELECT;
 
+                        if (mouse.x >= btnX && mouse.x <= btnX + btnW && mouse.y >= relicsY && mouse.y <= relicsY + btnH)
+                            currentScreen = GameScreen::RELIC_TRACKER;
+
                         // Boton QUIT
                         if (mouse.x >= btnX && mouse.x <= btnX + btnW && mouse.y >= quitY && mouse.y <= quitY + btnH)
                             window.close();
@@ -262,6 +266,12 @@ int main() {
                     }
                 }
 
+                else if (currentScreen == GameScreen::RELIC_TRACKER) {
+                    if (keyEvent->code == sf::Keyboard::Key::B || keyEvent->code == sf::Keyboard::Key::R) {
+                          currentScreen = GameScreen::MAIN_MENU;
+    }
+}
+
                 // Game Over / Win / Final Boss  R para volver al menu
                 else if (currentScreen == GameScreen::GAME_OVER || currentScreen == GameScreen::WIN) {
                     if (keyEvent->code == sf::Keyboard::Key::R) {
@@ -282,9 +292,13 @@ int main() {
         if (currentScreen == GameScreen::MAIN_MENU) {
             drawMainMenu(window, font, bgSprite, titleText, subtitleText, btnX, playY, relicsY, quitY, btnW, btnH);
         }
+        
+        else if (currentScreen == GameScreen::RELIC_TRACKER) {
+            RelicTracker::drawRelicTracker(window, font, bgSprite);        }
+
         else if (currentScreen == GameScreen::CHARACTER_SELECT) {
             drawCharacterSelect(window, font, csSprite, cards, selectedCard, cardW, cardH, cardTop);
-        }
+        }   
         else if (currentScreen == GameScreen::DOOR_SELECT && gameLoop.getCurrentFloor() && player) {
             drawDoorSelect(window, font, bgSprite, gameLoop.getCurrentFloor(), player, gameLoop.getFloorNumber());
         }

@@ -85,9 +85,17 @@ void RelicTracker::drawRelicTracker(sf::RenderWindow& window, sf::Font& font, co
     float startY = 185.f;
     float rowGap = 28.f;
 
-   for (int i = 0; i < static_cast<int>(unlockedRelics.size()); i++) {
-    sf::Text relicText(font, std::to_string(i + 1) + ". " + unlockedRelics[i], 20);
-    relicText.setFillColor(sf::Color(230, 220, 190));
-    relicText.setPosition({startX, startY + i * rowGap});
-    window.draw(relicText);
+    for (int i = 0; i < static_cast<int>(unlockedRelics.size()) && i < 12; i++) {
+        sf::Text relicText(font, std::to_string(i + 1) + ". " + unlockedRelics[i], 20);
+        relicText.setFillColor(sf::Color(230, 220, 190));
+        relicText.setPosition({startX, startY + i * rowGap});
+        window.draw(relicText);
+    }
+
+    if (unlockedRelics.size() > 12) {
+        sf::Text moreText(font, "...and more relics discovered.", 18);
+        moreText.setFillColor(sf::Color(160, 160, 160));
+        moreText.setPosition({startX, startY + 12 * rowGap + 10.f});
+        window.draw(moreText);
+    }
 }

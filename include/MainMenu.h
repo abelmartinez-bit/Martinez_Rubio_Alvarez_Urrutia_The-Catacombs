@@ -4,6 +4,7 @@
 //Para saber en que pantalla estamos y ver lo de cada una, por ahorita solo estas 3
 enum class GameScreen {
     MAIN_MENU,
+    RELIC_TRACKER, // pantalla para ver las reliquias desbloqueadas y sus efectos
     CHARACTER_SELECT,
     DOOR_SELECT,   // door select screen
     COMBAT,        // regular combat
