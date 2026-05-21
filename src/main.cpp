@@ -101,22 +101,19 @@ int main() {
     }
 
     sf::Sprite bgSprite(bgTexture);
-    bgSprite.setScale({800.f / bgTexture.getSize().x,
-                       600.f / bgTexture.getSize().y});
+    bgSprite.setScale({800.f / bgTexture.getSize().x, 600.f / bgTexture.getSize().y});
 
     sf::Sprite csSprite(csTexture);
-    csSprite.setScale({800.f / csTexture.getSize().x,
-                       600.f / csTexture.getSize().y});
+    csSprite.setScale({800.f / csTexture.getSize().x, 600.f / csTexture.getSize().y});
 
     sf::Sprite combatSprite(combatTexture);
-    combatSprite.setScale({800.f / combatTexture.getSize().x,
-                           600.f / combatTexture.getSize().y});
+    combatSprite.setScale({800.f / combatTexture.getSize().x, 600.f / combatTexture.getSize().y});
 
 
     // current game state
     GameScreen currentScreen = GameScreen::MAIN_MENU;
-    GameLoop   gameLoop;
-    Player*    player = nullptr;
+    GameLoop gameLoop;
+    Player* player = nullptr;
 
     // rewardGiven se pasa por referencia a drawCombat, que lo pone en true
     // cuando entrega las recompensas. main.cpp lo usa para poder presionar ENTER.
@@ -147,10 +144,10 @@ int main() {
     // Character Select, char data (needs tweaking too weak)
 
     CharacterCard cards[4] = {
-        {  117.f, "Warrior", PlayerType::WARRIOR, 1300, 30, 25, 10, 15, 10 }, // testing
-        { 306.f, "Mage",    PlayerType::MAGE,    100, 10, 15, 30, 25, 15 },
-        { 498.f, "Rogue",   PlayerType::ROGUE,   110, 40, 12, 15, 12, 40 },
-        { 689.f, "Archer",  PlayerType::ARCHER,  100, 15, 20, 30, 15, 25 }
+        {  117.f, "Warrior", PlayerType::WARRIOR, 1300, 30, 35, 10, 25, 10 }, // testing
+        { 306.f, "Mage",    PlayerType::MAGE,    100, 10, 25, 30, 35, 15 },
+        { 498.f, "Rogue",   PlayerType::ROGUE,   110, 40, 22, 15, 32, 40 },
+        { 689.f, "Archer",  PlayerType::ARCHER,  100, 15, 30, 30, 25, 25 }
     };
     const float cardW = 160.f, cardH = 480.f, cardTop = 60.f;
     int selectedCard = -1;
@@ -201,18 +198,15 @@ int main() {
 
                     if (currentScreen == GameScreen::MAIN_MENU) {
                         // Boton PLAY
-                        if (mouse.x >= btnX && mouse.x <= btnX + btnW &&
-                            mouse.y >= playY && mouse.y <= playY + btnH)
+                        if (mouse.x >= btnX && mouse.x <= btnX + btnW && mouse.y >= playY && mouse.y <= playY + btnH)
                             currentScreen = GameScreen::CHARACTER_SELECT;
 
                         // Boton QUIT
-                        if (mouse.x >= btnX && mouse.x <= btnX + btnW &&
-                            mouse.y >= quitY && mouse.y <= quitY + btnH)
+                        if (mouse.x >= btnX && mouse.x <= btnX + btnW && mouse.y >= quitY && mouse.y <= quitY + btnH)
                             window.close();
                     }
                     else if (currentScreen == GameScreen::CHARACTER_SELECT) {
-                        int clicked = handleCharacterSelectClick(
-                            mouse, cards, cardW, cardH, cardTop);
+                        int clicked = handleCharacterSelectClick(mouse, cards, cardW, cardH, cardTop);
                         if (clicked != -1) selectedCard = clicked;
                     }
                 }
@@ -226,8 +220,7 @@ int main() {
 
                 // char select
                 if (currentScreen == GameScreen::CHARACTER_SELECT) {
-                    if (handleCharacterSelectKey(keyEvent->code, selectedCard,
-                                                 cards, player)) {
+                    if (handleCharacterSelectKey(keyEvent->code, selectedCard, cards, player)) {
                         // Jugador creado: iniciamos partida en piso 1
                         gameLoop.startRun(player);
                         rewardGiven = false;
@@ -238,7 +231,7 @@ int main() {
                 // simple door select con 1, 2, 3. needs visual tweaking
                 else if (currentScreen == GameScreen::DOOR_SELECT) {
                     int doorIdx = -1;
-                    if      (keyEvent->code == sf::Keyboard::Key::Num1) doorIdx = 0;
+                    if (keyEvent->code == sf::Keyboard::Key::Num1) doorIdx = 0;
                     else if (keyEvent->code == sf::Keyboard::Key::Num2) doorIdx = 1;
                     else if (keyEvent->code == sf::Keyboard::Key::Num3) doorIdx = 2;
 
@@ -270,59 +263,40 @@ int main() {
                 }
 
                 // Game Over / Win / Final Boss  R para volver al menu
-                else if (currentScreen == GameScreen::GAME_OVER ||
-                         currentScreen == GameScreen::WIN) {
+                else if (currentScreen == GameScreen::GAME_OVER || currentScreen == GameScreen::WIN) {
                     if (keyEvent->code == sf::Keyboard::Key::R) {
                         gameLoop.reset();
                         delete player;
-                        player       = nullptr;
+                        player = nullptr;
                         selectedCard = -1;
-                        rewardGiven  = false;
+                        rewardGiven = false;
                         currentScreen = GameScreen::MAIN_MENU;
                     }
                 }
             }
         }
-
   
         
         window.clear(sf::Color(10, 5, 0));
 
         if (currentScreen == GameScreen::MAIN_MENU) {
-            drawMainMenu(window, font, bgSprite,
-                         titleText, subtitleText,
-                         btnX, playY, relicsY, quitY, btnW, btnH);
+            drawMainMenu(window, font, bgSprite, titleText, subtitleText, btnX, playY, relicsY, quitY, btnW, btnH);
         }
         else if (currentScreen == GameScreen::CHARACTER_SELECT) {
-            drawCharacterSelect(window, font, csSprite,
-                                cards, selectedCard, cardW, cardH, cardTop);
+            drawCharacterSelect(window, font, csSprite, cards, selectedCard, cardW, cardH, cardTop);
         }
-        else if (currentScreen == GameScreen::DOOR_SELECT &&
-                 gameLoop.getCurrentFloor() && player) {
-            drawDoorSelect(window, font, bgSprite,
-                           gameLoop.getCurrentFloor(), player,
-                           gameLoop.getFloorNumber());
+        else if (currentScreen == GameScreen::DOOR_SELECT && gameLoop.getCurrentFloor() && player) {
+            drawDoorSelect(window, font, bgSprite, gameLoop.getCurrentFloor(), player, gameLoop.getFloorNumber());
         }
-        else if (currentScreen == GameScreen::COMBAT &&
-                 player && gameLoop.getCombat() &&
-                 gameLoop.getCurrentFloor() && gameLoop.getCurrentEnemy()) {
-            drawCombat(window, player,
-                       gameLoop.getCurrentEnemy(), gameLoop.getCombat(),
-                       playerText, enemyText, logText, resultText,
-                       instructionText, combatTitleText,
-                       rewardGiven, combatSprite,
-                       gameLoop.getCurrentFloor(), gameLoop.getIsMiniBoss());
+        else if (currentScreen == GameScreen::COMBAT && player && gameLoop.getCombat() && gameLoop.getCurrentFloor() && gameLoop.getCurrentEnemy()) {
+            drawCombat(window, player, gameLoop.getCurrentEnemy(), gameLoop.getCombat(), playerText, enemyText, logText, resultText, instructionText, combatTitleText,
+                       rewardGiven, combatSprite, gameLoop.getCurrentFloor(), gameLoop.getIsMiniBoss());
         }
         else if (currentScreen == GameScreen::GAME_OVER) {
             // Dibuja el ultimo frame de combate como fondo (si existe)
-            if (gameLoop.getCurrentFloor() && gameLoop.getCurrentEnemy() &&
-                gameLoop.getCombat() && player) {
-                drawCombat(window, player,
-                           gameLoop.getCurrentEnemy(), gameLoop.getCombat(),
-                           playerText, enemyText, logText, resultText,
-                           instructionText, combatTitleText,
-                           rewardGiven, combatSprite,
-                           gameLoop.getCurrentFloor(), gameLoop.getIsMiniBoss());
+            if (gameLoop.getCurrentFloor() && gameLoop.getCurrentEnemy() && gameLoop.getCombat() && player) {
+                drawCombat(window, player, gameLoop.getCurrentEnemy(), gameLoop.getCombat(), playerText, enemyText, logText, resultText,
+                           instructionText, combatTitleText, rewardGiven, combatSprite, gameLoop.getCurrentFloor(), gameLoop.getIsMiniBoss());
             }
             drawGameOver(window, font);
         }

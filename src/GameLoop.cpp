@@ -2,9 +2,7 @@
 #include <iostream>
 #include <cstdlib>
 
-GameLoop::GameLoop()
-    : player(nullptr), currentFloor(nullptr), currentEnemy(nullptr),
-      combat(nullptr), currentFloorNumber(1), isMiniBoss(false) {}
+GameLoop::GameLoop() : player(nullptr), currentFloor(nullptr), currentEnemy(nullptr), combat(nullptr), currentFloorNumber(1), isMiniBoss(false) {}
 
 GameLoop::~GameLoop() {
     // player NO se destruye aqui: main.cpp se encarga de crear/destruir
@@ -16,9 +14,9 @@ GameLoop::~GameLoop() {
 // main loop
 
 void GameLoop::startRun(Player* p) {
-    player             = p;
+    player = p;
     currentFloorNumber = 1;
-    isMiniBoss         = false;
+    isMiniBoss = false;
     buildFloor();
 }
 
@@ -27,8 +25,8 @@ GameScreen GameLoop::selectDoor(int doorIndex) {
 
     std::vector<Door> doors = currentFloor->getDoors();
 
-    if (doorIndex < 0 || doorIndex >= static_cast<int>(doors.size()))
-        return GameScreen::DOOR_SELECT;
+    if (doorIndex < 0 || doorIndex >= static_cast<int>(doors.size())) 
+    return GameScreen::DOOR_SELECT;
 
     const Door& door = doors[doorIndex];
 
@@ -61,8 +59,8 @@ GameScreen GameLoop::advanceFloor() {
     }
     buildFloor();
     if (player->hasRelic("Healing Charm")) {
-        std::cout << "Healing Charm heals you for 15 HP as you ascend to the next floor!\n";
-        player->heal(15); // curacion de la reliquia al subir de piso
+        std::cout << "Healing Charm heals you for 10% HP as you ascend to the next floor!\n";
+        player->heal(player->getMaxHp() * 10 / 100); // curacion de la reliquia al subir de piso
     }
     return GameScreen::DOOR_SELECT;
 }
@@ -121,7 +119,7 @@ void GameLoop::reset() {
     currentFloor = nullptr;
 
     // player no se destruye aqui
-    player             = nullptr;
+    player = nullptr;
     currentFloorNumber = 1;
-    isMiniBoss         = false;
+    isMiniBoss = false;
 }

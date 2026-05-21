@@ -3,15 +3,8 @@
 #include <iostream>
 
 Entity::Entity(std::string name, int hp, int atk, int def, int spAtk, int spDef, int spd)
-    : name(name), hp(hp), maxHp(hp), 
-      atk(atk), baseAtk(atk),
-      def(def), baseDef(def),
-      spAtk(spAtk), baseSpAtk(spAtk),
-      spDef(spDef), baseSpDef(spDef),
-      spd(spd), baseSpd(spd),
-      isBlocking(false), moves(4, Move("Empty", MoveType::EFFECT, 0, 0)) {}
-
-
+    : name(name), hp(hp), maxHp(hp),  atk(atk), baseAtk(atk), def(def), baseDef(def), spAtk(spAtk), baseSpAtk(spAtk),
+      spDef(spDef), baseSpDef(spDef), spd(spd), baseSpd(spd), isBlocking(false), moves(4, Move("Empty", MoveType::EFFECT, 0, 0)) {}
 
 void Entity::resetStats() {
     atk = baseAtk;
@@ -52,4 +45,9 @@ void Entity::displayStats() const {
               << "ATK: " << atk << " | DEF: " << def << "\n"
               << "SP.ATK: " << spAtk << " | SP.DEF: " << spDef << "\n"
               << "SPD: " << spd << "\n";
+
+    std::cout << "Moves:\n";
+    for (const Move& move : moves) {
+        std::cout << "- " << move.getName() << "\n";
+    }
 }

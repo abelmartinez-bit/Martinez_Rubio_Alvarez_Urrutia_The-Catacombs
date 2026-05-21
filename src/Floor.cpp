@@ -41,7 +41,7 @@ void Floor::generateDoors(const Player& player) {
         else if (rand() % 100 < calculateCorruptionChance(player.getCorruptDoorModifier())) {
             doorType = DoorType::CORRUPT;
         }
-        // if they fail its normal
+        // if they fail it stays normal
 
         doors.push_back(Door(i, doorType, enemyType));
     }
@@ -49,12 +49,12 @@ void Floor::generateDoors(const Player& player) {
 
 void Floor::scaleEnemyStats(int& hp, int& atk, int& def, int& spAtk, int& spDef, int& spd) const {
     // Scale stats based on floor number
-    hp = static_cast<int>(hp * (.5 + floorNumber * .45));       // HP scales faster
+    hp = static_cast<int>(hp * (.5 + floorNumber * 0.3));      
     atk = static_cast<int>(atk * (.5 + floorNumber * 0.3));
     def = static_cast<int>(def * (.5 + floorNumber * 0.3));
     spAtk = static_cast<int>(spAtk * (.5 + floorNumber * 0.3));
     spDef = static_cast<int>(spDef * (.5 + floorNumber * 0.3));
-    spd = static_cast<int>(spd * (.5 + floorNumber * 0.24));     // Speed scales slower
+    spd = static_cast<int>(spd * (.5 + floorNumber * 0.15));     // Speed scales slower
     // Needs balancing
 }
 
@@ -116,7 +116,7 @@ void Floor::triggerEvent(Player& player, const Door& door) {
     
     std::cout << "You triggered an event behind the door...\n";
     std::cout << "You were blessed by the dungeon gods!\n";
-    player.levelUp(); // subir de nivel al trigger un evento
+    player.gainExp(120 * player.getLevel()); // subir de nivel al trigger un evento
 
     if (eventType < 40) {
         // Heal event (40% chance)
@@ -163,14 +163,14 @@ void Floor::giveRewards(Player& player, Entity* enemy, bool isMiniBoss) {
         int rareThreshold      = static_cast<int>(80 + mod / 2);
 
         if (roll < legendaryThreshold) {
-            player.addRelic(RelicPool::getRandomLegendaryRelic());
             std::cout << "You received a LEGENDARY relic!\n";
+            player.addRelic(RelicPool::getRandomLegendaryRelic());
         } else if (roll < rareThreshold) {
-            player.addRelic(RelicPool::getRandomRareRelic());
             std::cout << "You received a RARE relic!\n";
+            player.addRelic(RelicPool::getRandomRareRelic());
         } else {
-            player.addRelic(RelicPool::getRandomCommonRelic());
             std::cout << "You received a COMMON relic.\n";
+            player.addRelic(RelicPool::getRandomCommonRelic());
         }
     } else {
         // Enemigo normal
