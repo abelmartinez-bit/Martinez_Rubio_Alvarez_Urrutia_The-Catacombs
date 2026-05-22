@@ -118,11 +118,10 @@ void GameLoop::startCombat() {
     combat = new CombatEngine(player, currentEnemy);
 }
 
-
-void GameLoop::advanceTurn() {
+//ahora recibe parametro del move
+void GameLoop::advanceTurn(int moveIndex) {
     if (!combat || combat->isBattleOver()) return;
-    int playerMove = rand() % 4;   // aleatorio por ahora; la UI lo mejorara
-    combat->executeTurn(playerMove);
+    combat->executeTurn(moveIndex);
 }
 
 void GameLoop::usePotionInCombat() {

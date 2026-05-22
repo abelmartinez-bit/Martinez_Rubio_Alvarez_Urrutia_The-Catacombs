@@ -9,6 +9,10 @@
 void handleCombatKey(sf::Keyboard::Key key, Player* player, CombatEngine* combat);
 
 // Dibuja la pantalla de combate y entrega recompensa si termino
-void drawCombat(sf::RenderWindow& window, Player* player, Enemy* enemy, CombatEngine* combat, sf::Text& playerText, sf::Text& enemyText,
-                sf::Text& logText, sf::Text& resultText, sf::Text& instructionText, sf::Text& combatTitleText, bool& rewardGiven, const sf::Sprite& combatSprite,
+void drawCombat(sf::RenderWindow& window, sf::Font& font,
+                Player* player, Enemy* enemy, CombatEngine* combat,
+                sf::Text& playerText, sf::Text& enemyText,
+                sf::Text& logText, sf::Text& resultText,
+                sf::Text& instructionText, sf::Text& combatTitleText,
+                bool& rewardGiven, const sf::Sprite& combatSprite,
                 Floor* floor, bool isMiniBoss);
