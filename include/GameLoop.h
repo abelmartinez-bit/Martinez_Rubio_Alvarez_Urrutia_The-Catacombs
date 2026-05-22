@@ -40,7 +40,7 @@ public:
     // Devuelve: DOOR_SELECT, WIN, GAME_OVER
     GameScreen onCombatFinished();
 
-    void advanceTurn();       // SPACE: ejecuta un turno (move aleatorio por ahora)
+    void advanceTurn(int moveIndex); //ahora recibe el index del movimiento del player
     void usePotionInCombat(); // P: usa la primera pocion del inventario
 
     void reset(); // back to main menu
