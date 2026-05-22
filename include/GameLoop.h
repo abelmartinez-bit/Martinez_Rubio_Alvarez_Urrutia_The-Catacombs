@@ -14,15 +14,18 @@ private:
     Enemy*  currentEnemy;    // owned (Enemy* cubre MiniBoss tambien)
     CombatEngine* combat;    // owned
 
+    Enemy* previewEnemies[3]; // preview for the stat show on the door select screen
+
     int  currentFloorNumber;
     bool isMiniBoss;
 
     static const int MAX_FLOORS = 10; // can be changed
 
     // helpers internos
-    void       buildFloor();
-    void       spawnFromDoor(const Door& door);
-    void       startCombat();
+    void buildFloor();
+    void buildPreviewEnemies();
+    void spawnFromDoor(const Door& door, int doorIndex);
+    void startCombat();
     GameScreen advanceFloor();   // incrementa piso, genera doors o declara WIN
 
 public:
@@ -46,9 +49,15 @@ public:
     void reset(); // back to main menu
 
     // Getters
-    Floor*        getCurrentFloor()  const { return currentFloor; }
-    Enemy*        getCurrentEnemy()  const { return currentEnemy; }
+    Floor* getCurrentFloor()  const { return currentFloor; }
+    Enemy* getCurrentEnemy()  const { return currentEnemy; }
+
+    Enemy* getPreviewEnemy(int index) const { 
+        if (index < 0 || index >= 3) return nullptr;
+        return previewEnemies[index]; 
+    }
+
     CombatEngine* getCombat()        const { return combat; }
-    int           getFloorNumber()   const { return currentFloorNumber; }
-    bool          getIsMiniBoss()    const { return isMiniBoss; }
+    int getFloorNumber()   const { return currentFloorNumber; }
+    bool getIsMiniBoss()    const { return isMiniBoss; }
 };

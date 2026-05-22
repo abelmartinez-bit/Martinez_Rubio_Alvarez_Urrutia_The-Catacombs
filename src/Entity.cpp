@@ -51,3 +51,11 @@ void Entity::displayStats() const {
         std::cout << "- " << move.getName() << "\n";
     }
 }
+
+void Entity::displayBaseStats() const {
+    std::cout << "Name: " << name << "\n"
+              << "HP: " << maxHp << "\n"
+              << "ATK: " << baseAtk << " | DEF: " << baseDef << "\n"
+              << "SP.ATK: " << baseSpAtk << " | SP.DEF: " << baseSpDef << "\n"
+              << "SPD: " << baseSpd << "\n";
+}

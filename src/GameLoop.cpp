@@ -2,13 +2,19 @@
 #include <iostream>
 #include <cstdlib>
 
-GameLoop::GameLoop() : player(nullptr), currentFloor(nullptr), currentEnemy(nullptr), combat(nullptr), currentFloorNumber(1), isMiniBoss(false) {}
+GameLoop::GameLoop():player(nullptr), currentFloor(nullptr), currentEnemy(nullptr), combat(nullptr), 
+                     currentFloorNumber(1), isMiniBoss(false), previewEnemies{nullptr, nullptr, nullptr} {}
 
 GameLoop::~GameLoop() {
     // player NO se destruye aqui: main.cpp se encarga de crear/destruir
     delete combat;
     delete currentEnemy;
     delete currentFloor;
+
+    for (int i = 0; i < 3; i++) {
+        delete previewEnemies[i];
+        previewEnemies[i] = nullptr;
+    }
 }
 
 // main loop
@@ -38,7 +44,7 @@ GameScreen GameLoop::selectDoor(int doorIndex) {
     }
 
     // Puerta normal o corrupta -> combate
-    spawnFromDoor(door);
+    spawnFromDoor(door, doorIndex);
     startCombat();
     return GameScreen::COMBAT;
 }
@@ -69,17 +75,41 @@ void GameLoop::buildFloor() {
     delete currentFloor;
     currentFloor = new Floor(currentFloorNumber);
     currentFloor->generateDoors(*player);  // usa los probability modifiers 
+    buildPreviewEnemies();
 }
 
-void GameLoop::spawnFromDoor(const Door& door) {
+void GameLoop::buildPreviewEnemies() {
+    std::vector<Door> doors = currentFloor->getDoors();
+    for (int i = 0; i < static_cast<int>(doors.size()); i++) {
+        delete previewEnemies[i];
+        previewEnemies[i] = nullptr;
+        if (i < static_cast<int>(doors.size()) && !doors[i].isEvent()) {
+            // spawneamos el enemigo para mostrar sus stats en la pantalla de seleccion 
+            // spawnEnemyFromDoor devuelve Entity*, pero siempre crea Enemy o MiniBoss
+            // (MiniBoss hereda de Enemy), por lo que el cast es seguro
+            Entity* spawned = currentFloor->spawnEnemyFromDoor(doors[i]);
+            previewEnemies[i] = dynamic_cast<Enemy*>(spawned);
+        }
+    }
+}
+
+void GameLoop::spawnFromDoor(const Door& door, int doorIndex) {
     delete currentEnemy;
     currentEnemy = nullptr;
     isMiniBoss = door.isCorrupt();
+
+    currentEnemy = previewEnemies[doorIndex];
 
     // spawnEnemyFromDoor devuelve Entity*, pero siempre crea Enemy o MiniBoss
     // (MiniBoss hereda de Enemy), por lo que el cast es seguro
     Entity* spawned = currentFloor->spawnEnemyFromDoor(door);
     currentEnemy = dynamic_cast<Enemy*>(spawned);
+
+    // clean de los previews
+    for (int i = 0; i < 3; i++) {
+        delete previewEnemies[i];
+        previewEnemies[i] = nullptr;
+    }
 }
 
 void GameLoop::startCombat() {
@@ -117,6 +147,11 @@ void GameLoop::reset() {
     currentEnemy = nullptr;
     delete currentFloor; 
     currentFloor = nullptr;
+    
+    for (int i = 0; i < 3; i++) {
+        delete previewEnemies[i];
+        previewEnemies[i] = nullptr;
+    }
 
     // player no se destruye aqui
     player = nullptr;

@@ -1,6 +1,7 @@
 #include "../include/CombatEngine.h"
 #include <cstdlib> //rand
 #include <ctime> //time for seeding rand
+#include <iostream> // temp for testing
 
 CombatEngine::CombatEngine(Player* p, Entity* e) : player(p), enemy(e) {
     srand(time(0)); // seed random for accuracy checks y despues para crit chance
@@ -25,25 +26,32 @@ void CombatEngine::executeTurn(int playerMoveIndex) {
     Move secondMove = (first == player) ? enemyMove : playerMove;
     
     // First entity moves (efectos no ocupan acc check)
-    if (firstMove.getType() == MoveType::EFFECT) {
+    if (firstMove.getType() == MoveType::EFFECT && firstMove.getEffect() != MoveEffect::BLOCK) {
         Entity* target = (firstMove.getTarget() == MoveTarget::SELF) ? first : second;
         applyMoveEffect(firstMove, first, target);
+        if (secondMove.getType() == MoveType::EFFECT && secondMove.getEffect() == MoveEffect::BLOCK) combatLog += second->getName() + " is blocking!\n"; 
+        // para cuando bloquearon y no atacaron}
     } else {
         // Accuracy check
-        int roll = rand() % 100;
-        if (roll < firstMove.getAccuracy()) {
-            int damage = calculateDamage(first, second, firstMove);
-            second->takeDamage(damage);
-            combatLog += first->getName() + " used " + firstMove.getName() + " for " + std::to_string(damage) + " damage!\n";
+        int roll = rand() % 100; 
+        if (secondMove.getEffect() == MoveEffect::BLOCK) applyMoveEffect(secondMove, second, first);
+        // el bloque se aplica antes del daño para que el efecto de bloquear afecte el ataque del segundo movimiento
+        if (roll < firstMove.getAccuracy()) { // si el segundo movimiento fue block, el primero no puede fallar porque el bloque ya se aplico antes del accuracy check
 
-            if (firstMove.getEffect() != MoveEffect::NONE) {
-                combatLog +=  first->getName() + "'s " + firstMove.getName() + " had an additional effect!\n";
-                applyMoveEffect(firstMove, first, second); // para movimientos de dmg con efectos secundarios
+            if (firstMove.getEffect() != MoveEffect::BLOCK){
+                int damage = calculateDamage(first, second, firstMove);
+                second->takeDamage(damage);
+                combatLog += first->getName() + " used " + firstMove.getName() + " for ";
+                if (second->getIsBlocking()) combatLog += "a reduced ";
+                combatLog += std::to_string(damage) + " damage!\n";
+
+                if (firstMove.getEffect() != MoveEffect::NONE && firstMove.getEffect() != MoveEffect::BLOCK) {
+                    combatLog +=  first->getName() + "'s " + firstMove.getName() + " had an additional effect!\n";
+                    applyMoveEffect(firstMove, first, second); // para movimientos de dmg con efectos secundarios
+                }
             }
-
-        } else {
-            combatLog += first->getName() + "'s " + firstMove.getName() + " missed!\n";
-        }
+        } else combatLog += first->getName() + "'s " + firstMove.getName() + " missed!\n";
+        
     }
     
     // Check if battle ended (died from first move so second doesnt get to move)
@@ -53,24 +61,34 @@ void CombatEngine::executeTurn(int playerMoveIndex) {
     }
     
     // Second entity moves, same logic as first
-    if (secondMove.getType() == MoveType::EFFECT) {
+    if (secondMove.getType() == MoveType::EFFECT && secondMove.getEffect() != MoveEffect::BLOCK) {
         Entity* target = (secondMove.getTarget() == MoveTarget::SELF) ? second : first;
         applyMoveEffect(secondMove, second, target);
+        if (firstMove.getEffect() == MoveEffect::BLOCK) combatLog += first->getName() + " is blocking!\n"; 
+        // para cuando bloquearon y no atacaron
     } else {
         int roll = rand() % 100;
-        if (roll < secondMove.getAccuracy()) {
-            int damage = calculateDamage(second, first, secondMove);
-            first->takeDamage(damage);
-            combatLog += second->getName() + " used " + secondMove.getName() + " for " + std::to_string(damage) + " damage!\n"; 
-            
-            if (secondMove.getEffect() != MoveEffect::NONE) {
-                combatLog +=  second->getName() + "'s " + secondMove.getName() + " had an additional effect!\n";
-                applyMoveEffect(secondMove, second, first); // para movimientos de dmg con efectos secundarios
+
+        if (firstMove.getEffect() == MoveEffect::BLOCK) applyMoveEffect(firstMove, first, second); 
+        // el bloque se aplica antes del daño para que el efecto de bloquear afecte el ataque del segundo movimiento
+
+        if (roll < secondMove.getAccuracy()) { // si el primer movimiento fue block, el segundo no puede fallar porque el bloque ya se aplico antes del accuracy check
+
+            if (secondMove.getEffect() != MoveEffect::BLOCK){ 
+                int damage = calculateDamage(second, first, secondMove);
+                first->takeDamage(damage);
+                combatLog += second->getName() + " used " + secondMove.getName() + " for ";
+                if (first->getIsBlocking()) combatLog += "a reduced ";
+                combatLog += std::to_string(damage) + " damage!\n"; 
+                
+                if (secondMove.getEffect() != MoveEffect::NONE && secondMove.getEffect() != MoveEffect::BLOCK) {
+                    combatLog +=  second->getName() + "'s " + secondMove.getName() + " had an additional effect; ";
+                    applyMoveEffect(secondMove, second, first); // para movimientos de dmg con efectos secundarios
+                }
             }
 
-        } else {
-            combatLog += second->getName() + "'s " + secondMove.getName() + " missed!\n";
-        }
+        } else combatLog += second->getName() + "'s " + secondMove.getName() + " missed!\n";
+    
     }
 
     if (isBattleOver()) {
@@ -81,21 +99,30 @@ void CombatEngine::executeTurn(int playerMoveIndex) {
     // Reset blocking state after turn
     if (first->getIsBlocking()) first->setBlocking(false);
     if (second->getIsBlocking()) second->setBlocking(false);
+
+    // temp for testing
+    std::cout << "---- End of Turn Stats ----\n";
+    first->displayBaseStats();
+    first->displayStats();
+    std::cout << "------------------\n";
+    second->displayBaseStats();
+    second->displayStats();
+    std::cout << "\n\n";
 }
 
 int CombatEngine::calculateDamage(Entity* attacker, Entity* defender, Move move) {
     int attackStat = (move.getType() == MoveType::PHYSICAL) ? attacker->getAtk() : attacker->getSpAtk();
     int defenseStat = (move.getType() == MoveType::PHYSICAL) ? defender->getDef() : defender->getSpDef();
 
-    int critChance = 5 + (attacker->getSpd() / 10); // base crit chance 5%, scales con SPD
+    int critChance = 5 + (5 * attacker->getSpd() / defender->getSpd()); // base crit chance 5%, scales con SPD
     int roll = rand() % 100;
 
     if (roll < critChance) {
         int defenseStat = (move.getType() == MoveType::PHYSICAL) ? defender->getBaseDef() : defender->getBaseSpDef(); // crits ignore buffs/debuffs
         
         if (defender->getIsBlocking()) {
-            defenseStat = static_cast<int>(defenseStat / 3.5); // cancelamos el mult de block para crits
-            combatLog += attacker->getName() + " broke through " + defender->getName() + "'s block!\n";
+            combatLog += defender->getName() + "'s block broke because ";
+            defender->setBlocking(false); // el bloque se rompe si le pegan un crit
         }
 
         attackStat *= 3; // crits hacen el doble de dmg 
@@ -104,7 +131,11 @@ int CombatEngine::calculateDamage(Entity* attacker, Entity* defender, Move move)
     
     // Apply blocking bonus, static por int
     if (defender->getIsBlocking()) {
-        defenseStat = static_cast<int>(defenseStat * 3.5);
+        defenseStat = static_cast<int>(defenseStat * 2.4);
+        attackStat = static_cast<int>(attackStat * 0.9); // simula el debuff que le esta aplicando
+        combatLog += attacker->getName() + "'s offense got debuffed!\n";
+        attacker->setAtk(attacker->getAtk() - (attacker->getAtk() * 0.1)); // debuff de ataques para simular que el enemigo esta mas enfocado en defender que atacar
+        attacker->setSpAtk(attacker->getSpAtk() - (attacker->getSpAtk() * 0.1)); // debuff de ataques para simular que el enemigo esta mas enfocado en defender que atacar
     }
     
     // Simple damage formula
@@ -125,7 +156,7 @@ void CombatEngine::applyMoveEffect(Move move, Entity* user, Entity* target) {
             break;
         case MoveEffect::BLOCK:
             user->setBlocking(true);
-            combatLog += user->getName() + " is blocking!\n";
+            combatLog += user->getName() + " anticipated the attack and is blocking!\n";
             break;
         case MoveEffect::ATK_UP:
             user->setAtk(user->getAtk() + (user->getAtk() * potency / 100));

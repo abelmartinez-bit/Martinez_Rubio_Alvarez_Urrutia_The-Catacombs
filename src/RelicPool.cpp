@@ -100,7 +100,7 @@ Relic* RelicPool::getRandomCommonRelic() {
                 "Increases DEF by 6.",
                 RelicRarity::COMMON,
                 StatType::DEF,
-                3
+                6
             );
 
         case 9:

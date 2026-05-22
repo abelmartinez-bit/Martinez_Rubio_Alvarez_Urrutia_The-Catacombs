@@ -269,7 +269,7 @@ void Player::initializeMovePool() {
                 // Name, Type, Power, Accuracy, Effect, Target (los non effects no ocupan los ultimos 2 [o 3] parametros)
                 Move("Crush", MoveType::PHYSICAL, 90, 90),
                 Move("Slam", MoveType::PHYSICAL, 100, 80),
-                Move("Iron Wall", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::SELF),
+                Move("Iron Wall", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::ENEMY),
                 Move("Berserk", MoveType::EFFECT, 0, 100, MoveEffect::ATK_UP, MoveTarget::SELF, 30)
                 };
                 break;
@@ -283,7 +283,7 @@ void Player::initializeMovePool() {
                 break;
             case 2:
                 movePool = {
-                Move("Shield Block", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::SELF),
+                Move("Shield Block", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::ENEMY),
                 Move("Shield Throw", MoveType::SPECIAL, 130, 90),
                 Move("Taunt", MoveType::EFFECT, 0, 100, MoveEffect::DEF_DOWN, MoveTarget::ENEMY),
                 Move("Slam", MoveType::PHYSICAL, 100, 80)
@@ -297,7 +297,7 @@ void Player::initializeMovePool() {
                 movePool = {
                 Move("Backstab", MoveType::PHYSICAL, 100, 85),
                 Move("Shank", MoveType::PHYSICAL, 75, 100, MoveEffect::SPD_DOWN, MoveTarget::ENEMY, 15),
-                Move("Smoke Bomb", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::SELF),
+                Move("Smoke Bomb", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::ENEMY),
                 Move("Adrenaline Rush", MoveType::EFFECT, 0, 100, MoveEffect::ATK_UP, MoveTarget::SELF, 40)
                 };
                 break;
@@ -313,7 +313,7 @@ void Player::initializeMovePool() {
                 movePool = {
                 Move("Lethal Strike", MoveType::PHYSICAL, 120, 80),
                 Move("Distract", MoveType::EFFECT, 0, 100, MoveEffect::SPATK_DOWN, MoveTarget::ENEMY),
-                Move("Vanish", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::SELF),
+                Move("Vanish", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::ENEMY),
                 Move("Garrote", MoveType::PHYSICAL, 70, 100, MoveEffect::DEF_DOWN, MoveTarget::ENEMY)
                 };
             };
@@ -333,7 +333,7 @@ void Player::initializeMovePool() {
             case 1:
                 movePool = {
                 Move("Weaken", MoveType::EFFECT, 0, 100, MoveEffect::SPDEF_DOWN, MoveTarget::ENEMY, 40),
-                Move("Mana Shield", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::SELF),
+                Move("Mana Shield", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::ENEMY),
                 Move("Fireball", MoveType::SPECIAL, 90, 85),
                 Move("Frost Nova", MoveType::SPECIAL, 70, 95, MoveEffect::SPDEF_DOWN, MoveTarget::ENEMY, 25)
                 };
@@ -342,7 +342,7 @@ void Player::initializeMovePool() {
                 movePool = {
                 Move("Arcane Missiles", MoveType::SPECIAL, 75, 95),
                 Move("Silence", MoveType::EFFECT, 0, 100, MoveEffect::ATK_DOWN, MoveTarget::ENEMY, 40),
-                Move("Magic Barrier", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::SELF),
+                Move("Magic Barrier", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::ENEMY),
                 Move("Meteor Strike", MoveType::SPECIAL, 130, 70)
                 };
             };
@@ -371,7 +371,7 @@ void Player::initializeMovePool() {
                 movePool = {
                 Move("Mending Arrow", MoveType::EFFECT, 0, 100, MoveEffect::HEAL, MoveTarget::SELF, 30),
                 Move("Poison Arrow", MoveType::SPECIAL, 60, 95, MoveEffect::ATK_DOWN, MoveTarget::ENEMY),
-                Move("Bow Block", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::SELF),
+                Move("Bow Block", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::ENEMY),
                 Move("Multi Shot", MoveType::SPECIAL, 90, 90)
 
                 };
