@@ -162,6 +162,24 @@ int main() {
                         if (clicked != -1) selectedCard = clicked;
                     }
 
+                    //Nueva, seleccion de move en combate
+                    else if (currentScreen == GameScreen::COMBAT && player && gameLoop.getCombat() 
+                            && !gameLoop.getCombat()->isBattleOver()) {
+                        // Los 4 botones de move en la parte de abajo de la pantalla
+                        const float moveBtnW = 155.f, moveBtnH = 50.f;
+                        const float moveBtnY = 480.f;
+                        const float startX = (800.f - (moveBtnW * 4 + 20.f * 3)) / 2.f;
+
+                        for (int i = 0; i < 4; i++) {
+                            float bx = startX + i * (moveBtnW + 20.f);
+                            if (mouse.x >= bx && mouse.x <= bx + moveBtnW &&
+                                mouse.y >= moveBtnY && mouse.y <= moveBtnY + moveBtnH) {
+                                gameLoop.advanceTurn(i);
+                                break;
+                            }
+                        }
+                    }
+
                     // pop up LEVEL UP, click en uno de los 6 botones de stat
                     else if (showLevelUp && player) {
                         const float luBtnW = 260.f, luBtnH = 48.f;
@@ -236,10 +254,9 @@ int main() {
 
                 // main combat
                 else if (currentScreen == GameScreen::COMBAT) {
-                    if (keyEvent->code == sf::Keyboard::Key::Space) {
-                        gameLoop.advanceTurn();
-                    }
-                    else if (keyEvent->code == sf::Keyboard::Key::P) {
+                    //se borro el space para avanzar turno 
+                    
+                    if (keyEvent->code == sf::Keyboard::Key::P) {
                         gameLoop.usePotionInCombat();
                     }
                     else if (keyEvent->code == sf::Keyboard::Key::Enter) {
@@ -286,9 +303,11 @@ int main() {
         else if (currentScreen == GameScreen::DOOR_SELECT && gameLoop.getCurrentFloor() && player) {
             drawDoorSelect(window, font, bgSprite, gameLoop.getCurrentFloor(), player, gameLoop.getFloorNumber());
         }
-        else if (currentScreen == GameScreen::COMBAT && player && gameLoop.getCombat() && gameLoop.getCurrentFloor() && gameLoop.getCurrentEnemy()) {
-            drawCombat(window, player, gameLoop.getCurrentEnemy(), gameLoop.getCombat(), playerText, enemyText, logText, resultText, instructionText, combatTitleText,
-                       rewardGiven, combatSprite, gameLoop.getCurrentFloor(), gameLoop.getIsMiniBoss());
+        else if (currentScreen == GameScreen::COMBAT && player && gameLoop.getCombat() && gameLoop.getCurrentFloor() 
+                && gameLoop.getCurrentEnemy()) {
+            drawCombat(window, font, player, gameLoop.getCurrentEnemy(), gameLoop.getCombat(), playerText, enemyText, 
+                        logText, resultText, instructionText, combatTitleText, rewardGiven, combatSprite, 
+                        gameLoop.getCurrentFloor(), gameLoop.getIsMiniBoss());
             
             // Pop-ups encima del combate
             if (showLevelUp)
@@ -299,7 +318,7 @@ int main() {
         else if (currentScreen == GameScreen::GAME_OVER) {
             // Dibuja el ultimo frame de combate como fondo (si existe)
             if (gameLoop.getCurrentFloor() && gameLoop.getCurrentEnemy() && gameLoop.getCombat() && player) {
-                drawCombat(window, player, gameLoop.getCurrentEnemy(), gameLoop.getCombat(), playerText, enemyText, logText, resultText,
+                drawCombat(window, font, player, gameLoop.getCurrentEnemy(), gameLoop.getCombat(), playerText, enemyText, logText, resultText,
                            instructionText, combatTitleText, rewardGiven, combatSprite, gameLoop.getCurrentFloor(), gameLoop.getIsMiniBoss());
             }
             drawGameOver(window, font);

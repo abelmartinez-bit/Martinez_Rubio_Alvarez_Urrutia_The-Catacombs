@@ -3,9 +3,9 @@
 #include <iostream>
 
 
-void drawCombat(sf::RenderWindow& window, Player* player, Enemy* enemy, CombatEngine* combat, sf::Text& playerText, sf::Text& enemyText,
-                sf::Text& logText, sf::Text& resultText, sf::Text& instructionText, sf::Text& combatTitleText, bool& rewardGiven, const sf::Sprite& combatSprite,
-                Floor* floor, bool isMiniBoss) {
+void drawCombat(sf::RenderWindow& window, sf::Font& font, Player* player, Enemy* enemy, CombatEngine* combat, 
+                sf::Text& playerText, sf::Text& enemyText, sf::Text& logText, sf::Text& resultText, sf::Text& instructionText, 
+                sf::Text& combatTitleText, bool& rewardGiven, const sf::Sprite& combatSprite, Floor* floor, bool isMiniBoss) {
 
     // Actualizar textos con estado actual
     playerText.setString(
@@ -46,7 +46,7 @@ void drawCombat(sf::RenderWindow& window, Player* player, Enemy* enemy, CombatEn
         }
     } else {
         // Combate en curso
-        instructionText.setString("SPACE: avanzar turno   |   P: usar pocion");
+        instructionText.setString("Click a move to attack   |   P: usar pocion");
         resultText.setString("");
     }
 
@@ -59,4 +59,33 @@ void drawCombat(sf::RenderWindow& window, Player* player, Enemy* enemy, CombatEn
     window.draw(logText);
     window.draw(resultText);
     window.draw(instructionText);
+
+    //nuevos Botones de moves cuando el combate esta en curso
+    if (!combat->isBattleOver()) {
+        std::vector<Move> moves = player->getMoves();
+        const float moveBtnW = 155.f, moveBtnH = 50.f;
+        const float moveBtnY = 480.f;
+        const float startX = (800.f - (moveBtnW * 4 + 20.f * 3)) / 2.f;
+
+        for (int i = 0; i < 4; i++) {
+            float bx = startX + i * (moveBtnW + 20.f);
+
+            sf::RectangleShape border({moveBtnW + 4.f, moveBtnH + 4.f});
+            border.setPosition({bx - 2.f, moveBtnY - 2.f});
+            border.setFillColor(sf::Color(120, 80, 20));
+            window.draw(border);
+
+            sf::RectangleShape bg({moveBtnW, moveBtnH});
+            bg.setPosition({bx, moveBtnY});
+            bg.setFillColor(sf::Color(20, 12, 5, 210));
+            window.draw(bg);
+
+            sf::Text moveLabel(font, moves[i].getName(), 15);
+            moveLabel.setFillColor(sf::Color(210, 160, 60));
+            sf::FloatRect flb = moveLabel.getLocalBounds();
+            moveLabel.setPosition({bx + (moveBtnW - flb.size.x) / 2.f - flb.position.x,
+                                   moveBtnY + (moveBtnH - flb.size.y) / 2.f - flb.position.y});
+            window.draw(moveLabel);
+        }
+    }
 }
