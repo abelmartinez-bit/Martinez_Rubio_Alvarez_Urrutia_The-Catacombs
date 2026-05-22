@@ -1,9 +1,24 @@
 #include "../include/ScreenDoorSelect.h"
 #include <string>
 
-void drawDoorSelect(sf::RenderWindow& window, sf::Font& font,const sf::Sprite& bgSprite, const Floor* floor, const Player* player,int floorNumber) {
+void drawDoorSelect(sf::RenderWindow& window, sf::Font& font,const sf::Sprite& bgSprite, const Floor* floor, const Player* player,
+                    int floorNumber, Enemy* previewEnemies[3]) {
 
     if (!floor || !player) return;
+
+    // lambda ya que nunca se usa fuera de este caso, auto para dejar que el compilador infiera el tipo de retorno
+    // toma un puntero a enemigo para que si es null no tire error y asuma que el stat mas alto es atk (caso donde sea puerta de evento)
+    // -> string porq en nuestros retornos no especificamos el tipo de dato
+    auto highestStatName = [](const Enemy* e) -> std::string {
+        if (!e) return "ATK";
+
+        int h = e->getHighestStat();
+        if (h == e->getAtk())   return "ATK";
+        if (h == e->getDef())   return "DEF";
+        if (h == e->getSpAtk()) return "SP.ATK";
+        if (h == e->getSpDef()) return "SP.DEF";
+        return "SPD";
+    };
 
     window.draw(bgSprite);
 
@@ -103,5 +118,12 @@ void drawDoorSelect(sf::RenderWindow& window, sf::Font& font,const sf::Sprite& b
         sf::FloatRect kb = keyHint.getLocalBounds();
         keyHint.setPosition({dx + (DOOR_W - kb.size.x) / 2.f - kb.position.x, DOOR_TOP + DOOR_H + 16.f});
         window.draw(keyHint);
+
+        std::string statStr = (i < 3 && previewEnemies[i]) ? highestStatName(previewEnemies[i]) : " ATK";
+        sf::Text statHint(font, statStr + " oriented", 13);
+        statHint.setFillColor(sf::Color(180, 140, 100));
+        sf::FloatRect shb = statHint.getLocalBounds();
+        statHint.setPosition({dx + (DOOR_W - shb.size.x) / 2.f - shb.position.x, DOOR_TOP + DOOR_H - 18.f});
+        window.draw(statHint);
     }
 }

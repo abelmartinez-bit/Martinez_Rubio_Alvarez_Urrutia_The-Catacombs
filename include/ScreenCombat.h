@@ -6,8 +6,7 @@
 #include "CombatEngine.h"
 
 // Maneja teclas en combate (SPACE avanza turno, P usa pocion)
-void handleCombatKey(sf::Keyboard::Key key, Player* player,
-                     CombatEngine* combat);
+void handleCombatKey(sf::Keyboard::Key key, Player* player, CombatEngine* combat);
 
 // Dibuja la pantalla de combate y entrega recompensa si termino
 void drawCombat(sf::RenderWindow& window, sf::Font& font,

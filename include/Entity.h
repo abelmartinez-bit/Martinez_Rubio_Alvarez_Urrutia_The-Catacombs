@@ -74,5 +74,6 @@ public:
     /*virtual para que cada clase hija pueda mostrar sus stats/destruirse de forma diferente
     o sea redefinir la funcion */
     virtual void displayStats() const;
+    void displayBaseStats() const; // para mostrar los stats base sin modificaciones de potions o efectos de combate
     virtual ~Entity() = default;
 };

@@ -20,8 +20,7 @@ protected: //atributos aparte de los ya heredados de Entity
     std::vector<Move> movePool; // banco de movimientos de donde se seleccionan  
 
 public:
-    Enemy(std::string name, EnemyType type, int hp, int atk, int def, 
-          int spAtk, int spDef, int spd);
+    Enemy(std::string name, EnemyType type, int hp, int atk, int def, int spAtk, int spDef, int spd);
 
     EnemyType getType() const;
     int getExpReward() const;

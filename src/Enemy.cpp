@@ -32,7 +32,7 @@ void Enemy::initializeMovePool() {
                 Move("Shield Bash", MoveType::PHYSICAL, 70, 95),
                 Move("Fortify", MoveType::EFFECT, 0, 100, MoveEffect::DEF_UP, MoveTarget::SELF),
                 Move("Slam", MoveType::PHYSICAL, 90, 80),
-                Move("Iron Wall", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::SELF),
+                Move("Iron Wall", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::ENEMY),
                 Move("Overhead Strike", MoveType::PHYSICAL, 75, 90),
                 Move("Berserk", MoveType::EFFECT, 0, 100, MoveEffect::ATK_UP, MoveTarget::SELF)
             };
@@ -45,7 +45,7 @@ void Enemy::initializeMovePool() {
                 Move("Eviscerate", MoveType::PHYSICAL, 85, 80),
                 Move("Cripple", MoveType::EFFECT, 0, 90, MoveEffect::SPD_DOWN, MoveTarget::ENEMY),
                 Move("Flurry", MoveType::PHYSICAL, 70, 95),
-                Move("Evasion", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::SELF)
+                Move("Evasion", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::ENEMY)
             };
             break;
         case EnemyType::WRAITH:
@@ -56,7 +56,7 @@ void Enemy::initializeMovePool() {
                 Move("Wail", MoveType::EFFECT, 0, 90, MoveEffect::SPDEF_DOWN, MoveTarget::ENEMY),
                 Move("Ethereal Blast", MoveType::SPECIAL, 95, 75),
                 Move("Dark Pulse", MoveType::SPECIAL, 75, 95),
-                Move("Mana Shield", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::SELF)
+                Move("Mana Shield", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::ENEMY)
             };
             break;
         case EnemyType::GOLEM:
@@ -64,7 +64,7 @@ void Enemy::initializeMovePool() {
                 Move("Stone Fist", MoveType::PHYSICAL, 70, 90),
                 Move("Harden", MoveType::EFFECT, 0, 100, MoveEffect::DEF_UP, MoveTarget::SELF),
                 Move("Earthquake", MoveType::PHYSICAL, 95, 75),
-                Move("Rock Shield", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::SELF),
+                Move("Rock Shield", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::ENEMY),
                 Move("Petrify", MoveType::EFFECT, 0, 85, MoveEffect::SPD_DOWN, MoveTarget::ENEMY),
                 Move("Boulder Toss", MoveType::PHYSICAL, 85, 80),
                 Move("Stone Slam", MoveType::PHYSICAL, 80, 90)

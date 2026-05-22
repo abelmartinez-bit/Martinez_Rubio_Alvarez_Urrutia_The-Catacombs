@@ -12,7 +12,7 @@ void MiniBoss::setMiniBossMoves() {
     switch (type) {
         case EnemyType::SENTINEL:
             setMove(0, Move("Devastating Crush", MoveType::PHYSICAL, 100, 90));
-            setMove(1, Move("Iron Fortress", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::SELF));
+            setMove(1, Move("Iron Fortress", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::ENEMY));
             setMove(2, Move("Titanic Slam", MoveType::PHYSICAL, 110, 85));
             setMove(3, Move("War Cry", MoveType::EFFECT, 0, 100, MoveEffect::ATK_UP, MoveTarget::SELF, 60));
             break;
@@ -32,7 +32,7 @@ void MiniBoss::setMiniBossMoves() {
             setMove(0, Move("Cataclysmic Quake", MoveType::PHYSICAL, 110, 80));
             setMove(1, Move("Diamond Skin", MoveType::EFFECT, 0, 100, MoveEffect::DEF_UP, MoveTarget::SELF));
             setMove(2, Move("Mountain Slam", MoveType::PHYSICAL, 100, 85));
-            setMove(3, Move("Stone Fortress", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::SELF));
+            setMove(3, Move("Stone Fortress", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::ENEMY));
             break;
         case EnemyType::SHAMAN:
             setMove(0, Move("Apocalyptic Hex", MoveType::EFFECT, 0, 95, MoveEffect::ATK_DOWN, MoveTarget::ENEMY, 55));

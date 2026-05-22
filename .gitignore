@@ -44,3 +44,4 @@
 # Project specific
 build/
 .DS_Store
+unlocked_relics.txt
