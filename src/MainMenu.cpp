@@ -67,3 +67,4 @@ void drawMainMenu(sf::RenderWindow& window, sf::Font& font, const sf::Sprite& bg
     creditsText.setPosition({(800.f - credBounds.size.x) / 2.f - credBounds.position.x, 565.f});
     window.draw(creditsText);
 }
+

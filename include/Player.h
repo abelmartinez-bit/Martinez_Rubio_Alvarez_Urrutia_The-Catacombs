@@ -26,6 +26,7 @@ private:
     int potionSlots;
     std::vector<Potion> potions;
     std::vector<Move> movePool; // banco de movimientos de donde se seleccionan  
+    
     // nuevos atributos para efectos de reliquias
     int expBoostPercent;
     int restoreOnLevelUpPercent;
@@ -35,6 +36,13 @@ private:
     float minibossDropModifier;  // sube la rareza del drop al ganarle a un miniboss
     float enemyDropModifier;     // sube la rareza del drop al ganarle a un enemigo normal
     std::vector<std::string> activeSynergies;
+
+    //nueva variable para level up sin cin
+    int pendingStatBoosts; //para saber cuantas elecciones de stat faltan
+
+    //nuevas variables para MoveRelic select sin cin
+    bool hasPendingMove; // saber si hay un move esperando ser reemplazado o boosteado
+    Move pendingMove; //guarda el move que se va a agregar o boostear
 
 public:
     Player(std::string name, int hp, int atk, int def, int spAtk, int spDef, int spd, PlayerType playerType);
@@ -46,7 +54,9 @@ public:
     int getPotionSlots() const { return potionSlots; }
     std::vector<Relic*> getRelics() const { return relics; }
     std::vector<Potion> getPotions() const { return potions; }
-    
+    int getPendingStatBoosts() const { return pendingStatBoosts; }
+    bool getHasPendingMove() const { return hasPendingMove; }
+    Move getPendingMove() const { return pendingMove; }
 
     //acciones por ahora, adicionales a las heredadas
     void gainExp(int amount);
@@ -57,7 +67,7 @@ public:
     bool hasRelic(const std::string& relicName) const;
     bool hasSynergy(const std::string& synergyName) const;
     void checkRelicSynergies();
-    //
+    //funciones para pociones 
     void addPotion(Potion potion);
     void usePotion(int index, Entity& target);
     void expandPotionSlots(int amount); // con relics
@@ -68,7 +78,18 @@ public:
     void addCorruptDoorModifier(float amount);
     void addMinibossDropModifier(float amount);
     void addEnemyDropModifier(float amount);
+
+    //funciones para level up sin cin
+    bool needsStatBoost() const { return pendingStatBoosts > 0; } //para saber si el jugador necesita elegir un stat boost
+    void applyStatBoost(int choice); //para aplicar el boost elegido y reducir la variable pendingStatBoosts
     
+    //funciones para MoveRelic sin cin
+    void setPendingMove(const Move& m) { 
+        pendingMove = m; //guarda el move de la relic 
+        hasPendingMove = true; } //activa la variable que hay un move esperando
+    bool hasPendingMoveRelic() const { return hasPendingMove; } //para saber si hay un move de relic esperando a ser aplicado
+    void applyPendingMove(int slotIndex); //para reemplazar el move elegido y desactivar pending move
+
     // sus getters para que Floor los lea
     float getCorruptDoorModifier()  const { return corruptDoorModifier; }
     float getMinibossDropModifier() const { return minibossDropModifier; }

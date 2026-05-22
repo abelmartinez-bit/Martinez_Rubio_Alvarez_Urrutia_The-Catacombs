@@ -1,7 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
-//Para saber en que pantalla estamos y ver lo de cada una, por ahorita solo estas 3
+//Para saber en que pantalla estamos y ver lo de cada una
 enum class GameScreen {
     MAIN_MENU,
     CHARACTER_SELECT,
@@ -9,7 +9,7 @@ enum class GameScreen {
     COMBAT,        // regular combat
     EVENT,         // combatless event (no hace nada aun)
     GAME_OVER,     // died
-    WIN            // completo los 5 pisos
+    WIN           // completo los 10 pisos y boss final
 };
 
 //Funcion para un boton de play y quit
@@ -30,3 +30,5 @@ void drawMainMenu(sf::RenderWindow& window, sf::Font& font,
                   const sf::Sprite& bgSprite,
                   const sf::Text& titleText, const sf::Text& subtitleText,
                   float btnX, float playY, float relicsY, float quitY, float btnW, float btnH);
+
+
