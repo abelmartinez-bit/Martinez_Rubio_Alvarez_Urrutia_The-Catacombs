@@ -1,5 +1,2 @@
-Sharp Eye
-Old Medal
-Golden Ring
-Apprentice Ring
-Phoenix Feather
+Hunter Boots|Increases SPD by 12.
+Blue Crystal|Increases SP.ATK by 6.

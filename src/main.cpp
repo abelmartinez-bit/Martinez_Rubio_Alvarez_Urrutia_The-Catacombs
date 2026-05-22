@@ -202,6 +202,7 @@ int main() {
                         if (mouse.x >= btnX && mouse.x <= btnX + btnW && mouse.y >= playY && mouse.y <= playY + btnH)
                             currentScreen = GameScreen::CHARACTER_SELECT;
 
+                            // boton de reliquias
                         if (mouse.x >= btnX && mouse.x <= btnX + btnW && mouse.y >= relicsY && mouse.y <= relicsY + btnH)
                             currentScreen = GameScreen::RELIC_TRACKER;
 

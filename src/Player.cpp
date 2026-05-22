@@ -79,7 +79,7 @@ void Player::boostStat(int statChoice) {
 void Player::addRelic(Relic* relic) {
     relics.push_back(relic);
     relic->applyEffect(*this);
-    RelicTracker::unlockRelic(relic->getName()); // desbloquea la reliquia en el tracker
+    RelicTracker::unlockRelic(relic->getName(), relic->getDescription()); // se desbloquea en el tracker
     checkRelicSynergies(); // revisar  sinergias cada vez que se agrega una reliquia
 }
 
