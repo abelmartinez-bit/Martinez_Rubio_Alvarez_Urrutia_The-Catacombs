@@ -1,5 +1,7 @@
 #include "../include/Player.h"
+#include "../include/RelicTracker.h"
 #include <iostream>
+
 
 Player::Player(std::string name, int hp, int atk, int def, int spAtk, int spDef, int spd, PlayerType playerType)
     : Entity(name, hp, atk, def, spAtk, spDef, spd), type(playerType), level(1), exp(0), expToNextLevel(100), 
@@ -79,15 +81,17 @@ void Player::applyPendingMove(int slotIndex) {
 void Player::addRelic(Relic* relic) {
     relics.push_back(relic);
     relic->applyEffect(*this);
-    checkRelicSynergies(); // revisar sinergias cada vez que se agrega una reliquia
+    RelicTracker::unlockRelic(relic->getName(), relic->getDescription()); // se desbloquea en el tracker
+    checkRelicSynergies(); // revisar  sinergias cada vez que se agrega una reliquia
 }
+
 // funciones para sinergias     
 bool Player::hasRelic(const std::string& relicName) const {
     for (Relic* relic : relics) {
         if (relic->getName() == relicName) {
             return true;
         }
-    }
+    }   
     return false;
 }
 

@@ -12,6 +12,7 @@
 #include "ScreenCombat.h"
 #include "GameLoop.h"
 #include "ScreenOverlays.h"
+#include "RelicTracker.h"
 
 
 // main
@@ -156,6 +157,10 @@ int main() {
                         if (mouse.x >= btnX && mouse.x <= btnX + btnW && mouse.y >= playY && mouse.y <= playY + btnH)
                             currentScreen = GameScreen::CHARACTER_SELECT;
 
+                            // boton de reliquias
+                        if (mouse.x >= btnX && mouse.x <= btnX + btnW && mouse.y >= relicsY && mouse.y <= relicsY + btnH)
+                            currentScreen = GameScreen::RELIC_TRACKER;
+
                         // Boton QUIT
                         if (mouse.x >= btnX && mouse.x <= btnX + btnW && mouse.y >= quitY && mouse.y <= quitY + btnH)
                             window.close();
@@ -299,6 +304,12 @@ int main() {
                     }
                 }
 
+                else if (currentScreen == GameScreen::RELIC_TRACKER) {
+                    if (keyEvent->code == sf::Keyboard::Key::B || keyEvent->code == sf::Keyboard::Key::R) {
+                          currentScreen = GameScreen::MAIN_MENU;
+    }
+}
+
                 // Game Over / Win / Final Boss  R para volver al menu
                 else if (currentScreen == GameScreen::GAME_OVER || currentScreen == GameScreen::WIN) {
                     if (keyEvent->code == sf::Keyboard::Key::R) {
@@ -321,9 +332,13 @@ int main() {
         if (currentScreen == GameScreen::MAIN_MENU) {
             drawMainMenu(window, font, bgSprite, titleText, subtitleText, btnX, playY, relicsY, quitY, btnW, btnH);
         }
+        
+        else if (currentScreen == GameScreen::RELIC_TRACKER) {
+            RelicTracker::drawRelicTracker(window, font, bgSprite);        }
+
         else if (currentScreen == GameScreen::CHARACTER_SELECT) {
             drawCharacterSelect(window, font, csSprite, cards, selectedCard, cardW, cardH, cardTop);
-        }
+        }   
         else if (currentScreen == GameScreen::DOOR_SELECT && gameLoop.getCurrentFloor() && player) {
             Enemy *previews[3] = { gameLoop.getPreviewEnemy(0), gameLoop.getPreviewEnemy(1), gameLoop.getPreviewEnemy(2) };
             drawDoorSelect(window, font, bgSprite, gameLoop.getCurrentFloor(), player, gameLoop.getFloorNumber(), previews);
