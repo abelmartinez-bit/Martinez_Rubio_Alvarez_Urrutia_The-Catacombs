@@ -2,7 +2,9 @@
 #include <iostream>
 
 Player::Player(std::string name, int hp, int atk, int def, int spAtk, int spDef, int spd, PlayerType playerType)
-    : Entity(name, hp, atk, def, spAtk, spDef, spd), type(playerType), level(1), exp(0), expToNextLevel(100), potionSlots(2), expBoostPercent(0), restoreOnLevelUpPercent(0), corruptDoorModifier(0.f), minibossDropModifier(0.f), enemyDropModifier(0.f) {}
+    : Entity(name, hp, atk, def, spAtk, spDef, spd), type(playerType), level(1), exp(0), expToNextLevel(100), 
+            potionSlots(2), expBoostPercent(0), restoreOnLevelUpPercent(0), corruptDoorModifier(0.f), minibossDropModifier(0.f), 
+            enemyDropModifier(0.f), pendingStatBoosts(0), hasPendingMove(false), pendingMove("Empty", MoveType::EFFECT, 0, 0) {}
 
 class Potion; // Forward declaration to avoid circular include
 
@@ -31,35 +33,16 @@ void Player::levelUp() {
      // 10% heal base al subir de nivel + bonus de relics RESTORE_ON_LEVEL_UP
     int totalRestorePercent = 10 + restoreOnLevelUpPercent;
     int restore = maxHp * totalRestorePercent / 100;
-
-    heal(restore);
+    heal(restore); 
 
     std::cout << "Restored " << restore << " HP on level up";
-    if (restoreOnLevelUpPercent > 0) {
+    if (restoreOnLevelUpPercent > 0) 
         std::cout << " (" << totalRestorePercent << "% total restore)";
-    }
     std::cout << "!\n";
-
-
     std::cout << name << " leveled up to level " << level << "!\n";
-    std::cout << "Choose 2 stats to boost:\n";
-    std::cout << "1. HP (+20)\n";
-    std::cout << "2. ATK (+10)\n";
-    std::cout << "3. DEF (+10)\n";
-    std::cout << "4. SP.ATK (+10)\n";
-    std::cout << "5. SP.DEF (+10)\n";
-    std::cout << "6. SPD (+6)\n";
-
-    for (int i = 0; i < 2; i++) {
-        int choice;
-        std::cout << "Choice " << i + 1 << ": ";
-        std::cin >> choice;
-        if (!(choice >= 1 && choice <= 6)) {
-            std::cout << "Default HP boost.\n";
-            choice = 1; // default HP boost
-        }
-        boostStat(choice);
-    }
+   
+    //ahora sin cin, se marcan 2 boosts pendientes y el jugador elige después en la pantalla de level up
+    pendingStatBoosts = 2;
 }
 
 void Player::boostStat(int statChoice) {
@@ -72,6 +55,25 @@ void Player::boostStat(int statChoice) {
         case 6: spd += 6; break;
         default: std::cout << "Invalid choice!\n"; break;
     }
+}
+
+//boosteo de stat sin cin
+//funcion nueva a boostStat para validar, aplicarlo y restar la variable pendingStatBoosts
+void Player::applyStatBoost(int choice) {
+    if (pendingStatBoosts <= 0) return; 
+    boostStat(choice); 
+    pendingStatBoosts--;
+}
+
+//para aplicar el move de MoveRelic sin cin
+void Player::applyPendingMove(int slotIndex) {
+    if (!hasPendingMove) return; //validaciones
+    if (slotIndex >= 0 && slotIndex < 4)
+        setMove(slotIndex, pendingMove); 
+    else
+        setMove(0, pendingMove); //se aplica al primer slot si la elección no es válida
+    std::cout << "Move replaced with " << pendingMove.getName() << "!\n";
+    hasPendingMove = false; //resetear la variable
 }
 
 void Player::addRelic(Relic* relic) {
@@ -400,6 +402,7 @@ void Player::initializeMovePool() {
     //se asignan los moves al enemigo segun los indices obtenidos
     for (int i = 0; i < 4; i++)
         setMove(i, movePool[indices[i]]);
+
 }
 
 Player::~Player() {
