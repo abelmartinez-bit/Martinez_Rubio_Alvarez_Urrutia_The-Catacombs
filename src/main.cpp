@@ -73,6 +73,9 @@ int main() {
     bool showLevelUp = false;
     bool showMoveSelect = false;
 
+    // Track the next screen to transition to after level up from event door
+    GameScreen nextScreenAfterLevelUp = GameScreen::MAIN_MENU;
+
     // Main Menu — textos y botones
     sf::Text titleText(font, "THE CATACOMBS", 58);
     titleText.setFillColor(sf::Color(210, 160, 60));
@@ -194,8 +197,13 @@ int main() {
                                     showLevelUp = false;
                                     if (player->hasPendingMoveRelic())
                                         showMoveSelect = true;
-                                    else
+                                    else if (currentScreen == GameScreen::COMBAT) {
+                                        // Coming from combat, advance normally
                                         currentScreen = gameLoop.onCombatFinished();
+                                    } else {
+                                        // Coming from event door, use stored next screen
+                                        currentScreen = nextScreenAfterLevelUp;
+                                    }
                                 }
                                 break;
                             }
@@ -213,7 +221,13 @@ int main() {
                                 mouse.y >= by && mouse.y <= by + msBtnH) {
                                 player->applyPendingMove(i);
                                 showMoveSelect = false;
-                                currentScreen = gameLoop.onCombatFinished();
+                                if (currentScreen == GameScreen::COMBAT) {
+                                    // Coming from combat, advance normally
+                                    currentScreen = gameLoop.onCombatFinished();
+                                } else {
+                                    // Coming from event door, use stored next screen
+                                    currentScreen = nextScreenAfterLevelUp;
+                                }
                                 break;
                             }
                         }
@@ -246,7 +260,15 @@ int main() {
 
                     if (doorIdx != -1) {
                         rewardGiven = false;
-                        currentScreen = gameLoop.selectDoor(doorIdx);
+                        nextScreenAfterLevelUp = gameLoop.selectDoor(doorIdx);
+                        
+                        // Check if player needs level up from event door
+                        if (player && player->needsStatBoost()) {
+                            showLevelUp = true;
+                            // Keep currentScreen as DOOR_SELECT temporarily while showing level up
+                        } else {
+                            currentScreen = nextScreenAfterLevelUp;
+                        }
                         // Si fue evento, selectDoor ya genero el siguiente piso
                         // y devolvio DOOR_SELECT (o WIN/FINAL BOSS si era el ultimo piso)
                     }
@@ -263,8 +285,10 @@ int main() {
                         // Solo avanza si el combate ya termino y se entregaron recompensas
                         CombatEngine* combat = gameLoop.getCombat();
                         if (combat && combat->isBattleOver() && rewardGiven) {
-                            if (player->needsStatBoost())
+                            if (player->needsStatBoost()) {
                                 showLevelUp = true; //nuevo pop up para elegir stat boost
+                                nextScreenAfterLevelUp = GameScreen::COMBAT; // Mark we came from combat
+                            }
                             else if (player->hasPendingMoveRelic())
                                 showMoveSelect = true; //new pop up para elegir que move boostear o reemplazar con MoveRelic
                             else
@@ -303,6 +327,11 @@ int main() {
         else if (currentScreen == GameScreen::DOOR_SELECT && gameLoop.getCurrentFloor() && player) {
             Enemy *previews[3] = { gameLoop.getPreviewEnemy(0), gameLoop.getPreviewEnemy(1), gameLoop.getPreviewEnemy(2) };
             drawDoorSelect(window, font, bgSprite, gameLoop.getCurrentFloor(), player, gameLoop.getFloorNumber(), previews);
+            if (showLevelUp)
+                // aqui iria el drawEvent o algo por el estilo
+                drawLevelUp(window, font, player);
+            else if (showMoveSelect)
+                drawMoveSelect(window, font, player);
         }
         else if (currentScreen == GameScreen::COMBAT && player && gameLoop.getCombat() && gameLoop.getCurrentFloor() 
                 && gameLoop.getCurrentEnemy()) {
