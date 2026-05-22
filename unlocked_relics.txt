@@ -1,0 +1,2 @@
+Hunter Boots|Increases SPD by 12.
+Blue Crystal|Increases SP.ATK by 6.
