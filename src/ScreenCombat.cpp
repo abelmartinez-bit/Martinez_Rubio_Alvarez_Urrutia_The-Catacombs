@@ -11,14 +11,14 @@ void drawCombat(sf::RenderWindow& window, sf::Font& font, Player* player, Enemy*
     playerText.setString(
         player->getName() + " | " + combat->potionList(*player) + "\n" +
         "HP: " + std::to_string(player->getHp()) + "/" + std::to_string(player->getMaxHp()) + "\n" +
-        "SP.ATK: " + std::to_string(player->getSpAtk()) + " | DEF: " + std::to_string(player->getDef()) + "\n" +
+        player->getHighestAtkStr() + " | " + player->getHighestDefStr() + "\n" +
         "SPD: " + std::to_string(player->getSpd())
     );
 
     enemyText.setString(
         enemy->getName() + "\n" +
         "HP: " + std::to_string(enemy->getHp()) + "/" + std::to_string(enemy->getMaxHp()) + "\n" +
-        "ATK: " + std::to_string(enemy->getAtk()) + " | SP.DEF: " + std::to_string(enemy->getSpDef()) + "\n" +
+        enemy->getHighestAtkStr() + " | " + enemy->getHighestDefStr() + "\n" +
         "SPD: " + std::to_string(enemy->getSpd())
     );
 

@@ -101,8 +101,8 @@ int main() {
     CharacterCard cards[4] = {
         //centerX, name, PlayerType, hp, atk, def, spAtk, spDef, spd
         {  117.f, "Warrior", PlayerType::WARRIOR, 1300, 30, 35, 10, 25, 10 }, // testing
-        { 306.f, "Mage",    PlayerType::MAGE,    100, 10, 25, 30, 35, 15 },
-        { 498.f, "Rogue",   PlayerType::ROGUE,   110, 40, 22, 15, 32, 40 },
+        { 306.f, "Mage",    PlayerType::MAGE,    100, 10, 25, 35, 35, 15 },
+        { 498.f, "Rogue",   PlayerType::ROGUE,   110, 40, 22, 15, 22, 40 },
         { 689.f, "Archer",  PlayerType::ARCHER,  100, 15, 30, 30, 25, 25 }
     };
     const float cardW = 160.f, cardH = 480.f, cardTop = 60.f;

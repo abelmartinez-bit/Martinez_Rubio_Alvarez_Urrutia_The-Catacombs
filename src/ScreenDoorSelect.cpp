@@ -52,7 +52,7 @@ void drawDoorSelect(sf::RenderWindow& window, sf::Font& font,const sf::Sprite& b
         "   HP: " + std::to_string(player->getHp()) + "/" + std::to_string(player->getMaxHp()) +
         "   LVL: " + std::to_string(player->getLevel()) +
         "   Relics: " + std::to_string(player->getRelics().size()) +
-        "   Potions: " + std::to_string(player->getPotions().size());
+        "   Potions: " + std::to_string(player->getPotions().size()) + "/" + std::to_string(player->getPotionSlots());
 
     sf::Text playerStats(font, statsStr, 16);
     playerStats.setFillColor(sf::Color(100, 200, 100));
