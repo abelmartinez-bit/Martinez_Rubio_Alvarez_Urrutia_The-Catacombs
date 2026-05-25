@@ -114,22 +114,29 @@ int CombatEngine::calculateDamage(Entity* attacker, Entity* defender, Move move)
     int attackStat = (move.getType() == MoveType::PHYSICAL) ? attacker->getAtk() : attacker->getSpAtk();
     int defenseStat = (move.getType() == MoveType::PHYSICAL) ? defender->getDef() : defender->getSpDef();
 
+    int baseDefenseStat = (move.getType() == MoveType::PHYSICAL) ? defender->getBaseDef() : defender->getBaseSpDef();
+    int baseAttackStat = (move.getType() == MoveType::PHYSICAL) ? attacker->getBaseAtk() : attacker->getBaseSpAtk();
+
+
     int critChance = 5 + (5 * attacker->getSpd() / defender->getSpd()); // base crit chance 5%, scales con SPD
     int roll = rand() % 100;
 
     if (roll < critChance) {
-        int defenseStat = (move.getType() == MoveType::PHYSICAL) ? defender->getBaseDef() : defender->getBaseSpDef(); // crits ignore buffs/debuffs
+
+        if (baseDefenseStat < defenseStat) defenseStat = baseDefenseStat; // if defender buffed ignore buffs
+        if (baseAttackStat > attackStat) attackStat = baseAttackStat; // if attacker debuffed ignore debuffs
         
         if (defender->getIsBlocking()) {
             combatLog += defender->getName() + "'s block broke because ";
+            defenseStat = static_cast<int>(defenseStat * 2.4);
             defender->setBlocking(false); // el bloque se rompe si le pegan un crit
         }
 
-        attackStat *= 3; // crits hacen el doble de dmg 
+        attackStat *= 2.4; // mismo mult que el block
         combatLog += attacker->getName() + " landed a critical hit!\n";
     }
     
-    // Apply blocking bonus, static por int
+    // Apply blocking bonus when not crit, static por int
     if (defender->getIsBlocking()) {
         defenseStat = static_cast<int>(defenseStat * 2.4);
         attackStat = static_cast<int>(attackStat * 0.9); // simula el debuff que le esta aplicando

@@ -66,15 +66,15 @@ Entity* Floor::spawnEnemyFromDoor(const Door& door) {
     switch (door.getEnemyType()) {
         case EnemyType::SENTINEL:
             name = "Sentinel";
-            hp = 60; atk = 15; def = 18; spAtk = 5; spDef = 8; spd = 5;
+            hp = 60; atk = 15; def = 14; spAtk = 5; spDef = 14; spd = 6;
             break;
         case EnemyType::SHADE:
             name = "Shade";
-            hp = 40; atk = 18; def = 6; spAtk = 5; spDef = 6; spd = 20;
+            hp = 40; atk = 20; def = 6; spAtk = 5; spDef = 6; spd = 20;
             break;
         case EnemyType::WRAITH:
             name = "Wraith";
-            hp = 50; atk = 5; def = 8; spAtk = 20; spDef = 12; spd = 12;
+            hp = 50; atk = 5; def = 10; spAtk = 20; spDef = 12; spd = 12;
             break;
         case EnemyType::GOLEM:
             name = "Golem";
@@ -82,11 +82,11 @@ Entity* Floor::spawnEnemyFromDoor(const Door& door) {
             break;
         case EnemyType::SHAMAN:
             name = "Shaman";
-            hp = 50; atk = 12; def = 12; spAtk = 14; spDef = 14; spd = 14;
+            hp = 50; atk = 12; def = 12; spAtk = 14; spDef = 16; spd = 14;
             break;
         case EnemyType::SPECTER:
             name = "Specter";
-            hp = 35; atk = 5; def = 6; spAtk = 22; spDef = 8; spd = 18;
+            hp = 35; atk = 15; def = 6; spAtk = 22; spDef = 8; spd = 24;
             break;
     }
     

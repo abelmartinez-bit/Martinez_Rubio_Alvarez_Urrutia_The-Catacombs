@@ -37,7 +37,7 @@ void drawWin(sf::RenderWindow& window, sf::Font& font) {
     title.setPosition({(800.f - tb.size.x) / 2.f - tb.position.x, 170.f});
     window.draw(title);
 
-    sf::Text sub(font, "You conquered all 5 floors of The Catacombs.", 20);
+    sf::Text sub(font, "You conquered all 10 floors of The Catacombs.", 20);
     sub.setFillColor(sf::Color(180, 160, 100));
     sf::FloatRect sb = sub.getLocalBounds();
     sub.setPosition({(800.f - sb.size.x) / 2.f - sb.position.x, 285.f});

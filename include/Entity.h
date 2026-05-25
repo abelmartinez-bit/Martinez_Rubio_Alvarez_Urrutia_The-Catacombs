@@ -45,8 +45,28 @@ public:
         return highest;
     }
 
+    std::string getHighestAtkStr() const{
+        int highest = atk;
+        if (spAtk > highest) {
+            highest = spAtk;
+            return "SP.ATK: " + std::to_string(highest);
+        }
+        return "ATK: " + std::to_string(highest);
+    }
+
+    std::string getHighestDefStr() const{
+        int highest = def;
+        if (spDef > highest) {
+            highest = spDef;
+            return "SP.DEF: " + std::to_string(highest);
+        }
+        return "DEF: " + std::to_string(highest);
+    }
+
     int getBaseDef() const { return baseDef; }
     int getBaseSpDef() const { return baseSpDef; }
+    int getBaseAtk() const { return baseAtk; }
+    int getBaseSpAtk() const { return baseSpAtk; }
     bool getIsBlocking() const { return isBlocking; }
     std::vector<Move> getMoves() const { return moves; }
 
