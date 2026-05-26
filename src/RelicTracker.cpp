@@ -56,7 +56,7 @@ void RelicTracker::unlockRelic(const std::string& relicName, const std::string& 
     std::cout << "Relic tracked: " << relicName << " - " << relicDescription << "\n";
 }
 
-void RelicTracker::drawRelicTracker(sf::RenderWindow& window, sf::Font& font, const sf::Sprite& bgSprite) {
+void RelicTracker::drawRelicTracker(sf::RenderWindow& window, sf::Font& font, sf::Font& fontSmall, const sf::Sprite& bgSprite) {
     std::vector<std::pair<std::string, std::string>> unlockedRelics = loadUnlockedRelics();
 
     window.draw(bgSprite);
@@ -76,7 +76,7 @@ void RelicTracker::drawRelicTracker(sf::RenderWindow& window, sf::Font& font, co
 
     window.draw(title);
 
-    sf::Text hint(font, "Press B or R to return to the main menu", 15);
+    sf::Text hint(fontSmall, "Press B to return to the main menu", 15);
     hint.setFillColor(sf::Color(160, 160, 160));
 
     sf::FloatRect hintBounds = hint.getLocalBounds();
@@ -93,7 +93,7 @@ void RelicTracker::drawRelicTracker(sf::RenderWindow& window, sf::Font& font, co
     window.draw(panel);
 
     if (unlockedRelics.empty()) {
-        sf::Text emptyText(font, "No relics discovered yet.", 22);
+        sf::Text emptyText(fontSmall, "No relics discovered yet.", 22);
         emptyText.setFillColor(sf::Color::White);
 
         sf::FloatRect emptyBounds = emptyText.getLocalBounds();
@@ -114,12 +114,12 @@ void RelicTracker::drawRelicTracker(sf::RenderWindow& window, sf::Font& font, co
         std::string relicName = unlockedRelics[i].first;
         std::string relicDescription = unlockedRelics[i].second;
 
-        sf::Text relicNameText(font, std::to_string(i + 1) + ". " + relicName, 15);
+        sf::Text relicNameText(fontSmall, std::to_string(i + 1) + ". " + relicName, 15);
         relicNameText.setFillColor(sf::Color(230, 220, 190));
         relicNameText.setPosition({startX, startY + i * rowGap});
         window.draw(relicNameText);
 
-        sf::Text relicDescriptionText(font, relicDescription, 12);
+        sf::Text relicDescriptionText(fontSmall, relicDescription, 12);
         relicDescriptionText.setFillColor(sf::Color(170, 170, 170));
         relicDescriptionText.setPosition({startX + 20.f, startY + 18.f + i * rowGap});
         window.draw(relicDescriptionText);

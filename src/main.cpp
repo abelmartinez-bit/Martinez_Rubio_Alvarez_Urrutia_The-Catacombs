@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
@@ -27,31 +28,54 @@ int main() {
     sf::View view(sf::FloatRect({0.f, 0.f}, {800.f, 600.f}));
     window.setView(view);
 
-    sf::Font font;
-    if (!font.openFromFile("assets/fonts/Arial.ttf")) {
+    //crear y cargar fuentes, texturas y sprites , y music
+    sf::Font font; //cinzel, principal
+    sf::Font fontSmall; //arial, para letras chiquitas
+    sf::Font fontTitle; //MedievalSharp solo para titulo
+
+    if (!font.openFromFile("assets/fonts/Cinzel-VariableFont_wght.ttf")) {
         std::cerr << "Error: no se pudo cargar la fuente\n";
         return 1;
     }
 
-    sf::Texture bgTexture;
+    if (!fontSmall.openFromFile("assets/fonts/Arial.ttf")) {
+        std::cerr << "Error: no se pudo cargar la fuente\n";
+        return 1;
+    }
+
+    if (!fontTitle.openFromFile("assets/fonts/MedievalSharp-Regular.ttf")) {
+        std::cerr << "Error: no se pudo cargar la fuente\n";
+        return 1;
+    }
+
+    sf::Music music;
+    if (!music.openFromFile("assets/audio/PianoBG.wav")) {
+        std::cerr << "Error: no se pudo cargar la musica\n";
+     return 1;
+    }
+    music.setLooping(true);
+    music.setVolume(50.f);
+    music.play();
+
+    sf::Texture bgTexture; //fondo del main menu
     if (!bgTexture.loadFromFile("assets/images/CTHomeScreen1.jpg")) {
         std::cerr << "Error: no se pudo cargar el fondo del menu\n";
         return 1;
     }
 
-    sf::Texture csTexture;
+    sf::Texture csTexture; //fondo del character select
     if (!csTexture.loadFromFile("assets/images/CharacterSelect.jpeg")) {
         std::cerr << "Error: no se pudo cargar el fondo de seleccion\n";
         return 1;
     }
 
-    sf::Texture combatTexture;
+    sf::Texture combatTexture; //fondo del combate
     if (!combatTexture.loadFromFile("assets/images/Corridor.jpeg")) {
         std::cerr << "Error: no se pudo cargar el fondo de combate\n";
         return 1;
     }
 
-    sf::Sprite bgSprite(bgTexture);
+    sf::Sprite bgSprite(bgTexture); 
     bgSprite.setScale({800.f / bgTexture.getSize().x, 600.f / bgTexture.getSize().y});
 
     sf::Sprite csSprite(csTexture);
@@ -78,14 +102,14 @@ int main() {
     GameScreen nextScreenAfterLevelUp = GameScreen::MAIN_MENU;
 
     // Main Menu — textos y botones
-    sf::Text titleText(font, "THE CATACOMBS", 58);
+    sf::Text titleText(fontTitle, "THE CATACOMBS", 58);
     titleText.setFillColor(sf::Color(210, 160, 60));
     {
         sf::FloatRect b = titleText.getLocalBounds();
         titleText.setPosition({(800.f - b.size.x) / 2.f - b.position.x, 130.f});
     }
 
-    sf::Text subtitleText(font, "- Roguelike Dungeon Crawler -", 17);
+    sf::Text subtitleText(fontSmall, "- Roguelike Dungeon Crawler -", 17);
     subtitleText.setFillColor(sf::Color(160, 120, 50));
     {
         sf::FloatRect b = subtitleText.getLocalBounds();
@@ -154,8 +178,10 @@ int main() {
 
                     if (currentScreen == GameScreen::MAIN_MENU) {
                         // Boton PLAY
-                        if (mouse.x >= btnX && mouse.x <= btnX + btnW && mouse.y >= playY && mouse.y <= playY + btnH)
+                        if (mouse.x >= btnX && mouse.x <= btnX + btnW && mouse.y >= playY && mouse.y <= playY + btnH) {
+                            music.stop();
                             currentScreen = GameScreen::CHARACTER_SELECT;
+                        }
 
                             // boton de reliquias
                         if (mouse.x >= btnX && mouse.x <= btnX + btnW && mouse.y >= relicsY && mouse.y <= relicsY + btnH)
@@ -305,7 +331,7 @@ int main() {
                 }
 
                 else if (currentScreen == GameScreen::RELIC_TRACKER) {
-                    if (keyEvent->code == sf::Keyboard::Key::B || keyEvent->code == sf::Keyboard::Key::R) {
+                    if (keyEvent->code == sf::Keyboard::Key::B) {
                           currentScreen = GameScreen::MAIN_MENU;
     }
 }
@@ -330,11 +356,12 @@ int main() {
         //bloques de dibujo por pantalla
 
         if (currentScreen == GameScreen::MAIN_MENU) {
-            drawMainMenu(window, font, bgSprite, titleText, subtitleText, btnX, playY, relicsY, quitY, btnW, btnH);
+            sf::Vector2f mouse = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+            drawMainMenu(window, font, fontSmall, fontTitle, bgSprite, titleText, subtitleText, btnX, playY, relicsY, quitY, btnW, btnH, mouse);
         }
         
         else if (currentScreen == GameScreen::RELIC_TRACKER) {
-            RelicTracker::drawRelicTracker(window, font, bgSprite);        }
+            RelicTracker::drawRelicTracker(window, font, fontSmall, bgSprite);        }
 
         else if (currentScreen == GameScreen::CHARACTER_SELECT) {
             drawCharacterSelect(window, font, csSprite, cards, selectedCard, cardW, cardH, cardTop);

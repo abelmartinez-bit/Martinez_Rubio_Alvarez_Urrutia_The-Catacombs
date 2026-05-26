@@ -60,15 +60,21 @@ void drawCharacterSelect(sf::RenderWindow& window, sf::Font& font, const sf::Spr
         window.draw(nameText);
     }
 
+    // Rectangulo detras del texto
+    sf::RectangleShape textBg({440.f, 56.f});
+    textBg.setPosition({180.f, 545.f});
+    textBg.setFillColor(sf::Color(10, 5, 0, 180));
+    window.draw(textBg);
+
     // Texto de seleccion
     sf::Text tempText(font, "SELECCIONA TU PERSONAJE", 26);
-    tempText.setFillColor(sf::Color::Black);
+    tempText.setFillColor(sf::Color::White);
     sf::FloatRect tb = tempText.getLocalBounds();
     tempText.setPosition({(800.f - tb.size.x) / 2.f - tb.position.x, 545.f});
     window.draw(tempText);
 
     sf::Text hintText(font, selectedCard == -1 ? "Haz click en un personaje" : "Presiona C para continuar", 18);
-    hintText.setFillColor(sf::Color::Black);
+    hintText.setFillColor(sf::Color::White);
     sf::FloatRect hb = hintText.getLocalBounds();
     hintText.setPosition({(800.f - hb.size.x) / 2.f - hb.position.x, 575.f});
     window.draw(hintText);
