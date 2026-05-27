@@ -18,6 +18,7 @@
                 "-lsfml-graphics",
                 "-lsfml-window",
                 "-lsfml-system",
+                "-lsfml-audio",
                 "-o",
                 "${workspaceFolder}/libs/SFML/game"
             ],
@@ -44,6 +45,7 @@
                 "-lsfml-graphics",
                 "-lsfml-window",
                 "-lsfml-system",
+                "-lsfml-audio",
                 "-o",
                 "${workspaceFolder}/libs/SFML/game.exe"
             ],
