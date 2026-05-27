@@ -4,6 +4,9 @@
 
 static const std::string RELIC_TRACKER_FILE = "unlocked_relics.txt";
 
+// Initialize static member
+float RelicTracker::scrollOffset = 0.f;
+
 std::vector<std::pair<std::string, std::string>> RelicTracker::loadUnlockedRelics() {
     std::vector<std::pair<std::string, std::string>> unlockedRelics;
     std::ifstream file(RELIC_TRACKER_FILE);
@@ -56,6 +59,14 @@ void RelicTracker::unlockRelic(const std::string& relicName, const std::string& 
     std::cout << "Relic tracked: " << relicName << " - " << relicDescription << "\n";
 }
 
+void RelicTracker::handleScroll(int delta) {
+    scrollOffset -= delta * 10.f;  // Multiply by 10 for more noticeable scrolling
+}
+
+void RelicTracker::resetScroll() {
+    scrollOffset = 0.f;
+}
+
 void RelicTracker::drawRelicTracker(sf::RenderWindow& window, sf::Font& font, sf::Font& fontSmall, const sf::Sprite& bgSprite) {
     std::vector<std::pair<std::string, std::string>> unlockedRelics = loadUnlockedRelics();
 
@@ -76,19 +87,21 @@ void RelicTracker::drawRelicTracker(sf::RenderWindow& window, sf::Font& font, sf
 
     window.draw(title);
 
-    sf::Text hint(fontSmall, "Press B to return to the main menu", 15);
+    sf::Text hint(fontSmall, "Press B to return to the main menu | Scroll to see more relics", 15);
     hint.setFillColor(sf::Color(160, 160, 160));
 
     sf::FloatRect hintBounds = hint.getLocalBounds();
-    hint.setPosition({
-        (800.f - hintBounds.size.x) / 2.f - hintBounds.position.x,
-        95.f
-    });
+    hint.setPosition({(800.f - hintBounds.size.x) / 2.f - hintBounds.position.x, 95.f});
 
     window.draw(hint);
 
-    sf::RectangleShape panel({660.f, 420.f});
-    panel.setPosition({70.f, 135.f});
+    const float panelX = 70.f;      // Left edge
+    const float panelY = 130.f;     // Top edge
+    const float panelW = 660.f;     // Width
+    const float panelH = 440.f;     // Height
+
+    sf::RectangleShape panel({panelW, panelH});
+    panel.setPosition({panelX, panelY});
     panel.setFillColor(sf::Color(20, 12, 5, 210));
     window.draw(panel);
 
@@ -106,22 +119,69 @@ void RelicTracker::drawRelicTracker(sf::RenderWindow& window, sf::Font& font, sf
         return;
     }
 
-    float startX = 105.f;
-    float startY = 155.f;
-    float rowGap = 42.f;
+    float startX = 100.f;
+    float startY = panelY + 15.f;  // Start below the top of the panel with some padding
+    float rowGap = 45.f;
+
+    // Calculate maximum scroll offset to prevent scrolling too far
+    float totalHeight = unlockedRelics.size() * rowGap;
+    float maxScroll = std::max(0.f, totalHeight - panelH + 20.f);
+    if (scrollOffset > maxScroll) {
+        scrollOffset = maxScroll;
+    }
+    if (scrollOffset < 0.f) {
+        scrollOffset = 0.f;
+    }
+
+    // Save the current view so we can restore it later
+    sf::View viewport = window.getView();
+
+    sf::Vector2f viewSize = viewport.getSize();  // (800, 600)
+
+    sf::View scissorView(sf::FloatRect({panelX, panelY}, {panelW, panelH}));
+    scissorView.setViewport(sf::FloatRect(
+        {panelX / viewSize.x,  panelY / viewSize.y},
+        {panelW / viewSize.x,  panelH / viewSize.y}
+    ));
+    window.setView(scissorView);
 
     for (int i = 0; i < static_cast<int>(unlockedRelics.size()); i++) {
-        std::string relicName = unlockedRelics[i].first;
-        std::string relicDescription = unlockedRelics[i].second;
+        float yPos = panelY + 15.f + i * rowGap - scrollOffset;
 
-        sf::Text relicNameText(fontSmall, std::to_string(i + 1) + ". " + relicName, 15);
+        if (yPos + rowGap < panelY || yPos > panelY + panelH) continue;
+
+        sf::Text relicNameText(fontSmall, std::to_string(i + 1) + ". " + unlockedRelics[i].first, 14);
         relicNameText.setFillColor(sf::Color(230, 220, 190));
-        relicNameText.setPosition({startX, startY + i * rowGap});
+        relicNameText.setPosition({startX, yPos});
         window.draw(relicNameText);
 
-        sf::Text relicDescriptionText(fontSmall, relicDescription, 12);
+        sf::Text relicDescriptionText(fontSmall, unlockedRelics[i].second, 14);
         relicDescriptionText.setFillColor(sf::Color(170, 170, 170));
-        relicDescriptionText.setPosition({startX + 20.f, startY + 18.f + i * rowGap});
+        relicDescriptionText.setPosition({startX + 20.f, yPos + 18.f});
         window.draw(relicDescriptionText);
+    }
+
+    window.setView(viewport);
+
+    // Draw scrollbar
+    if (totalHeight > panelH) {
+        const float scrollbarX = panelX + panelW + 10.f;
+        const float scrollbarW = 8.f;
+        const float scrollbarTrackH = panelH;
+
+        // Scrollbar track
+        sf::RectangleShape track({scrollbarW, scrollbarTrackH});
+        track.setPosition({scrollbarX, panelY});
+        track.setFillColor(sf::Color(60, 40, 20, 150));
+        window.draw(track);
+
+        // Scrollbar thumb
+        float thumbHeight = (panelH / totalHeight) * panelH;
+        float thumbY = panelY + (scrollOffset / maxScroll) * (panelH - thumbHeight);
+
+        sf::RectangleShape thumb({scrollbarW, thumbHeight});
+        thumb.setPosition({scrollbarX, thumbY});
+        thumb.setFillColor(sf::Color(150, 100, 40, 200));
+        window.draw(thumb);
     }
 }

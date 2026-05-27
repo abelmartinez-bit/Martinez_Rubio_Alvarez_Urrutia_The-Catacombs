@@ -50,7 +50,8 @@ void drawWin(sf::RenderWindow& window, sf::Font& font) {
     window.draw(hint);
 }
 
-void drawLevelUp(sf::RenderWindow& window, sf::Font& font, Player* player) {
+void drawLevelUp(sf::RenderWindow& window, sf::Font& font, Player* player, sf::Vector2f mousePos) {
+
     sf::RectangleShape overlay({800.f, 600.f});
     overlay.setFillColor(sf::Color(0, 0, 0, 210));
     window.draw(overlay);
@@ -87,18 +88,22 @@ void drawLevelUp(sf::RenderWindow& window, sf::Font& font, Player* player) {
     const float luBtnX = (800.f - luBtnW) / 2.f;
 
     for (int i = 0; i < 6; i++) {
+        // Check if mouse is hovering over this button
+        bool isHovered = (mousePos.x >= luBtnX && mousePos.x <= luBtnX + luBtnW &&
+                          mousePos.y >= btns[i].y && mousePos.y <= btns[i].y + luBtnH);
+
         sf::RectangleShape border({luBtnW + 4.f, luBtnH + 4.f});
         border.setPosition({luBtnX - 2.f, btns[i].y - 2.f});
-        border.setFillColor(sf::Color(120, 80, 20));
+        border.setFillColor(isHovered ? sf::Color(200, 150, 50) : sf::Color(120, 80, 20));
         window.draw(border);
 
         sf::RectangleShape bg({luBtnW, luBtnH});
         bg.setPosition({luBtnX, btns[i].y});
-        bg.setFillColor(sf::Color(20, 12, 5, 210));
+        bg.setFillColor(isHovered ? sf::Color(50, 35, 15, 210) : sf::Color(20, 12, 5, 210));
         window.draw(bg);
 
         sf::Text label(font, btns[i].label, 22);
-        label.setFillColor(sf::Color(210, 160, 60));
+        label.setFillColor(isHovered ? sf::Color(255, 200, 100) : sf::Color(210, 160, 60));
         sf::FloatRect flb = label.getLocalBounds();
         label.setPosition({luBtnX + (luBtnW - flb.size.x) / 2.f - flb.position.x,
                            btns[i].y + (luBtnH - flb.size.y) / 2.f - flb.position.y});
@@ -106,7 +111,7 @@ void drawLevelUp(sf::RenderWindow& window, sf::Font& font, Player* player) {
     }
 }
 
-void drawMoveSelect(sf::RenderWindow& window, sf::Font& font, Player* player) {
+void drawMoveSelect(sf::RenderWindow& window, sf::Font& font, Player* player, sf::Vector2f mousePos) {
     sf::RectangleShape overlay({800.f, 600.f});
     overlay.setFillColor(sf::Color(0, 0, 0, 210));
     window.draw(overlay);
@@ -118,7 +123,7 @@ void drawMoveSelect(sf::RenderWindow& window, sf::Font& font, Player* player) {
     window.draw(title);
 
     sf::Text newMove(font, "New move: " + player->getPendingMove().getName() +
-                     "  (Power: " + std::to_string(player->getPendingMove().getPower()) + ")", 20);
+                     "  (Power: " + std::to_string(player->getPendingMove().getPower()) + ")", 16);
     newMove.setFillColor(sf::Color(100, 220, 100));
     sf::FloatRect nb = newMove.getLocalBounds();
     newMove.setPosition({(800.f - nb.size.x) / 2.f - nb.position.x, 100.f});
@@ -138,19 +143,23 @@ void drawMoveSelect(sf::RenderWindow& window, sf::Font& font, Player* player) {
     for (int i = 0; i < 4; i++) {
         float by = msStartY + i * (msBtnH + 18.f);
 
+        // Check if mouse is hovering over this button
+        bool isHovered = (mousePos.x >= msBtnX && mousePos.x <= msBtnX + msBtnW &&
+                          mousePos.y >= by && mousePos.y <= by + msBtnH);
+
         sf::RectangleShape border({msBtnW + 4.f, msBtnH + 4.f});
         border.setPosition({msBtnX - 2.f, by - 2.f});
-        border.setFillColor(sf::Color(120, 80, 20));
+        border.setFillColor(isHovered ? sf::Color(200, 150, 50) : sf::Color(120, 80, 20));
         window.draw(border);
 
         sf::RectangleShape bg({msBtnW, msBtnH});
         bg.setPosition({msBtnX, by});
-        bg.setFillColor(sf::Color(20, 12, 5, 210));
+        bg.setFillColor(isHovered ? sf::Color(50, 35, 15, 210) : sf::Color(20, 12, 5, 210));
         window.draw(bg);
 
         sf::Text label(font, std::to_string(i + 1) + ".  " + moves[i].getName() +
-                       "  (Power: " + std::to_string(moves[i].getPower()) + ")", 20);
-        label.setFillColor(sf::Color(210, 160, 60));
+                       "  (Power: " + std::to_string(moves[i].getPower()) + ")", 16);
+        label.setFillColor(isHovered ? sf::Color(255, 200, 100) : sf::Color(210, 160, 60));
         sf::FloatRect flb = label.getLocalBounds();
         label.setPosition({msBtnX + (msBtnW - flb.size.x) / 2.f - flb.position.x,
                            by + (msBtnH - flb.size.y) / 2.f - flb.position.y});
