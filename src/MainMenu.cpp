@@ -1,17 +1,25 @@
 #include "MainMenu.h"
 
-void drawButton(sf::RenderWindow& window, sf::Font& font, float x, float y, float w, float h, const std::string& label) {
+void drawButton(sf::RenderWindow& window, sf::Font& font, float x, float y, float w, float h, 
+    const std::string& label, sf::Vector2f mousePos) {
+    //si el mouse esta dentro del area del boton, hover es true
+    bool hover = mousePos.x >= x && mousePos.x <= x + w && mousePos.y >= y && mousePos.y <= y + h;
+
+    //si hover, el borde es dorado mas claro, sino es dorado oscuro
+    sf::Color borderColor = hover ? sf::Color(210, 160, 60) : sf::Color(120, 80, 20);
+    // Fondo: casi negro normal, cafe oscuro en hover
+    sf::Color bgColor = hover ? sf::Color(50, 30, 10, 220) : sf::Color(20, 12, 5, 200);
 
     //Crear exterior dorado oscuro
     sf::RectangleShape border({w + 4.f, h + 4.f});
     border.setPosition({x - 2.f, y - 2.f});
-    border.setFillColor(sf::Color(120, 80, 20));
+    border.setFillColor(borderColor); //ahora depende del hover
     window.draw(border);
 
     // Fondo del boton semitransparente
     sf::RectangleShape btn({w, h});
     btn.setPosition({x, y});
-    btn.setFillColor(sf::Color(20, 12, 5, 200));
+    btn.setFillColor(bgColor);
     window.draw(btn);
 
     // Texto centrado dentro del boton
@@ -22,8 +30,10 @@ void drawButton(sf::RenderWindow& window, sf::Font& font, float x, float y, floa
     window.draw(text);
 }
 
-void drawMainMenu(sf::RenderWindow& window, sf::Font& font, const sf::Sprite& bgSprite, const sf::Text& titleText, const sf::Text& subtitleText,
-                  float btnX, float playY, float relicsY, float quitY, float btnW, float btnH) {
+void drawMainMenu(sf::RenderWindow& window, sf::Font& font, sf::Font& fontSmall, sf::Font& fontTitle,
+                  const sf::Sprite& bgSprite, const sf::Text& titleText, const sf::Text& subtitleText,
+                  float btnX, float playY, float relicsY, float quitY, float btnW, float btnH, 
+                  sf::Vector2f mousePos) {
 
     //imagen de fondo
     window.draw(bgSprite);
@@ -56,12 +66,12 @@ void drawMainMenu(sf::RenderWindow& window, sf::Font& font, const sf::Sprite& bg
     window.draw(lineBot);
 
     // Botones
-    drawButton(window, font, btnX, playY, btnW, btnH, "PLAY");
-    drawButton(window, font, btnX, relicsY, btnW, btnH, "RELICS"); //nuevo boton de reliquias, por ahora no hace nada
-    drawButton(window, font, btnX, quitY, btnW, btnH, "QUIT");
+    drawButton(window, font, btnX, playY, btnW, btnH, "PLAY", mousePos);
+    drawButton(window, font, btnX, relicsY, btnW, btnH, "RELICS", mousePos); //nuevo boton de reliquias, por ahora no hace nada
+    drawButton(window, font, btnX, quitY, btnW, btnH, "QUIT", mousePos);
 
     //Creditos hasta abajo
-    sf::Text creditsText(font, "CETYS Universidad  |  ICC C2  |  2026", 13);
+    sf::Text creditsText(fontSmall, "CETYS Universidad  |  ICC C2  |  2026", 13);
     creditsText.setFillColor(sf::Color(210, 160, 60));
     sf::FloatRect credBounds = creditsText.getLocalBounds();
     creditsText.setPosition({(800.f - credBounds.size.x) / 2.f - credBounds.position.x, 565.f});

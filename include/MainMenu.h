@@ -16,7 +16,7 @@ enum class GameScreen {
 //Funcion para un boton de play y quit
 void drawButton(sf::RenderWindow& window, sf::Font& font,
                 float x, float y, float w, float h,
-                const std::string& label);
+                const std::string& label, sf::Vector2f mousePos);
 
 // Maneja eventos y dibuja todo lo del main menu
 // Devuelve la pantalla a la que hay que cambiar (o MAIN_MENU si no hay cambio)
@@ -27,9 +27,10 @@ GameScreen updateMainMenu(sf::RenderWindow& window, sf::Font& font,
                           const std::optional<sf::Event>& event);
 
 // Solo dibuja el main menu (sin manejar eventos)
-void drawMainMenu(sf::RenderWindow& window, sf::Font& font,
+void drawMainMenu(sf::RenderWindow& window, sf::Font& font, sf::Font& fontSmall, sf::Font& fontTitle,
                   const sf::Sprite& bgSprite,
                   const sf::Text& titleText, const sf::Text& subtitleText,
-                  float btnX, float playY, float relicsY, float quitY, float btnW, float btnH);
+                  float btnX, float playY, float relicsY, float quitY, float btnW, float btnH, 
+                  sf::Vector2f mousePos);
 
 
