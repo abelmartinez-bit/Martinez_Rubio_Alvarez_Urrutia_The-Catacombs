@@ -20,7 +20,7 @@
                 "-lsfml-system",
                 "-lsfml-audio",
                 "-o",
-                "${workspaceFolder}/build/game"
+                "${workspaceFolder}/libs/SFML/game"
             ],
             "group": {
                 "kind": "build",
@@ -47,7 +47,7 @@
                 "-lsfml-system",
                 "-lsfml-audio",
                 "-o",
-                "${workspaceFolder}/build/game.exe"
+                "${workspaceFolder}/libs/SFML/game.exe"
             ],
             "group": {
                 "kind": "build",
@@ -58,7 +58,7 @@
         {
             "label": "Run Game",
             "type": "shell",
-            "command": "./build/game",
+            "command": "./libs/SFML/game",
             "group": "test",
             "dependsOn": "Build (Mac)"
         }

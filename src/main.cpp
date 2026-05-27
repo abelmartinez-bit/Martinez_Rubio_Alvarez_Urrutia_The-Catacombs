@@ -124,12 +124,12 @@ int main() {
     //crear array de structs para las cards de seleccion de personaje
     CharacterCard cards[4] = {
         //centerX, name, PlayerType, hp, atk, def, spAtk, spDef, spd
-        {  117.f, "Warrior", PlayerType::WARRIOR, 1300, 30, 35, 10, 25, 10 }, // testing
+        { 117.f, "Warrior", PlayerType::WARRIOR, 1300, 30, 35, 10, 25, 10 }, // testing
         { 306.f, "Mage",    PlayerType::MAGE,    100, 10, 25, 35, 35, 15 },
         { 498.f, "Rogue",   PlayerType::ROGUE,   110, 40, 22, 15, 22, 40 },
         { 689.f, "Archer",  PlayerType::ARCHER,  100, 15, 30, 30, 25, 25 }
     };
-    const float cardW = 160.f, cardH = 480.f, cardTop = 60.f;
+    const float cardW = 170.f, cardH = 510.f, cardTop = 27.f;
     int selectedCard = -1;
 
 
@@ -184,8 +184,10 @@ int main() {
                         }
 
                             // boton de reliquias
-                        if (mouse.x >= btnX && mouse.x <= btnX + btnW && mouse.y >= relicsY && mouse.y <= relicsY + btnH)
+                        if (mouse.x >= btnX && mouse.x <= btnX + btnW && mouse.y >= relicsY && mouse.y <= relicsY + btnH) {
+                            RelicTracker::resetScroll();
                             currentScreen = GameScreen::RELIC_TRACKER;
+                        }
 
                         // Boton QUIT
                         if (mouse.x >= btnX && mouse.x <= btnX + btnW && mouse.y >= quitY && mouse.y <= quitY + btnH)
@@ -266,6 +268,13 @@ int main() {
                 } 
             }
 
+            // Mouse scroll
+            if (const auto* scroll = event->getIf<sf::Event::MouseWheelScrolled>()) {
+                if (currentScreen == GameScreen::RELIC_TRACKER) {
+                    RelicTracker::handleScroll(scroll->delta);
+                }
+            }
+
             // Teclas
             if (const auto* keyEvent = event->getIf<sf::Event::KeyPressed>()) {
                 //escape cierra el juego desde cualquier pantalla
@@ -332,9 +341,10 @@ int main() {
 
                 else if (currentScreen == GameScreen::RELIC_TRACKER) {
                     if (keyEvent->code == sf::Keyboard::Key::B) {
-                          currentScreen = GameScreen::MAIN_MENU;
-    }
-}
+                        RelicTracker::resetScroll();
+                        currentScreen = GameScreen::MAIN_MENU;
+                    }
+                }
 
                 // Game Over / Win / Final Boss  R para volver al menu
                 else if (currentScreen == GameScreen::GAME_OVER || currentScreen == GameScreen::WIN) {
@@ -369,11 +379,15 @@ int main() {
         else if (currentScreen == GameScreen::DOOR_SELECT && gameLoop.getCurrentFloor() && player) {
             Enemy *previews[3] = { gameLoop.getPreviewEnemy(0), gameLoop.getPreviewEnemy(1), gameLoop.getPreviewEnemy(2) };
             drawDoorSelect(window, font, bgSprite, gameLoop.getCurrentFloor(), player, gameLoop.getFloorNumber(), previews);
-            if (showLevelUp)
+            if (showLevelUp){
                 // aqui iria el drawEvent o algo por el estilo
-                drawLevelUp(window, font, player);
-            else if (showMoveSelect)
-                drawMoveSelect(window, font, player);
+                sf::Vector2f mouse = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+                drawLevelUp(window, font, player, mouse);
+            }
+            else if (showMoveSelect) {
+                sf::Vector2f mouse = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+                drawMoveSelect(window, font, player, mouse);
+            }
         }
         else if (currentScreen == GameScreen::COMBAT && player && gameLoop.getCombat() && gameLoop.getCurrentFloor() 
                 && gameLoop.getCurrentEnemy()) {
@@ -382,10 +396,14 @@ int main() {
                         gameLoop.getCurrentFloor(), gameLoop.getIsMiniBoss());
             
             // Pop-ups encima del combate
-            if (showLevelUp)
-                drawLevelUp(window, font, player);
-            else if (showMoveSelect)
-                drawMoveSelect(window, font, player);
+            if (showLevelUp) {
+                sf::Vector2f mouse = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+                drawLevelUp(window, font, player, mouse);
+            }
+            else if (showMoveSelect) {
+                sf::Vector2f mouse = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+                drawMoveSelect(window, font, player, mouse);
+            }
         }
         else if (currentScreen == GameScreen::GAME_OVER) {
             // Dibuja el ultimo frame de combate como fondo (si existe)
