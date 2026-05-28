@@ -5,7 +5,7 @@
 
 void drawCombat(sf::RenderWindow& window, sf::Font& font, Player* player, Enemy* enemy, CombatEngine* combat, 
                 sf::Text& playerText, sf::Text& enemyText, sf::Text& logText, sf::Text& resultText, sf::Text& instructionText, 
-                sf::Text& combatTitleText, bool& rewardGiven, const sf::Sprite& combatSprite, Floor* floor, bool isMiniBoss) {
+                sf::Text& combatTitleText, bool& rewardGiven, const sf::Sprite& combatSprite, Floor* floor, bool isMiniBoss, std::string& rewardDescription) {
 
     // Actualizar textos con estado actual
     playerText.setString(
@@ -31,7 +31,7 @@ void drawCombat(sf::RenderWindow& window, sf::Font& font, Player* player, Enemy*
 
         // Entregar recompensa una sola vez si el jugador gano
         if (player->isAlive() && !rewardGiven) {
-            floor->giveRewards(*player, enemy, isMiniBoss);
+            rewardDescription = floor->giveRewards(*player, enemy, isMiniBoss);
             rewardGiven = true;
         } else if (!player->isAlive() && !rewardGiven) {
             // El jugador murio. no hay recompensa, solo marcamos para evitar re-entrar

@@ -111,86 +111,105 @@ Entity* Floor::spawnEnemyFromDoor(const Door& door) {
     }
 }
 
-void Floor::triggerEvent(Player& player, const Door& door) {
+std::string Floor::triggerEvent(Player& player, const Door& door) {
     int eventType = rand() % 100;
-    
-    std::cout << "You triggered an event behind the door...\n";
-    std::cout << "You were blessed by the dungeon gods!\n";
-    player.gainExp(120 * player.getLevel()); // subir de nivel al trigger un evento
+
+    int expGained = 120 * player.getLevel();
+    player.gainExp(expGained);
+
+    std::string result = "The dungeon gods smile upon you.\n\n";
 
     if (eventType < 40) {
-        // Heal event (40% chance)
-        int healAmount = player.getMaxHp() * 0.4;
+        int healAmount = static_cast<int>(player.getMaxHp() * 0.4);
         player.heal(healAmount);
-        std::cout << "You found a healing shrine! Restored " << healAmount << " HP.\n";
+        result += "Healing Shrine: You were restored for " + std::to_string(healAmount) + " HP!";
     } else if (eventType < 70) {
-        // Potion event (30% chance)
-        player.addPotion(Potion::createRandomPotion());
-        std::cout << "You found a potion!\n";
+        Potion p = Potion::createRandomPotion();
+        std::string potionName = p.getName();
+
+        if (player.getPotions().size() < player.getPotionSlots()) {
+            player.addPotion(p);
+            result += "You discovered a " + potionName + " !";
+        } else {
+            result += "You found a " + potionName + " , but your inventory is full. You had to leave it behind.";
+        }
+
+        
     } else {
-        // Relic event (30% chance por default)
-        player.addRelic(RelicPool::getRandomRelic());
-        std::cout << "You found a relic!\n";
+        Relic* r = RelicPool::getRandomRelic();
+        std::string relicName = r->getName();
+        std::string relicDesc = r->getDescription();
+        player.addRelic(r);
+        result += "Ancient relic found: " + relicName + "\n" + relicDesc;
     }
+
+    result += "\n\nGained " + std::to_string(expGained) + " EXP!";
+    return result;
 }
-void Floor::giveRewards(Player& player, Entity* enemy, bool isMiniBoss) {
-    // --- EXP --
-    // dynamic_cast para acceder a getExpReward(), que solo existe en Enemy
+
+std::string Floor::giveRewards(Player& player, Entity* enemy, bool isMiniBoss) {
+    std::string result;
+
+    // --- EXP ---
     Enemy* e = dynamic_cast<Enemy*>(enemy);
+    int expGained = 0;
     if (e) {
-        player.gainExp(e->getExpReward());
+        expGained = e->getExpReward();
+        player.gainExp(expGained);
+    }
+    result += "+" + std::to_string(expGained) + " EXP gained!\n\n";
+
+    // --- Potion drop (30% chance) ---
+    if (rand() % 100 < 30) {
+        Potion p = Potion::createRandomPotion();
+        if (player.getPotions().size() < (size_t)player.getPotionSlots()) {
+            player.addPotion(p);
+            result += "Found: " + p.getName() + "\n\n";
+        } else {
+            result += "Found " + p.getName() + ", but your inventory is full.\n\n";
+        }
     }
 
-    // Potion drop
-    // 30% chance de drop
-    if (rand() % 100 < 30) {
-        player.addPotion(Potion::createRandomPotion());
-        std::cout << "You now have " << player.getPotions().size() << " potions!\n";
-    } 
-
-    // Relic drop
-    // La rareza del drop sube segun los modificadores del jugador.
-    // Probabilidades base (igual que RelicPool::getRandomRelic):
-    //   Comun 70% | Rara 25% | Legendaria 5%
-    // Cada punto de modifier desplaza el umbral hacia raridades mayores.
+    // --- Relic drop ---
     int roll = rand() % 100;
+    Relic* dropped = nullptr;
+    std::string rarityLabel;
 
     if (isMiniBoss) {
-        // Miniboss: Base values more generous: Rara 60%, Legendaria 20%, Comun 20%
-        // minibossDropModifier sube la chance de Legendaria y Rara a costa de Comun
         float mod = player.getMinibossDropModifier();
         int legendaryThreshold = static_cast<int>(20 + mod);
         int rareThreshold      = static_cast<int>(80 + mod / 2);
 
         if (roll < legendaryThreshold) {
-            std::cout << "You received a LEGENDARY relic!\n";
-            player.addRelic(RelicPool::getRandomLegendaryRelic());
+            dropped = RelicPool::getRandomLegendaryRelic();
+            rarityLabel = "[LEGENDARY] ";
         } else if (roll < rareThreshold) {
-            std::cout << "You received a RARE relic!\n";
-            player.addRelic(RelicPool::getRandomRareRelic());
+            dropped = RelicPool::getRandomRareRelic();
+            rarityLabel = "[RARE] ";
         } else {
-            std::cout << "You received a COMMON relic.\n";
-            player.addRelic(RelicPool::getRandomCommonRelic());
+            dropped = RelicPool::getRandomCommonRelic();
+            rarityLabel = "[COMMON] ";
         }
     } else {
-        // Enemigo normal
-        // enemyDropModifier sube la chance de Rara por algo de Comun
         float mod = player.getEnemyDropModifier();
         int legendaryThreshold = static_cast<int>(5  + mod / 2);
-        int rareThreshold = static_cast<int>(30 + mod);
+        int rareThreshold      = static_cast<int>(30 + mod);
 
         if (roll < legendaryThreshold) {
-            std::cout << "You received a LEGENDARY relic!\n";
-            player.addRelic(RelicPool::getRandomLegendaryRelic());
+            dropped = RelicPool::getRandomLegendaryRelic();
+            rarityLabel = "[LEGENDARY] ";
         } else if (roll < rareThreshold) {
-            std::cout << "You received a RARE relic!\n";
-            player.addRelic(RelicPool::getRandomRareRelic());
+            dropped = RelicPool::getRandomRareRelic();
+            rarityLabel = "[RARE] ";
         } else {
-            std::cout << "You received a COMMON relic.\n";
-            player.addRelic(RelicPool::getRandomCommonRelic());
+            dropped = RelicPool::getRandomCommonRelic();
+            rarityLabel = "[COMMON] ";
         }
     }
 
-    player.displayStats(); // temp for testing
+    player.addRelic(dropped);
+    result += "Relic acquired:\n" + rarityLabel + dropped->getName() + "\n" + dropped->getDescription();
 
+    player.displayStats(); // temp for testing
+    return result;
 }

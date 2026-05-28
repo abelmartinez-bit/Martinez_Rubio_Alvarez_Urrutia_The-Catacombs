@@ -7,3 +7,5 @@ void drawGameOver(sf::RenderWindow& window, sf::Font& font);
 void drawWin(sf::RenderWindow& window, sf::Font& font);
 void drawLevelUp(sf::RenderWindow& window, sf::Font& font, Player* player, sf::Vector2f mousePos);
 void drawMoveSelect(sf::RenderWindow& window, sf::Font& font, Player* player, sf::Vector2f mousePos);
+void drawEventScreen(sf::RenderWindow& window, sf::Font& font, const std::string& description, Player* player, float time);
+void drawRewardScreen(sf::RenderWindow& window, sf::Font& font, const std::string& description, Player* player, float time);

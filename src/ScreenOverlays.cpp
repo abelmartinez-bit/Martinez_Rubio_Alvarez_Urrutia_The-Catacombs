@@ -166,3 +166,143 @@ void drawMoveSelect(sf::RenderWindow& window, sf::Font& font, Player* player, sf
         window.draw(label);
     }
 }
+
+void drawEventScreen(sf::RenderWindow& window, sf::Font& font, const std::string& description, Player* player, float time) {
+
+    // Dark overlay
+    sf::RectangleShape overlay({800.f, 600.f});
+    overlay.setFillColor(sf::Color(0, 0, 0, 170));
+    window.draw(overlay);
+
+    // Title
+    sf::Text title(font, "DUNGEON EVENT", 50);
+    title.setFillColor(sf::Color(210, 160, 60));
+    sf::FloatRect tb = title.getLocalBounds();
+    title.setPosition({(800.f - tb.size.x) / 2.f - tb.position.x, 48.f});
+    window.draw(title);
+
+    // Divider
+    sf::RectangleShape line({500.f, 2.f});
+    line.setFillColor(sf::Color(120, 80, 20));
+    line.setPosition({150.f, 115.f});
+    window.draw(line);
+
+    // Description panel
+    const float panelX = 110.f, panelY = 138.f;
+    const float panelW = 580.f, panelH = 230.f;
+
+    sf::RectangleShape border({panelW + 4.f, panelH + 4.f});
+    border.setPosition({panelX - 2.f, panelY - 2.f});
+    border.setFillColor(sf::Color(120, 80, 20));
+    window.draw(border);
+
+    sf::RectangleShape panel({panelW, panelH});
+    panel.setPosition({panelX, panelY});
+    panel.setFillColor(sf::Color(20, 12, 5, 220));
+    window.draw(panel);
+
+    sf::Text desc(font, description, 18);
+    desc.setFillColor(sf::Color(210, 195, 165));
+    desc.setPosition({panelX + 22.f, panelY + 18.f});
+    window.draw(desc);
+
+    // Player HP / level
+    if (player) {
+        std::string hpStr =
+            player->getName() +
+            "   HP: " + std::to_string(player->getHp()) + " / " + std::to_string(player->getMaxHp()) +
+            "   LVL: " + std::to_string(player->getLevel());
+        sf::Text hpText(font, hpStr, 17);
+        hpText.setFillColor(sf::Color(100, 220, 100));
+        sf::FloatRect hb = hpText.getLocalBounds();
+        hpText.setPosition({(800.f - hb.size.x) / 2.f - hb.position.x, 392.f});
+        window.draw(hpText);
+    }
+
+    float sineWave = std::sin(time * 3.f); 
+
+    // range para que no desaparezca completamente
+    int minAlpha = 5; 
+    int alphaRange = 255 - minAlpha;
+    int alpha = minAlpha + static_cast<int>((sineWave + 1.f) * 0.5f * alphaRange);
+
+
+    // Continue hint
+    sf::Text hint(font, "Press  ENTER  to continue.", 19);
+    hint.setFillColor(sf::Color(150, 150, 150, alpha));
+    sf::FloatRect hb = hint.getLocalBounds();
+    hint.setPosition({(800.f - hb.size.x) / 2.f - hb.position.x, 460.f});
+    window.draw(hint);
+}
+
+void drawRewardScreen(sf::RenderWindow& window, sf::Font& font, const std::string& description, Player* player, float time) {
+    // Dark overlay
+    sf::RectangleShape overlay({800.f, 600.f});
+    overlay.setFillColor(sf::Color(0, 0, 0, 210));
+    window.draw(overlay);
+
+    // Title
+    sf::Text title(font, "FLOOR CLEARED!", 50);
+    title.setFillColor(sf::Color(210, 160, 60));
+    sf::FloatRect tb = title.getLocalBounds();
+    title.setPosition({(800.f - tb.size.x) / 2.f - tb.position.x, 48.f});
+    window.draw(title);
+
+    // Divider
+    sf::RectangleShape line({500.f, 2.f});
+    line.setFillColor(sf::Color(120, 80, 20));
+    line.setPosition({150.f, 115.f});
+    window.draw(line);
+
+    // Description panel
+    const float panelX = 110.f, panelY = 138.f;
+    const float panelW = 580.f, panelH = 230.f;
+
+    sf::RectangleShape border({panelW + 4.f, panelH + 4.f});
+    border.setPosition({panelX - 2.f, panelY - 2.f});
+    border.setFillColor(sf::Color(120, 80, 20));
+    window.draw(border);
+
+    sf::RectangleShape panel({panelW, panelH});
+    panel.setPosition({panelX, panelY});
+    panel.setFillColor(sf::Color(20, 12, 5, 220));
+    window.draw(panel);
+
+    sf::Text desc(font, description, 18);
+    desc.setFillColor(sf::Color(210, 195, 165));
+    desc.setPosition({panelX + 22.f, panelY + 18.f});
+    window.draw(desc);
+
+    // Player HP / level
+    if (player) {
+        std::string hpStr =
+            player->getName() +
+            "   HP: " + std::to_string(player->getHp()) + " / " + std::to_string(player->getMaxHp()) +
+            "   LVL: " + std::to_string(player->getLevel());
+        sf::Text hpText(font, hpStr, 17);
+        hpText.setFillColor(sf::Color(100, 220, 100));
+        sf::FloatRect hb = hpText.getLocalBounds();
+        hpText.setPosition({(800.f - hb.size.x) / 2.f - hb.position.x, 392.f});
+        window.draw(hpText);
+    }
+
+    float sineWave = std::sin(time * 3.f); 
+
+    // range para que no desaparezca completamente
+    int minAlpha = 5; 
+    int alphaRange = 255 - minAlpha;
+    int alpha = minAlpha + static_cast<int>((sineWave + 1.f) * 0.5f * alphaRange);
+
+
+    // Continue hint
+    sf::Text hint(font, "Press  ENTER  to continue.", 19);
+    hint.setFillColor(sf::Color(150, 150, 150, alpha));
+    sf::FloatRect hb = hint.getLocalBounds();
+    hint.setPosition({(800.f - hb.size.x) / 2.f - hb.position.x, 460.f});
+    window.draw(hint);
+}
+
+
+
+
+
