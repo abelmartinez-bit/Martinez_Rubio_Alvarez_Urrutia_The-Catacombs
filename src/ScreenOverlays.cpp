@@ -171,7 +171,7 @@ void drawEventScreen(sf::RenderWindow& window, sf::Font& font, const std::string
 
     // Dark overlay
     sf::RectangleShape overlay({800.f, 600.f});
-    overlay.setFillColor(sf::Color(0, 0, 0, 210));
+    overlay.setFillColor(sf::Color(0, 0, 0, 170));
     window.draw(overlay);
 
     // Title
