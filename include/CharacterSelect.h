@@ -20,5 +20,5 @@ int handleCharacterSelectClick(sf::Vector2f mouse, CharacterCard cards[4], float
 bool handleCharacterSelectKey(sf::Keyboard::Key key, int selectedCard, CharacterCard cards[4], Player*& player);
 
 // Dibuja la pantalla de seleccion de personaje
-void drawCharacterSelect(sf::RenderWindow& window, sf::Font& font, const sf::Sprite& csSprite, CharacterCard cards[4], int selectedCard, float cardW, float cardH, float cardTop);
+void drawCharacterSelect(sf::RenderWindow& window, sf::Font& font, const sf::Sprite& csSprite, CharacterCard cards[4], int selectedCard, float cardW, float cardH, float cardTop, float time);
 // hanles less things now

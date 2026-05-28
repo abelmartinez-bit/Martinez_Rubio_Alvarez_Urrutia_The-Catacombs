@@ -24,6 +24,8 @@ int main() {
     sf::RenderWindow window(sf::VideoMode::getFullscreenModes()[0], "The Catacombs", sf::State::Fullscreen);
     window.setFramerateLimit(60);
 
+    sf::Clock flashClock; // Reloj para animaciones de flashing
+
     //config de la vista para coordenadas 800x600, asi es mas facil posicionar los elementos en pantalla
     sf::View view(sf::FloatRect({0.f, 0.f}, {800.f, 600.f}));
     window.setView(view);
@@ -129,7 +131,7 @@ int main() {
         { 498.f, "Rogue",   PlayerType::ROGUE,   110, 40, 22, 15, 22, 40 },
         { 689.f, "Archer",  PlayerType::ARCHER,  100, 15, 30, 30, 25, 25 }
     };
-    const float cardW = 170.f, cardH = 510.f, cardTop = 27.f;
+    const float cardW = 172.f, cardH = 520.f, cardTop = 20.f;
     int selectedCard = -1;
 
 
@@ -163,6 +165,8 @@ int main() {
     // main game while loop
 
     while (window.isOpen()) {
+
+        float timePassed = flashClock.getElapsedTime().asSeconds();
 
         while (const std::optional event = window.pollEvent()) {
 
@@ -374,7 +378,7 @@ int main() {
             RelicTracker::drawRelicTracker(window, font, fontSmall, bgSprite);        }
 
         else if (currentScreen == GameScreen::CHARACTER_SELECT) {
-            drawCharacterSelect(window, font, csSprite, cards, selectedCard, cardW, cardH, cardTop);
+            drawCharacterSelect(window, font, csSprite, cards, selectedCard, cardW, cardH, cardTop, timePassed);
         }   
         else if (currentScreen == GameScreen::DOOR_SELECT && gameLoop.getCurrentFloor() && player) {
             Enemy *previews[3] = { gameLoop.getPreviewEnemy(0), gameLoop.getPreviewEnemy(1), gameLoop.getPreviewEnemy(2) };
