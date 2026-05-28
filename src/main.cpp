@@ -83,6 +83,12 @@ int main() {
         return 1;
     }
 
+    sf::Texture rewardsTexture; // fondo de pantalla de recompensas
+    if (!rewardsTexture.loadFromFile("assets/images/dungeon_hallway.jpg")) {
+        std::cerr << "Error: no se pudo cargar el fondo de recompensas\n";
+        return 1;
+    }
+
     sf::Sprite bgSprite(bgTexture); 
     bgSprite.setScale({800.f / bgTexture.getSize().x, 600.f / bgTexture.getSize().y});
 
@@ -95,6 +101,9 @@ int main() {
     sf::Sprite eventSprite(eventTexture);
     eventSprite.setScale({800.f / eventTexture.getSize().x, 600.f / eventTexture.getSize().y});
 
+    sf::Sprite rewardsSprite(rewardsTexture);
+    rewardsSprite.setScale({800.f / rewardsTexture.getSize().x, 600.f / rewardsTexture.getSize().y});
+
     // current game state
     GameScreen currentScreen = GameScreen::MAIN_MENU; //empezar en el main menu
     GameLoop gameLoop; //crear el game loop que encarga de pisos, enemigos, combate, etc
@@ -104,6 +113,20 @@ int main() {
     // cuando entrega las recompensas. main.cpp lo usa para poder presionar ENTER.
     bool rewardGiven = false;
     std::string combatRewardDescription;   // set by drawCombat when rewards are given
+
+    // Transitions
+
+    enum class TransitionPhase { NONE, FADE_OUT, FADE_IN };
+    TransitionPhase transitionPhase = TransitionPhase::NONE;
+    GameScreen pendingScreen = GameScreen::MAIN_MENU;
+    float transitionAlpha = 0.f;
+    const float TRANSITION_SPEED = 700.f;
+    sf::RectangleShape transitionOverlay({800.f, 600.f});
+    transitionOverlay.setFillColor(sf::Color(0, 0, 0, 0));
+    sf::Clock dtClock;
+    std::function<void()> onScreenFlip = nullptr; // for running code at the exact moment we actually switch screens during a transition
+
+
 
 
     //nuevas variables para evitar cin en level up y move select
@@ -177,8 +200,40 @@ int main() {
     while (window.isOpen()) {
 
         float timePassed = flashClock.getElapsedTime().asSeconds();
+        float dt = dtClock.restart().asSeconds();
+
+        auto startTransition = [&](GameScreen target) {
+            pendingScreen = target;
+            transitionPhase = TransitionPhase::FADE_OUT;
+            transitionAlpha = 0.f;
+        };
+
+        if (transitionPhase == TransitionPhase::FADE_OUT) {
+            transitionAlpha += TRANSITION_SPEED * dt;
+            if (transitionAlpha >= 255.f) {
+                transitionAlpha = 255.f;
+                currentScreen = pendingScreen;
+                if (onScreenFlip) { 
+                    onScreenFlip(); 
+                    onScreenFlip = nullptr; 
+                }
+                transitionPhase = TransitionPhase::FADE_IN;
+            }
+        } else if (transitionPhase == TransitionPhase::FADE_IN) {
+            transitionAlpha -= TRANSITION_SPEED * dt;
+            if (transitionAlpha <= 0.f) {
+                transitionAlpha = 0.f;
+                transitionPhase = TransitionPhase::NONE;
+            }
+        }
+        transitionOverlay.setFillColor(sf::Color(0, 0, 0, static_cast<uint8_t>(transitionAlpha)));
 
         while (const std::optional event = window.pollEvent()) {
+
+            if (transitionPhase != TransitionPhase::NONE) {
+                if (event->is<sf::Event::Closed>()) window.close();
+                continue;
+            }
 
             // Cerrar ventana
             if (event->is<sf::Event::Closed>())
@@ -193,14 +248,14 @@ int main() {
                     if (currentScreen == GameScreen::MAIN_MENU) {
                         // Boton PLAY
                         if (mouse.x >= btnX && mouse.x <= btnX + btnW && mouse.y >= playY && mouse.y <= playY + btnH) {
-                            music.stop();
-                            currentScreen = GameScreen::CHARACTER_SELECT;
+                            onScreenFlip = [&] { music.stop(); };
+                            startTransition(GameScreen::CHARACTER_SELECT); 
                         }
 
                             // boton de reliquias
                         if (mouse.x >= btnX && mouse.x <= btnX + btnW && mouse.y >= relicsY && mouse.y <= relicsY + btnH) {
-                            RelicTracker::resetScroll();
-                            currentScreen = GameScreen::RELIC_TRACKER;
+                            onScreenFlip = [&] { RelicTracker::resetScroll(); };
+                            startTransition(GameScreen::RELIC_TRACKER);
                         }
 
                         // Boton QUIT
@@ -246,10 +301,10 @@ int main() {
                                         showMoveSelect = true;
                                     else if (currentScreen == GameScreen::COMBAT) {
                                         // Coming from combat, advance normally
-                                        currentScreen = gameLoop.onCombatFinished();
+                                        startTransition(gameLoop.onCombatFinished());
                                     } else {
                                         // Coming from event door, use stored next screen
-                                        currentScreen = nextScreenAfterLevelUp;
+                                        startTransition(nextScreenAfterLevelUp);
                                     }
                                 }
                                 break;
@@ -270,10 +325,10 @@ int main() {
                                 showMoveSelect = false;
                                 if (currentScreen == GameScreen::COMBAT) {
                                     // Coming from combat, advance normally
-                                    currentScreen = gameLoop.onCombatFinished();
+                                    startTransition(gameLoop.onCombatFinished());
                                 } else {
                                     // Coming from event door, use stored next screen
-                                    currentScreen = nextScreenAfterLevelUp;
+                                    startTransition(nextScreenAfterLevelUp);
                                 }
                                 break;
                             }
@@ -301,7 +356,7 @@ int main() {
                         // Jugador creado: iniciamos partida en piso 1
                         gameLoop.startRun(player);
                         rewardGiven = false;
-                        currentScreen = GameScreen::DOOR_SELECT;
+                        startTransition(GameScreen::DOOR_SELECT);
                     }
                 }
 
@@ -317,15 +372,15 @@ int main() {
                         GameScreen result = gameLoop.selectDoor(doorIdx);
 
                         if (result == GameScreen::EVENT) {
-                            currentScreen = GameScreen::EVENT;
                             nextScreenAfterLevelUp = gameLoop.onEventDismissed();
+                            startTransition(GameScreen::EVENT);
                             // level up / move select handled when player presses ENTER on EVENT screen
                         } else {
                             nextScreenAfterLevelUp = result;
                             if (player && player->needsStatBoost()) {
                                 showLevelUp = true;
                             } else {
-                                currentScreen = result;
+                                startTransition(result);
                             }
                         }
                     }
@@ -349,7 +404,7 @@ int main() {
                             else if (player->hasPendingMoveRelic())
                                 showMoveSelect = true; //new pop up para elegir que move boostear o reemplazar con MoveRelic
                             else
-                                currentScreen = gameLoop.onCombatFinished();
+                                startTransition(gameLoop.onCombatFinished());
                             // Si el siguiente estado es DOOR_SELECT, rewardGiven
                             // se reseteara al elegir la siguiente puerta
                         }
@@ -363,33 +418,38 @@ int main() {
                         // nextScreenAfterLevelUp already set when we entered EVENT
                         } else if (player->hasPendingMoveRelic()) {
                             showMoveSelect = true;
-                        } else currentScreen = gameLoop.onEventDismissed();
+                        } else startTransition(gameLoop.onEventDismissed());
                     }
                 }
 
                 else if (currentScreen == GameScreen::REWARDS) {
                     if (keyEvent->code == sf::Keyboard::Key::Enter || keyEvent->code == sf::Keyboard::Key::Space) {
-                        combatRewardDescription = "";
-                        currentScreen = gameLoop.onRewardsDismissed();
+                        onScreenFlip = [&] { combatRewardDescription = ""; };
+                        startTransition(gameLoop.onRewardsDismissed());
                     }
                 }
 
                 else if (currentScreen == GameScreen::RELIC_TRACKER) {
                     if (keyEvent->code == sf::Keyboard::Key::B) {
-                        RelicTracker::resetScroll();
-                        currentScreen = GameScreen::MAIN_MENU;
+                        onScreenFlip = [&] { RelicTracker::resetScroll(); };
+                        startTransition(GameScreen::MAIN_MENU);
                     }
                 }
 
                 // Game Over / Win / Final Boss  R para volver al menu
                 else if (currentScreen == GameScreen::GAME_OVER || currentScreen == GameScreen::WIN) {
                     if (keyEvent->code == sf::Keyboard::Key::R) {
-                        gameLoop.reset();
-                        delete player;
-                        player = nullptr;
-                        selectedCard = -1;
-                        rewardGiven = false;
-                        currentScreen = GameScreen::MAIN_MENU;
+                        onScreenFlip = [&] {
+                            gameLoop.reset();
+                            delete player;
+                            player = nullptr;
+                            selectedCard = -1;
+                            rewardGiven = false; 
+                            music.setLooping(true);
+                            music.setVolume(50.f);
+                            music.play(); 
+                        };
+                        startTransition(GameScreen::MAIN_MENU);
                     }
                 }
             }
@@ -452,7 +512,7 @@ int main() {
         }
 
         else if (currentScreen == GameScreen::REWARDS && player) {
-            window.draw(eventSprite);
+            window.draw(rewardsSprite);
             drawRewardScreen(window, font, combatRewardDescription, player, timePassed);
             // level-up / move-select overlays in case they leveled up mid-reward
             if (showLevelUp) {
@@ -476,6 +536,7 @@ int main() {
             drawWin(window, font);
         }
 
+        window.draw(transitionOverlay); // Dibuja la transition por encima de todo
         window.display();
     }
 
