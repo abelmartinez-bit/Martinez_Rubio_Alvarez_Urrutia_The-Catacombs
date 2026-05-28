@@ -28,6 +28,9 @@ private:
     void startCombat();
     GameScreen advanceFloor();   // incrementa piso, genera doors o declara WIN
 
+    std::string lastEventDescription;
+    GameScreen eventResultScreen;
+
 public:
     GameLoop();
     ~GameLoop();
@@ -40,8 +43,8 @@ public:
     GameScreen selectDoor(int doorIndex);
 
     // Llamado desde main.cpp despues de que el combate termino
-    // Devuelve: DOOR_SELECT, WIN, GAME_OVER
-    GameScreen onCombatFinished();
+    GameScreen onCombatFinished(); // Devuelve: DOOR_SELECT, WIN, GAME_OVER
+    GameScreen onEventDismissed() const { return eventResultScreen; }
 
     void advanceTurn(int moveIndex); //ahora recibe el index del movimiento del player
     void usePotionInCombat(); // P: usa la primera pocion del inventario
@@ -56,6 +59,8 @@ public:
         if (index < 0 || index >= 3) return nullptr;
         return previewEnemies[index]; 
     }
+
+    std::string getEventDescription()  const { return lastEventDescription; }
 
     CombatEngine* getCombat()        const { return combat; }
     int getFloorNumber()   const { return currentFloorNumber; }

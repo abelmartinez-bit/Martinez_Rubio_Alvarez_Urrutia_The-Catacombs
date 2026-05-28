@@ -77,6 +77,12 @@ int main() {
         return 1;
     }
 
+    sf::Texture eventTexture; //fondo de eventos
+    if (!eventTexture.loadFromFile("assets/images/event_screen.jpg")) {
+        std::cerr << "Error: no se pudo cargar el fondo de eventos\n";
+        return 1;
+    }
+
     sf::Sprite bgSprite(bgTexture); 
     bgSprite.setScale({800.f / bgTexture.getSize().x, 600.f / bgTexture.getSize().y});
 
@@ -86,6 +92,8 @@ int main() {
     sf::Sprite combatSprite(combatTexture);
     combatSprite.setScale({800.f / combatTexture.getSize().x, 600.f / combatTexture.getSize().y});
 
+    sf::Sprite eventSprite(eventTexture);
+    eventSprite.setScale({800.f / eventTexture.getSize().x, 600.f / eventTexture.getSize().y});
 
     // current game state
     GameScreen currentScreen = GameScreen::MAIN_MENU; //empezar en el main menu
@@ -304,17 +312,20 @@ int main() {
 
                     if (doorIdx != -1) {
                         rewardGiven = false;
-                        nextScreenAfterLevelUp = gameLoop.selectDoor(doorIdx);
-                        
-                        // Check if player needs level up from event door
-                        if (player && player->needsStatBoost()) {
-                            showLevelUp = true;
-                            // Keep currentScreen as DOOR_SELECT temporarily while showing level up
+                        GameScreen result = gameLoop.selectDoor(doorIdx);
+
+                        if (result == GameScreen::EVENT) {
+                            currentScreen = GameScreen::EVENT;
+                            nextScreenAfterLevelUp = gameLoop.onEventDismissed();
+                            // level up / move select handled when player presses ENTER on EVENT screen
                         } else {
-                            currentScreen = nextScreenAfterLevelUp;
+                            nextScreenAfterLevelUp = result;
+                            if (player && player->needsStatBoost()) {
+                                showLevelUp = true;
+                            } else {
+                                currentScreen = result;
+                            }
                         }
-                        // Si fue evento, selectDoor ya genero el siguiente piso
-                        // y devolvio DOOR_SELECT (o WIN/FINAL BOSS si era el ultimo piso)
                     }
                 }
 
@@ -340,6 +351,17 @@ int main() {
                             // Si el siguiente estado es DOOR_SELECT, rewardGiven
                             // se reseteara al elegir la siguiente puerta
                         }
+                    }
+                }
+
+                else if (currentScreen == GameScreen::EVENT) {
+                    if (keyEvent->code == sf::Keyboard::Key::Enter || keyEvent->code == sf::Keyboard::Key::Space) {
+                        if (player->needsStatBoost()) {
+                        showLevelUp = true;
+                        // nextScreenAfterLevelUp already set when we entered EVENT
+                        } else if (player->hasPendingMoveRelic()) {
+                            showMoveSelect = true;
+                        } else currentScreen = gameLoop.onEventDismissed();
                     }
                 }
 
@@ -393,8 +415,7 @@ int main() {
                 drawMoveSelect(window, font, player, mouse);
             }
         }
-        else if (currentScreen == GameScreen::COMBAT && player && gameLoop.getCombat() && gameLoop.getCurrentFloor() 
-                && gameLoop.getCurrentEnemy()) {
+        else if (currentScreen == GameScreen::COMBAT && player && gameLoop.getCombat() && gameLoop.getCurrentFloor() && gameLoop.getCurrentEnemy()) {
             drawCombat(window, font, player, gameLoop.getCurrentEnemy(), gameLoop.getCombat(), playerText, enemyText, 
                         logText, resultText, instructionText, combatTitleText, rewardGiven, combatSprite, 
                         gameLoop.getCurrentFloor(), gameLoop.getIsMiniBoss());
@@ -405,6 +426,17 @@ int main() {
                 drawLevelUp(window, font, player, mouse);
             }
             else if (showMoveSelect) {
+                sf::Vector2f mouse = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+                drawMoveSelect(window, font, player, mouse);
+            }
+        }
+        else if (currentScreen == GameScreen::EVENT && player) {
+            window.draw(eventSprite); 
+            drawEventScreen(window, font, gameLoop.getEventDescription(), player, timePassed);
+            if (showLevelUp) {
+                sf::Vector2f mouse = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+                drawLevelUp(window, font, player, mouse);
+            } else if (showMoveSelect) {
                 sf::Vector2f mouse = window.mapPixelToCoords(sf::Mouse::getPosition(window));
                 drawMoveSelect(window, font, player, mouse);
             }

@@ -38,7 +38,7 @@ void drawCharacterSelect(sf::RenderWindow& window, sf::Font& font, const sf::Spr
         float cardX = cards[i].centerX - cardW / 2.f;
 
         // Calculate alpha usando seno
-        // * 5.f +velocidad del parpadeo
+        // * 8.f +velocidad del parpadeo
         float sineWave = std::sin(time * 8.f); 
 
         // range para que no desaparezca completamente

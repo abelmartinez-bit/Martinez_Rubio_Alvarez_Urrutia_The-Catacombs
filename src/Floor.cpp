@@ -111,28 +111,35 @@ Entity* Floor::spawnEnemyFromDoor(const Door& door) {
     }
 }
 
-void Floor::triggerEvent(Player& player, const Door& door) {
+std::string Floor::triggerEvent(Player& player, const Door& door) {
     int eventType = rand() % 100;
-    
-    std::cout << "You triggered an event behind the door...\n";
-    std::cout << "You were blessed by the dungeon gods!\n";
-    player.gainExp(120 * player.getLevel()); // subir de nivel al trigger un evento
+
+    int expGained = 120 * player.getLevel();
+    player.gainExp(expGained);
+
+    std::string result = "The dungeon gods smile upon you.\n\n";
 
     if (eventType < 40) {
-        // Heal event (40% chance)
-        int healAmount = player.getMaxHp() * 0.4;
+        int healAmount = static_cast<int>(player.getMaxHp() * 0.4);
         player.heal(healAmount);
-        std::cout << "You found a healing shrine! Restored " << healAmount << " HP.\n";
+        result += "Healing Shrine: You were restored for " + std::to_string(healAmount) + " HP!";
     } else if (eventType < 70) {
-        // Potion event (30% chance)
-        player.addPotion(Potion::createRandomPotion());
-        std::cout << "You found a potion!\n";
+        Potion p = Potion::createRandomPotion();
+        std::string potionName = p.getName();
+        player.addPotion(p);
+        result += "You discovered a " + potionName + "!";
     } else {
-        // Relic event (30% chance por default)
-        player.addRelic(RelicPool::getRandomRelic());
-        std::cout << "You found a relic!\n";
+        Relic* r = RelicPool::getRandomRelic();
+        std::string relicName = r->getName();
+        std::string relicDesc = r->getDescription();
+        player.addRelic(r);
+        result += "Ancient relic found: " + relicName + "\n" + relicDesc;
     }
+
+    result += "\n\nGained " + std::to_string(expGained) + " EXP!";
+    return result;
 }
+
 void Floor::giveRewards(Player& player, Entity* enemy, bool isMiniBoss) {
     // --- EXP --
     // dynamic_cast para acceder a getExpReward(), que solo existe en Enemy
