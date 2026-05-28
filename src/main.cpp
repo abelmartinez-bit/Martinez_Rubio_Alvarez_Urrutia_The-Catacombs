@@ -3,6 +3,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
+#include <array>
 // normal libraries 
 
 // nuestros headers
@@ -135,6 +136,10 @@ int main() {
 
     // Track the next screen to transition to after level up from event door
     GameScreen nextScreenAfterLevelUp = GameScreen::MAIN_MENU;
+
+    // Freeze door preview display while fading out to avoid showing updated previews
+    bool freezeDoorPreview = false;
+    std::array<std::string,3> frozenStatStr = {"", "", ""};
 
     // Main Menu — textos y botones
     sf::Text titleText(fontTitle, "THE CATACOMBS", 58);
@@ -361,7 +366,7 @@ int main() {
                 }
 
                 // simple door select con 1, 2, 3. needs visual tweaking
-                else if (currentScreen == GameScreen::DOOR_SELECT) {
+                    else if (currentScreen == GameScreen::DOOR_SELECT) {
                     int doorIdx = -1;
                     if (keyEvent->code == sf::Keyboard::Key::Num1) doorIdx = 0;
                     else if (keyEvent->code == sf::Keyboard::Key::Num2) doorIdx = 1;
@@ -369,20 +374,43 @@ int main() {
 
                     if (doorIdx != -1) {
                         rewardGiven = false;
-                        GameScreen result = gameLoop.selectDoor(doorIdx);
+                            // Capture current preview stat strings so the UI doesn't
+                            // immediately update when selectDoor mutates floors/previews.
+                            auto highestStatName = [&](const Enemy* e) -> std::string {
+                                if (!e) return "ATK";
+                                int h = e->getHighestStat();
+                                if (h == e->getAtk())   return "ATK";
+                                if (h == e->getDef())   return "DEF";
+                                if (h == e->getSpAtk()) return "SP.ATK";
+                                if (h == e->getSpDef()) return "SP.DEF";
+                                return "SPD";
+                            };
 
-                        if (result == GameScreen::EVENT) {
-                            nextScreenAfterLevelUp = gameLoop.onEventDismissed();
-                            startTransition(GameScreen::EVENT);
-                            // level up / move select handled when player presses ENTER on EVENT screen
-                        } else {
-                            nextScreenAfterLevelUp = result;
-                            if (player && player->needsStatBoost()) {
-                                showLevelUp = true;
-                            } else {
-                                startTransition(result);
+                            for (int i = 0; i < 3; ++i) {
+                                Enemy* pe = gameLoop.getPreviewEnemy(i);
+                                frozenStatStr[i] = (pe) ? highestStatName(pe) : "ATK";
                             }
-                        }
+                            freezeDoorPreview = true;
+
+                            GameScreen result = gameLoop.selectDoor(doorIdx);
+
+                            // Always clear the freeze at the actual screen flip.
+                            if (result == GameScreen::EVENT) {
+                                onScreenFlip = [&] {
+                                    freezeDoorPreview = false;
+                                    nextScreenAfterLevelUp = gameLoop.onEventDismissed();
+                                };
+                                startTransition(GameScreen::EVENT);
+                                // level up / move select handled when player presses ENTER on EVENT screen
+                            } else {
+                                onScreenFlip = [&] { freezeDoorPreview = false; };
+                                nextScreenAfterLevelUp = result;
+                                if (player && player->needsStatBoost()) {
+                                    showLevelUp = true;
+                                } else {
+                                    startTransition(result);
+                                }
+                            }
                     }
                 }
 
@@ -473,7 +501,10 @@ int main() {
         }   
         else if (currentScreen == GameScreen::DOOR_SELECT && gameLoop.getCurrentFloor() && player) {
             Enemy *previews[3] = { gameLoop.getPreviewEnemy(0), gameLoop.getPreviewEnemy(1), gameLoop.getPreviewEnemy(2) };
-            drawDoorSelect(window, font, bgSprite, gameLoop.getCurrentFloor(), player, gameLoop.getFloorNumber(), previews);
+            if (freezeDoorPreview)
+                drawDoorSelect(window, font, bgSprite, gameLoop.getCurrentFloor(), player, gameLoop.getFloorNumber(), previews, frozenStatStr);
+            else
+                drawDoorSelect(window, font, bgSprite, gameLoop.getCurrentFloor(), player, gameLoop.getFloorNumber(), previews);
             if (showLevelUp){
                 // aqui iria el drawEvent o algo por el estilo
                 sf::Vector2f mouse = window.mapPixelToCoords(sf::Mouse::getPosition(window));

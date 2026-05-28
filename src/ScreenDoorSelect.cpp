@@ -2,7 +2,7 @@
 #include <string>
 
 void drawDoorSelect(sf::RenderWindow& window, sf::Font& font,const sf::Sprite& bgSprite, const Floor* floor, const Player* player,
-                    int floorNumber, Enemy* previewEnemies[3]) {
+                    int floorNumber, Enemy* previewEnemies[3], const std::array<std::string,3>& statOverrides) {
 
     if (!floor || !player) return;
 
@@ -119,7 +119,9 @@ void drawDoorSelect(sf::RenderWindow& window, sf::Font& font,const sf::Sprite& b
         keyHint.setPosition({dx + (DOOR_W - kb.size.x) / 2.f - kb.position.x, DOOR_TOP + DOOR_H + 16.f});
         window.draw(keyHint);
 
-        std::string statStr = (i < 3 && previewEnemies[i]) ? highestStatName(previewEnemies[i]) : " ATK";
+        std::string statStr;
+        if (!statOverrides[i].empty()) statStr = statOverrides[i];
+        else statStr = (i < 3 && previewEnemies[i]) ? highestStatName(previewEnemies[i]) : " ATK";
         sf::Text statHint(font, statStr + " oriented", 13);
         statHint.setFillColor(sf::Color(180, 140, 100));
         sf::FloatRect shb = statHint.getLocalBounds();
