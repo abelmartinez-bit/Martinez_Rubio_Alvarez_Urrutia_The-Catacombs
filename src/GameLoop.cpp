@@ -4,7 +4,7 @@
 
 GameLoop::GameLoop():player(nullptr), currentFloor(nullptr), currentEnemy(nullptr), combat(nullptr), 
                      currentFloorNumber(1), isMiniBoss(false), previewEnemies{nullptr, nullptr, nullptr}, 
-                     lastEventDescription(""), eventResultScreen(GameScreen::DOOR_SELECT) {}
+                     rewardDescription(""), eventResultScreen(GameScreen::DOOR_SELECT) {}
 
 GameLoop::~GameLoop() {
     // player NO se destruye aqui: main.cpp se encarga de crear/destruir
@@ -40,7 +40,7 @@ GameScreen GameLoop::selectDoor(int doorIndex) {
     if (door.isEvent()) {
         // Evento: aplica efecto inmediato (curacion, pocion o reliquia)
         // y avanza de piso sin combate
-        lastEventDescription = currentFloor->triggerEvent(*player, door);
+        rewardDescription = currentFloor->triggerEvent(*player, door);
         eventResultScreen = advanceFloor();   // builds next floor, returns DOOR_SELECT or WIN
         return GameScreen::EVENT;
     }
@@ -56,7 +56,12 @@ GameScreen GameLoop::onCombatFinished() {
     if (!player->isAlive()) {
         return GameScreen::GAME_OVER;
     }
-    return advanceFloor();
+    return GameScreen::REWARDS;
+}
+
+GameScreen GameLoop::onRewardsDismissed() {
+    // El jugador presiono ENTER en la pantalla de recompensas -> avanzar piso
+    return advanceFloor();   // devuelve DOOR_SELECT o WIN
 }
 
 // Avanza al siguiente piso o declara victoria

@@ -26,5 +26,5 @@ public:
     std::string triggerEvent(Player& player, const Door& door);
 
      // Floor entrega las recompensas al jugador al terminar el combate
-    void giveRewards(Player& player, Entity* enemy, bool isMiniBoss);
+    std::string giveRewards(Player& player, Entity* enemy, bool isMiniBoss);
 };

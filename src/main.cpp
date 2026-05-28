@@ -103,6 +103,8 @@ int main() {
     // rewardGiven se pasa por referencia a drawCombat, que lo pone en true
     // cuando entrega las recompensas. main.cpp lo usa para poder presionar ENTER.
     bool rewardGiven = false;
+    std::string combatRewardDescription;   // set by drawCombat when rewards are given
+
 
     //nuevas variables para evitar cin en level up y move select
     bool showLevelUp = false;
@@ -365,6 +367,13 @@ int main() {
                     }
                 }
 
+                else if (currentScreen == GameScreen::REWARDS) {
+                    if (keyEvent->code == sf::Keyboard::Key::Enter || keyEvent->code == sf::Keyboard::Key::Space) {
+                        combatRewardDescription = "";
+                        currentScreen = gameLoop.onRewardsDismissed();
+                    }
+                }
+
                 else if (currentScreen == GameScreen::RELIC_TRACKER) {
                     if (keyEvent->code == sf::Keyboard::Key::B) {
                         RelicTracker::resetScroll();
@@ -418,7 +427,7 @@ int main() {
         else if (currentScreen == GameScreen::COMBAT && player && gameLoop.getCombat() && gameLoop.getCurrentFloor() && gameLoop.getCurrentEnemy()) {
             drawCombat(window, font, player, gameLoop.getCurrentEnemy(), gameLoop.getCombat(), playerText, enemyText, 
                         logText, resultText, instructionText, combatTitleText, rewardGiven, combatSprite, 
-                        gameLoop.getCurrentFloor(), gameLoop.getIsMiniBoss());
+                        gameLoop.getCurrentFloor(), gameLoop.getIsMiniBoss(), combatRewardDescription);
             
             // Pop-ups encima del combate
             if (showLevelUp) {
@@ -432,7 +441,7 @@ int main() {
         }
         else if (currentScreen == GameScreen::EVENT && player) {
             window.draw(eventSprite); 
-            drawEventScreen(window, font, gameLoop.getEventDescription(), player, timePassed);
+            drawEventScreen(window, font, gameLoop.getRewardDescription(), player, timePassed);
             if (showLevelUp) {
                 sf::Vector2f mouse = window.mapPixelToCoords(sf::Mouse::getPosition(window));
                 drawLevelUp(window, font, player, mouse);
@@ -441,11 +450,25 @@ int main() {
                 drawMoveSelect(window, font, player, mouse);
             }
         }
+
+        else if (currentScreen == GameScreen::REWARDS && player) {
+            window.draw(eventSprite);
+            drawRewardScreen(window, font, combatRewardDescription, player, timePassed);
+            // level-up / move-select overlays in case they leveled up mid-reward
+            if (showLevelUp) {
+                sf::Vector2f mouse = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+                drawLevelUp(window, font, player, mouse);
+            } else if (showMoveSelect) {
+                sf::Vector2f mouse = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+                drawMoveSelect(window, font, player, mouse);
+            }
+        }
+
         else if (currentScreen == GameScreen::GAME_OVER) {
             // Dibuja el ultimo frame de combate como fondo (si existe)
             if (gameLoop.getCurrentFloor() && gameLoop.getCurrentEnemy() && gameLoop.getCombat() && player) {
                 drawCombat(window, font, player, gameLoop.getCurrentEnemy(), gameLoop.getCombat(), playerText, enemyText, logText, resultText,
-                           instructionText, combatTitleText, rewardGiven, combatSprite, gameLoop.getCurrentFloor(), gameLoop.getIsMiniBoss());
+                           instructionText, combatTitleText, rewardGiven, combatSprite, gameLoop.getCurrentFloor(), gameLoop.getIsMiniBoss(), combatRewardDescription);
             }
             drawGameOver(window, font);
         }
