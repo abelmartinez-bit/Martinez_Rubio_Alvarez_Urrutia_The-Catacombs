@@ -6,4 +6,5 @@
 
 // con este y el .cpp haces hook up las nuevas door screens
 void drawDoorSelect(sf::RenderWindow& window, sf::Font& font, const sf::Sprite& bgSprite, const Floor* floor, const Player* player, 
-                    int floorNumber, Enemy* previewEnemies[3], const std::array<std::string,3>& statOverrides = {});
+                    int floorNumber, Enemy* previewEnemies[3], const sf::Sprite& doorSprite, const sf::Sprite& doorCorruptSprite, 
+                    const std::array<std::string,3>& statOverrides = {});

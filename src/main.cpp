@@ -90,6 +90,24 @@ int main() {
         return 1;
     }
 
+    sf::Texture wall;
+    if (!wall.loadFromFile("assets/images/3_doors.jpg")) {
+        std::cerr << "Error: no se pudo cargar la imagen de la pared\n";
+        return 1;
+    }
+
+    sf::Texture door;
+    if (!door.loadFromFile("assets/images/door2.png")) {
+        std::cerr << "Error: no se pudo cargar la imagen de la puerta\n";
+        return 1;
+    }
+
+    sf::Texture doorC;
+    if (!doorC.loadFromFile("assets/images/door2_c.png")) {
+        std::cerr << "Error: no se pudo cargar la imagen de la puerta corrupta\n";
+        return 1;
+    }
+
     sf::Sprite bgSprite(bgTexture); 
     bgSprite.setScale({800.f / bgTexture.getSize().x, 600.f / bgTexture.getSize().y});
 
@@ -104,6 +122,12 @@ int main() {
 
     sf::Sprite rewardsSprite(rewardsTexture);
     rewardsSprite.setScale({800.f / rewardsTexture.getSize().x, 600.f / rewardsTexture.getSize().y});
+
+    sf::Sprite wallSprite(wall);
+    wallSprite.setScale({800.f / wall.getSize().x, 600.f / wall.getSize().y});
+
+    sf::Sprite doorSprite(door);
+    sf::Sprite doorCorruptSprite(doorC);
 
     // current game state
     GameScreen currentScreen = GameScreen::MAIN_MENU; //empezar en el main menu
@@ -375,12 +399,12 @@ int main() {
                     if (doorIdx != -1) {
                         rewardGiven = false;
                             // Capture current preview stat strings so the UI doesn't
-                            // immediately update when selectDoor mutates floors/previews.
+                            // immediately update when selectDoor mutates floors/previews. i couldnt use onScreenFlip
                             auto highestStatName = [&](const Enemy* e) -> std::string {
                                 if (!e) return "ATK";
                                 int h = e->getHighestStat();
-                                if (h == e->getAtk())   return "ATK";
-                                if (h == e->getDef())   return "DEF";
+                                if (h == e->getAtk()) return "ATK";
+                                if (h == e->getDef()) return "DEF";
                                 if (h == e->getSpAtk()) return "SP.ATK";
                                 if (h == e->getSpDef()) return "SP.DEF";
                                 return "SPD";
@@ -502,9 +526,9 @@ int main() {
         else if (currentScreen == GameScreen::DOOR_SELECT && gameLoop.getCurrentFloor() && player) {
             Enemy *previews[3] = { gameLoop.getPreviewEnemy(0), gameLoop.getPreviewEnemy(1), gameLoop.getPreviewEnemy(2) };
             if (freezeDoorPreview)
-                drawDoorSelect(window, font, bgSprite, gameLoop.getCurrentFloor(), player, gameLoop.getFloorNumber(), previews, frozenStatStr);
+                drawDoorSelect(window, font, wallSprite, gameLoop.getCurrentFloor(), player, gameLoop.getFloorNumber(), previews, doorSprite, doorCorruptSprite, frozenStatStr);
             else
-                drawDoorSelect(window, font, bgSprite, gameLoop.getCurrentFloor(), player, gameLoop.getFloorNumber(), previews);
+                drawDoorSelect(window, font, wallSprite, gameLoop.getCurrentFloor(), player, gameLoop.getFloorNumber(), previews, doorSprite, doorCorruptSprite);
             if (showLevelUp){
                 // aqui iria el drawEvent o algo por el estilo
                 sf::Vector2f mouse = window.mapPixelToCoords(sf::Mouse::getPosition(window));

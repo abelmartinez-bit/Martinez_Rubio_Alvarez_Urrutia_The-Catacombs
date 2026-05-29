@@ -68,7 +68,7 @@ void drawLevelUp(sf::RenderWindow& window, sf::Font& font, Player* player, sf::V
     lvlText.setPosition({(800.f - lb.size.x) / 2.f - lb.position.x, 110.f});
     window.draw(lvlText);
 
-    sf::Text hint(font, "Click a stat to boost:", 18);
+    sf::Text hint(font, "Click two stats to boost:", 18);
     hint.setFillColor(sf::Color(180, 180, 180));
     sf::FloatRect hb = hint.getLocalBounds();
     hint.setPosition({(800.f - hb.size.x) / 2.f - hb.position.x, 148.f});
