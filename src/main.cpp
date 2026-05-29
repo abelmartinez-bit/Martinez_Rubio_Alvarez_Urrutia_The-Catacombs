@@ -20,8 +20,8 @@
 int main() {
     srand(static_cast<unsigned int>(time(nullptr))); // seed para aleatoriedad
     //creacion de la ventana, ahora abre en fullscreen, pero se puede cambiar a 800x600 para pruebas
-    sf::RenderWindow window(sf::VideoMode::getFullscreenModes()[0], "The Catacombs", sf::State::Fullscreen);
-    window.setFramerateLimit(60);
+    sf::RenderWindow window(sf::VideoMode({800, 600}), "The Catacombs");
+        window.setFramerateLimit(60);
 
     //config de la vista para coordenadas 800x600, asi es mas facil posicionar los elementos en pantalla
     sf::View view(sf::FloatRect({0.f, 0.f}, {800.f, 600.f}));
