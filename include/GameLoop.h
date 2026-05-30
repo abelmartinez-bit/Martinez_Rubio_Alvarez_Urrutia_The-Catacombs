@@ -2,7 +2,6 @@
 #include "Player.h"
 #include "Floor.h"
 #include "Enemy.h"
-#include "FinalBoss.h"
 #include "CombatEngine.h"
 #include "MainMenu.h"   // GameScreen enum
 
@@ -19,7 +18,6 @@ private:
 
     int  currentFloorNumber;
     bool isMiniBoss;
-    bool isFinalBoss;
 
     static const int MAX_FLOORS = 10; // can be changed
 
@@ -28,8 +26,10 @@ private:
     void buildPreviewEnemies();
     void spawnFromDoor(const Door& door, int doorIndex);
     void startCombat();
-    void startFinalBossCombat();
     GameScreen advanceFloor();   // incrementa piso, genera doors o declara WIN
+
+    std::string rewardDescription;
+    GameScreen eventResultScreen;
 
 public:
     GameLoop();
@@ -43,8 +43,9 @@ public:
     GameScreen selectDoor(int doorIndex);
 
     // Llamado desde main.cpp despues de que el combate termino
-    // Devuelve: DOOR_SELECT, WIN, GAME_OVER
-    GameScreen onCombatFinished();
+    GameScreen onCombatFinished(); // Devuelve: DOOR_SELECT, WIN, GAME_OVER
+    GameScreen onEventDismissed() const { return eventResultScreen; }
+    GameScreen onRewardsDismissed();
 
     void advanceTurn(int moveIndex); //ahora recibe el index del movimiento del player
     void usePotionInCombat(); // P: usa la primera pocion del inventario
@@ -60,8 +61,9 @@ public:
         return previewEnemies[index]; 
     }
 
+    std::string getRewardDescription()  const { return rewardDescription; }
+
     CombatEngine* getCombat()        const { return combat; }
     int getFloorNumber()   const { return currentFloorNumber; }
     bool getIsMiniBoss()    const { return isMiniBoss; }
-    bool getIsFinalBoss() const { return isFinalBoss; }
 };

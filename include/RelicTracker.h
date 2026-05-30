@@ -9,5 +9,10 @@ public:
     static void unlockRelic(const std::string& relicName, const std::string& relicDescription);
     static std::vector<std::pair<std::string, std::string>> loadUnlockedRelics();
     static bool isRelicUnlocked(const std::string& relicName, const std::vector<std::pair<std::string, std::string>>& unlockedRelics);
-    static void drawRelicTracker(sf::RenderWindow& window, sf::Font& font, const sf::Sprite& bgSprite);
+    static void drawRelicTracker(sf::RenderWindow& window, sf::Font& font, sf::Font& fontSmall, const sf::Sprite& bgSprite);
+    static void handleScroll(int delta);
+    static void resetScroll();
+    
+private:
+    static float scrollOffset;
 };

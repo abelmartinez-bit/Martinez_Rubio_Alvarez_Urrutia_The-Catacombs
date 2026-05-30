@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
@@ -23,35 +24,72 @@ int main() {
     sf::RenderWindow window(sf::VideoMode({800, 600}), "The Catacombs");
         window.setFramerateLimit(60);
 
+    sf::Clock flashClock; // Reloj para animaciones de flashing
+
     //config de la vista para coordenadas 800x600, asi es mas facil posicionar los elementos en pantalla
     sf::View view(sf::FloatRect({0.f, 0.f}, {800.f, 600.f}));
     window.setView(view);
 
-    sf::Font font;
-    if (!font.openFromFile("assets/fonts/Arial.ttf")) {
+    //crear y cargar fuentes, texturas y sprites , y music
+    sf::Font font; //cinzel, principal
+    sf::Font fontSmall; //arial, para letras chiquitas
+    sf::Font fontTitle; //MedievalSharp solo para titulo
+
+    if (!font.openFromFile("assets/fonts/Cinzel-VariableFont_wght.ttf")) {
         std::cerr << "Error: no se pudo cargar la fuente\n";
         return 1;
     }
 
-    sf::Texture bgTexture;
+    if (!fontSmall.openFromFile("assets/fonts/Arial.ttf")) {
+        std::cerr << "Error: no se pudo cargar la fuente\n";
+        return 1;
+    }
+
+    if (!fontTitle.openFromFile("assets/fonts/MedievalSharp-Regular.ttf")) {
+        std::cerr << "Error: no se pudo cargar la fuente\n";
+        return 1;
+    }
+
+    sf::Music music;
+    if (!music.openFromFile("assets/audio/PianoBG.wav")) {
+        std::cerr << "Error: no se pudo cargar la musica\n";
+     return 1;
+    }
+    music.setLooping(true);
+    music.setVolume(50.f);
+    music.play();
+
+    sf::Texture bgTexture; //fondo del main menu
     if (!bgTexture.loadFromFile("assets/images/CTHomeScreen1.jpg")) {
         std::cerr << "Error: no se pudo cargar el fondo del menu\n";
         return 1;
     }
 
-    sf::Texture csTexture;
+    sf::Texture csTexture; //fondo del character select
     if (!csTexture.loadFromFile("assets/images/CharacterSelect.jpeg")) {
         std::cerr << "Error: no se pudo cargar el fondo de seleccion\n";
         return 1;
     }
 
-    sf::Texture combatTexture;
+    sf::Texture combatTexture; //fondo del combate
     if (!combatTexture.loadFromFile("assets/images/Corridor.jpeg")) {
         std::cerr << "Error: no se pudo cargar el fondo de combate\n";
         return 1;
     }
 
-    sf::Sprite bgSprite(bgTexture);
+    sf::Texture eventTexture; //fondo de eventos
+    if (!eventTexture.loadFromFile("assets/images/event_screen.jpg")) {
+        std::cerr << "Error: no se pudo cargar el fondo de eventos\n";
+        return 1;
+    }
+
+    sf::Texture rewardsTexture; // fondo de pantalla de recompensas
+    if (!rewardsTexture.loadFromFile("assets/images/dungeon_hallway.jpg")) {
+        std::cerr << "Error: no se pudo cargar el fondo de recompensas\n";
+        return 1;
+    }
+
+    sf::Sprite bgSprite(bgTexture); 
     bgSprite.setScale({800.f / bgTexture.getSize().x, 600.f / bgTexture.getSize().y});
 
     sf::Sprite csSprite(csTexture);
@@ -60,6 +98,11 @@ int main() {
     sf::Sprite combatSprite(combatTexture);
     combatSprite.setScale({800.f / combatTexture.getSize().x, 600.f / combatTexture.getSize().y});
 
+    sf::Sprite eventSprite(eventTexture);
+    eventSprite.setScale({800.f / eventTexture.getSize().x, 600.f / eventTexture.getSize().y});
+
+    sf::Sprite rewardsSprite(rewardsTexture);
+    rewardsSprite.setScale({800.f / rewardsTexture.getSize().x, 600.f / rewardsTexture.getSize().y});
 
     // current game state
     GameScreen currentScreen = GameScreen::MAIN_MENU; //empezar en el main menu
@@ -69,6 +112,22 @@ int main() {
     // rewardGiven se pasa por referencia a drawCombat, que lo pone en true
     // cuando entrega las recompensas. main.cpp lo usa para poder presionar ENTER.
     bool rewardGiven = false;
+    std::string combatRewardDescription;   // set by drawCombat when rewards are given
+
+    // Transitions
+
+    enum class TransitionPhase { NONE, FADE_OUT, FADE_IN };
+    TransitionPhase transitionPhase = TransitionPhase::NONE;
+    GameScreen pendingScreen = GameScreen::MAIN_MENU;
+    float transitionAlpha = 0.f;
+    const float TRANSITION_SPEED = 700.f;
+    sf::RectangleShape transitionOverlay({800.f, 600.f});
+    transitionOverlay.setFillColor(sf::Color(0, 0, 0, 0));
+    sf::Clock dtClock;
+    std::function<void()> onScreenFlip = nullptr; // for running code at the exact moment we actually switch screens during a transition
+
+
+
 
     //nuevas variables para evitar cin en level up y move select
     bool showLevelUp = false;
@@ -78,14 +137,14 @@ int main() {
     GameScreen nextScreenAfterLevelUp = GameScreen::MAIN_MENU;
 
     // Main Menu — textos y botones
-    sf::Text titleText(font, "THE CATACOMBS", 58);
+    sf::Text titleText(fontTitle, "THE CATACOMBS", 58);
     titleText.setFillColor(sf::Color(210, 160, 60));
     {
         sf::FloatRect b = titleText.getLocalBounds();
         titleText.setPosition({(800.f - b.size.x) / 2.f - b.position.x, 130.f});
     }
 
-    sf::Text subtitleText(font, "- Roguelike Dungeon Crawler -", 17);
+    sf::Text subtitleText(fontSmall, "- Roguelike Dungeon Crawler -", 17);
     subtitleText.setFillColor(sf::Color(160, 120, 50));
     {
         sf::FloatRect b = subtitleText.getLocalBounds();
@@ -100,12 +159,12 @@ int main() {
     //crear array de structs para las cards de seleccion de personaje
     CharacterCard cards[4] = {
         //centerX, name, PlayerType, hp, atk, def, spAtk, spDef, spd
-        {  117.f, "Warrior", PlayerType::WARRIOR, 1300, 30, 35, 10, 25, 10 }, // testing
-        { 306.f, "Mage",    PlayerType::MAGE,    100, 10, 25, 30, 35, 15 },
-        { 498.f, "Rogue",   PlayerType::ROGUE,   110, 40, 22, 15, 32, 40 },
+        { 117.f, "Warrior", PlayerType::WARRIOR, 1300, 30, 35, 10, 25, 10 }, // testing
+        { 306.f, "Mage",    PlayerType::MAGE,    100, 10, 25, 35, 35, 15 },
+        { 498.f, "Rogue",   PlayerType::ROGUE,   110, 40, 22, 15, 22, 40 },
         { 689.f, "Archer",  PlayerType::ARCHER,  100, 15, 30, 30, 25, 25 }
     };
-    const float cardW = 160.f, cardH = 480.f, cardTop = 60.f;
+    const float cardW = 172.f, cardH = 520.f, cardTop = 20.f;
     int selectedCard = -1;
 
 
@@ -140,7 +199,41 @@ int main() {
 
     while (window.isOpen()) {
 
+        float timePassed = flashClock.getElapsedTime().asSeconds();
+        float dt = dtClock.restart().asSeconds();
+
+        auto startTransition = [&](GameScreen target) {
+            pendingScreen = target;
+            transitionPhase = TransitionPhase::FADE_OUT;
+            transitionAlpha = 0.f;
+        };
+
+        if (transitionPhase == TransitionPhase::FADE_OUT) {
+            transitionAlpha += TRANSITION_SPEED * dt;
+            if (transitionAlpha >= 255.f) {
+                transitionAlpha = 255.f;
+                currentScreen = pendingScreen;
+                if (onScreenFlip) { 
+                    onScreenFlip(); 
+                    onScreenFlip = nullptr; 
+                }
+                transitionPhase = TransitionPhase::FADE_IN;
+            }
+        } else if (transitionPhase == TransitionPhase::FADE_IN) {
+            transitionAlpha -= TRANSITION_SPEED * dt;
+            if (transitionAlpha <= 0.f) {
+                transitionAlpha = 0.f;
+                transitionPhase = TransitionPhase::NONE;
+            }
+        }
+        transitionOverlay.setFillColor(sf::Color(0, 0, 0, static_cast<uint8_t>(transitionAlpha)));
+
         while (const std::optional event = window.pollEvent()) {
+
+            if (transitionPhase != TransitionPhase::NONE) {
+                if (event->is<sf::Event::Closed>()) window.close();
+                continue;
+            }
 
             // Cerrar ventana
             if (event->is<sf::Event::Closed>())
@@ -154,12 +247,16 @@ int main() {
 
                     if (currentScreen == GameScreen::MAIN_MENU) {
                         // Boton PLAY
-                        if (mouse.x >= btnX && mouse.x <= btnX + btnW && mouse.y >= playY && mouse.y <= playY + btnH)
-                            currentScreen = GameScreen::CHARACTER_SELECT;
+                        if (mouse.x >= btnX && mouse.x <= btnX + btnW && mouse.y >= playY && mouse.y <= playY + btnH) {
+                            onScreenFlip = [&] { music.stop(); };
+                            startTransition(GameScreen::CHARACTER_SELECT); 
+                        }
 
                             // boton de reliquias
-                        if (mouse.x >= btnX && mouse.x <= btnX + btnW && mouse.y >= relicsY && mouse.y <= relicsY + btnH)
-                            currentScreen = GameScreen::RELIC_TRACKER;
+                        if (mouse.x >= btnX && mouse.x <= btnX + btnW && mouse.y >= relicsY && mouse.y <= relicsY + btnH) {
+                            onScreenFlip = [&] { RelicTracker::resetScroll(); };
+                            startTransition(GameScreen::RELIC_TRACKER);
+                        }
 
                         // Boton QUIT
                         if (mouse.x >= btnX && mouse.x <= btnX + btnW && mouse.y >= quitY && mouse.y <= quitY + btnH)
@@ -204,10 +301,10 @@ int main() {
                                         showMoveSelect = true;
                                     else if (currentScreen == GameScreen::COMBAT) {
                                         // Coming from combat, advance normally
-                                        currentScreen = gameLoop.onCombatFinished();
+                                        startTransition(gameLoop.onCombatFinished());
                                     } else {
                                         // Coming from event door, use stored next screen
-                                        currentScreen = nextScreenAfterLevelUp;
+                                        startTransition(nextScreenAfterLevelUp);
                                     }
                                 }
                                 break;
@@ -228,16 +325,23 @@ int main() {
                                 showMoveSelect = false;
                                 if (currentScreen == GameScreen::COMBAT) {
                                     // Coming from combat, advance normally
-                                    currentScreen = gameLoop.onCombatFinished();
+                                    startTransition(gameLoop.onCombatFinished());
                                 } else {
                                     // Coming from event door, use stored next screen
-                                    currentScreen = nextScreenAfterLevelUp;
+                                    startTransition(nextScreenAfterLevelUp);
                                 }
                                 break;
                             }
                         }
                     } 
                 } 
+            }
+
+            // Mouse scroll
+            if (const auto* scroll = event->getIf<sf::Event::MouseWheelScrolled>()) {
+                if (currentScreen == GameScreen::RELIC_TRACKER) {
+                    RelicTracker::handleScroll(scroll->delta);
+                }
             }
 
             // Teclas
@@ -252,7 +356,7 @@ int main() {
                         // Jugador creado: iniciamos partida en piso 1
                         gameLoop.startRun(player);
                         rewardGiven = false;
-                        currentScreen = GameScreen::DOOR_SELECT;
+                        startTransition(GameScreen::DOOR_SELECT);
                     }
                 }
 
@@ -265,17 +369,20 @@ int main() {
 
                     if (doorIdx != -1) {
                         rewardGiven = false;
-                        nextScreenAfterLevelUp = gameLoop.selectDoor(doorIdx);
-                        
-                        // Check if player needs level up from event door
-                        if (player && player->needsStatBoost()) {
-                            showLevelUp = true;
-                            // Keep currentScreen as DOOR_SELECT temporarily while showing level up
+                        GameScreen result = gameLoop.selectDoor(doorIdx);
+
+                        if (result == GameScreen::EVENT) {
+                            nextScreenAfterLevelUp = gameLoop.onEventDismissed();
+                            startTransition(GameScreen::EVENT);
+                            // level up / move select handled when player presses ENTER on EVENT screen
                         } else {
-                            currentScreen = nextScreenAfterLevelUp;
+                            nextScreenAfterLevelUp = result;
+                            if (player && player->needsStatBoost()) {
+                                showLevelUp = true;
+                            } else {
+                                startTransition(result);
+                            }
                         }
-                        // Si fue evento, selectDoor ya genero el siguiente piso
-                        // y devolvio DOOR_SELECT (o WIN/FINAL BOSS si era el ultimo piso)
                     }
                 }
 
@@ -297,28 +404,52 @@ int main() {
                             else if (player->hasPendingMoveRelic())
                                 showMoveSelect = true; //new pop up para elegir que move boostear o reemplazar con MoveRelic
                             else
-                                currentScreen = gameLoop.onCombatFinished();
+                                startTransition(gameLoop.onCombatFinished());
                             // Si el siguiente estado es DOOR_SELECT, rewardGiven
                             // se reseteara al elegir la siguiente puerta
                         }
                     }
                 }
 
+                else if (currentScreen == GameScreen::EVENT) {
+                    if (keyEvent->code == sf::Keyboard::Key::Enter || keyEvent->code == sf::Keyboard::Key::Space) {
+                        if (player->needsStatBoost()) {
+                        showLevelUp = true;
+                        // nextScreenAfterLevelUp already set when we entered EVENT
+                        } else if (player->hasPendingMoveRelic()) {
+                            showMoveSelect = true;
+                        } else startTransition(gameLoop.onEventDismissed());
+                    }
+                }
+
+                else if (currentScreen == GameScreen::REWARDS) {
+                    if (keyEvent->code == sf::Keyboard::Key::Enter || keyEvent->code == sf::Keyboard::Key::Space) {
+                        onScreenFlip = [&] { combatRewardDescription = ""; };
+                        startTransition(gameLoop.onRewardsDismissed());
+                    }
+                }
+
                 else if (currentScreen == GameScreen::RELIC_TRACKER) {
-                    if (keyEvent->code == sf::Keyboard::Key::B || keyEvent->code == sf::Keyboard::Key::R) {
-                          currentScreen = GameScreen::MAIN_MENU;
-    }
-}
+                    if (keyEvent->code == sf::Keyboard::Key::B) {
+                        onScreenFlip = [&] { RelicTracker::resetScroll(); };
+                        startTransition(GameScreen::MAIN_MENU);
+                    }
+                }
 
                 // Game Over / Win / Final Boss  R para volver al menu
                 else if (currentScreen == GameScreen::GAME_OVER || currentScreen == GameScreen::WIN) {
                     if (keyEvent->code == sf::Keyboard::Key::R) {
-                        gameLoop.reset();
-                        delete player;
-                        player = nullptr;
-                        selectedCard = -1;
-                        rewardGiven = false;
-                        currentScreen = GameScreen::MAIN_MENU;
+                        onScreenFlip = [&] {
+                            gameLoop.reset();
+                            delete player;
+                            player = nullptr;
+                            selectedCard = -1;
+                            rewardGiven = false; 
+                            music.setLooping(true);
+                            music.setVolume(50.f);
+                            music.play(); 
+                        };
+                        startTransition(GameScreen::MAIN_MENU);
                     }
                 }
             }
@@ -330,41 +461,74 @@ int main() {
         //bloques de dibujo por pantalla
 
         if (currentScreen == GameScreen::MAIN_MENU) {
-            drawMainMenu(window, font, bgSprite, titleText, subtitleText, btnX, playY, relicsY, quitY, btnW, btnH);
+            sf::Vector2f mouse = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+            drawMainMenu(window, font, fontSmall, fontTitle, bgSprite, titleText, subtitleText, btnX, playY, relicsY, quitY, btnW, btnH, mouse);
         }
         
         else if (currentScreen == GameScreen::RELIC_TRACKER) {
-            RelicTracker::drawRelicTracker(window, font, bgSprite);        }
+            RelicTracker::drawRelicTracker(window, font, fontSmall, bgSprite);        }
 
         else if (currentScreen == GameScreen::CHARACTER_SELECT) {
-            drawCharacterSelect(window, font, csSprite, cards, selectedCard, cardW, cardH, cardTop);
+            drawCharacterSelect(window, font, csSprite, cards, selectedCard, cardW, cardH, cardTop, timePassed);
         }   
         else if (currentScreen == GameScreen::DOOR_SELECT && gameLoop.getCurrentFloor() && player) {
             Enemy *previews[3] = { gameLoop.getPreviewEnemy(0), gameLoop.getPreviewEnemy(1), gameLoop.getPreviewEnemy(2) };
             drawDoorSelect(window, font, bgSprite, gameLoop.getCurrentFloor(), player, gameLoop.getFloorNumber(), previews);
-            if (showLevelUp)
+            if (showLevelUp){
                 // aqui iria el drawEvent o algo por el estilo
-                drawLevelUp(window, font, player);
-            else if (showMoveSelect)
-                drawMoveSelect(window, font, player);
+                sf::Vector2f mouse = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+                drawLevelUp(window, font, player, mouse);
+            }
+            else if (showMoveSelect) {
+                sf::Vector2f mouse = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+                drawMoveSelect(window, font, player, mouse);
+            }
         }
-        else if (currentScreen == GameScreen::COMBAT && player && gameLoop.getCombat() && gameLoop.getCurrentFloor() 
-                && gameLoop.getCurrentEnemy()) {
+        else if (currentScreen == GameScreen::COMBAT && player && gameLoop.getCombat() && gameLoop.getCurrentFloor() && gameLoop.getCurrentEnemy()) {
             drawCombat(window, font, player, gameLoop.getCurrentEnemy(), gameLoop.getCombat(), playerText, enemyText, 
                         logText, resultText, instructionText, combatTitleText, rewardGiven, combatSprite, 
-                        gameLoop.getCurrentFloor(), gameLoop.getIsMiniBoss());
+                        gameLoop.getCurrentFloor(), gameLoop.getIsMiniBoss(), combatRewardDescription);
             
             // Pop-ups encima del combate
-            if (showLevelUp)
-                drawLevelUp(window, font, player);
-            else if (showMoveSelect)
-                drawMoveSelect(window, font, player);
+            if (showLevelUp) {
+                sf::Vector2f mouse = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+                drawLevelUp(window, font, player, mouse);
+            }
+            else if (showMoveSelect) {
+                sf::Vector2f mouse = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+                drawMoveSelect(window, font, player, mouse);
+            }
         }
+        else if (currentScreen == GameScreen::EVENT && player) {
+            window.draw(eventSprite); 
+            drawEventScreen(window, font, gameLoop.getRewardDescription(), player, timePassed);
+            if (showLevelUp) {
+                sf::Vector2f mouse = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+                drawLevelUp(window, font, player, mouse);
+            } else if (showMoveSelect) {
+                sf::Vector2f mouse = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+                drawMoveSelect(window, font, player, mouse);
+            }
+        }
+
+        else if (currentScreen == GameScreen::REWARDS && player) {
+            window.draw(rewardsSprite);
+            drawRewardScreen(window, font, combatRewardDescription, player, timePassed);
+            // level-up / move-select overlays in case they leveled up mid-reward
+            if (showLevelUp) {
+                sf::Vector2f mouse = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+                drawLevelUp(window, font, player, mouse);
+            } else if (showMoveSelect) {
+                sf::Vector2f mouse = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+                drawMoveSelect(window, font, player, mouse);
+            }
+        }
+
         else if (currentScreen == GameScreen::GAME_OVER) {
             // Dibuja el ultimo frame de combate como fondo (si existe)
             if (gameLoop.getCurrentFloor() && gameLoop.getCurrentEnemy() && gameLoop.getCombat() && player) {
                 drawCombat(window, font, player, gameLoop.getCurrentEnemy(), gameLoop.getCombat(), playerText, enemyText, logText, resultText,
-                           instructionText, combatTitleText, rewardGiven, combatSprite, gameLoop.getCurrentFloor(), gameLoop.getIsMiniBoss());
+                           instructionText, combatTitleText, rewardGiven, combatSprite, gameLoop.getCurrentFloor(), gameLoop.getIsMiniBoss(), combatRewardDescription);
             }
             drawGameOver(window, font);
         }
@@ -372,6 +536,7 @@ int main() {
             drawWin(window, font);
         }
 
+        window.draw(transitionOverlay); // Dibuja la transition por encima de todo
         window.display();
     }
 

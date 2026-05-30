@@ -28,24 +28,60 @@ bool handleCharacterSelectKey(sf::Keyboard::Key key, int selectedCard, Character
 }
 
 void drawCharacterSelect(sf::RenderWindow& window, sf::Font& font, const sf::Sprite& csSprite, CharacterCard cards[4], int selectedCard,
-                         float cardW, float cardH, float cardTop) {
+                         float cardW, float cardH, float cardTop, float time) {
 
     //imagen de seleccion de personaje
     window.draw(csSprite);
 
-    // Dibujar nombre y resaltado de cada carta
+    // Dibujar nombre, HP y resaltado de cada carta
     for (int i = 0; i < 4; i++) {
         float cardX = cards[i].centerX - cardW / 2.f;
+
+        // Calculate alpha usando seno
+        // * 8.f +velocidad del parpadeo
+        float sineWave = std::sin(time * 8.f); 
+
+        // range para que no desaparezca completamente
+        int minAlpha = 155; 
+        int alphaRange = 255 - minAlpha;
+        int alpha = minAlpha + static_cast<int>((sineWave + 1.f) * 0.5f * alphaRange);
 
         // Si esta seleccionada, dibujar un borde dorado encima de la carta
         if (selectedCard == i) {
             sf::RectangleShape highlight({cardW, cardH});
             highlight.setPosition({cardX, cardTop});
             highlight.setFillColor(sf::Color(0, 0, 0, 0)); //transparente
-            highlight.setOutlineColor(sf::Color(210, 160, 60));
-            highlight.setOutlineThickness(4.f);
+            
+            // alpha es nuestro blinker
+            highlight.setOutlineColor(sf::Color(210, 160, 60, alpha)); // dorado
+            highlight.setOutlineThickness(5.f);
+            
             window.draw(highlight);
         }
+
+
+        // HP display en la tarjeta (parte superior)
+        sf::Text hpText(font, "HP: " + std::to_string(cards[i].hp), 40);
+        sf::Color lightGreen(144, 238, 144);
+        hpText.setFillColor(lightGreen);
+        sf::FloatRect hb = hpText.getLocalBounds();
+        float hpX = cards[i].centerX - hb.size.x / 2.f - hb.position.x;
+        float hpY = cardTop + 8.f;
+        
+        // Shadow rectangle (dark, more transparent)
+        sf::RectangleShape hpShadow({hb.size.x + 16.f, hb.size.y + 10.f});
+        hpShadow.setPosition({hpX - 8.f, hpY + 3.f});
+        hpShadow.setFillColor(sf::Color(0, 0, 0, 80));
+        window.draw(hpShadow);
+        
+        // Background rectangle (semi-transparent)
+        sf::RectangleShape hpBg({hb.size.x + 16.f, hb.size.y + 10.f});
+        hpBg.setPosition({hpX - 8.f, hpY});
+        hpBg.setFillColor(sf::Color(0, 0, 0, 120));
+        window.draw(hpBg);
+        
+        hpText.setPosition({hpX, hpY - 3.f});
+        window.draw(hpText);
 
         // Nombre del personaje debajo de la carta
         sf::Text nameText(font, cards[i].name, 20);
@@ -60,15 +96,21 @@ void drawCharacterSelect(sf::RenderWindow& window, sf::Font& font, const sf::Spr
         window.draw(nameText);
     }
 
+    // Rectangulo detras del texto
+    sf::RectangleShape textBg({440.f, 56.f});
+    textBg.setPosition({180.f, 545.f});
+    textBg.setFillColor(sf::Color(10, 5, 0, 180));
+    window.draw(textBg);
+
     // Texto de seleccion
     sf::Text tempText(font, "SELECCIONA TU PERSONAJE", 26);
-    tempText.setFillColor(sf::Color::Black);
+    tempText.setFillColor(sf::Color::White);
     sf::FloatRect tb = tempText.getLocalBounds();
     tempText.setPosition({(800.f - tb.size.x) / 2.f - tb.position.x, 545.f});
     window.draw(tempText);
 
     sf::Text hintText(font, selectedCard == -1 ? "Haz click en un personaje" : "Presiona C para continuar", 18);
-    hintText.setFillColor(sf::Color::Black);
+    hintText.setFillColor(sf::Color::White);
     sf::FloatRect hb = hintText.getLocalBounds();
     hintText.setPosition({(800.f - hb.size.x) / 2.f - hb.position.x, 575.f});
     window.draw(hintText);

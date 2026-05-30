@@ -37,7 +37,7 @@ void drawWin(sf::RenderWindow& window, sf::Font& font) {
     title.setPosition({(800.f - tb.size.x) / 2.f - tb.position.x, 170.f});
     window.draw(title);
 
-    sf::Text sub(font, "You conquered all 5 floors of The Catacombs.", 20);
+    sf::Text sub(font, "You conquered all 10 floors of The Catacombs.", 20);
     sub.setFillColor(sf::Color(180, 160, 100));
     sf::FloatRect sb = sub.getLocalBounds();
     sub.setPosition({(800.f - sb.size.x) / 2.f - sb.position.x, 285.f});
@@ -50,7 +50,8 @@ void drawWin(sf::RenderWindow& window, sf::Font& font) {
     window.draw(hint);
 }
 
-void drawLevelUp(sf::RenderWindow& window, sf::Font& font, Player* player) {
+void drawLevelUp(sf::RenderWindow& window, sf::Font& font, Player* player, sf::Vector2f mousePos) {
+
     sf::RectangleShape overlay({800.f, 600.f});
     overlay.setFillColor(sf::Color(0, 0, 0, 210));
     window.draw(overlay);
@@ -87,18 +88,22 @@ void drawLevelUp(sf::RenderWindow& window, sf::Font& font, Player* player) {
     const float luBtnX = (800.f - luBtnW) / 2.f;
 
     for (int i = 0; i < 6; i++) {
+        // Check if mouse is hovering over this button
+        bool isHovered = (mousePos.x >= luBtnX && mousePos.x <= luBtnX + luBtnW &&
+                          mousePos.y >= btns[i].y && mousePos.y <= btns[i].y + luBtnH);
+
         sf::RectangleShape border({luBtnW + 4.f, luBtnH + 4.f});
         border.setPosition({luBtnX - 2.f, btns[i].y - 2.f});
-        border.setFillColor(sf::Color(120, 80, 20));
+        border.setFillColor(isHovered ? sf::Color(200, 150, 50) : sf::Color(120, 80, 20));
         window.draw(border);
 
         sf::RectangleShape bg({luBtnW, luBtnH});
         bg.setPosition({luBtnX, btns[i].y});
-        bg.setFillColor(sf::Color(20, 12, 5, 210));
+        bg.setFillColor(isHovered ? sf::Color(50, 35, 15, 210) : sf::Color(20, 12, 5, 210));
         window.draw(bg);
 
         sf::Text label(font, btns[i].label, 22);
-        label.setFillColor(sf::Color(210, 160, 60));
+        label.setFillColor(isHovered ? sf::Color(255, 200, 100) : sf::Color(210, 160, 60));
         sf::FloatRect flb = label.getLocalBounds();
         label.setPosition({luBtnX + (luBtnW - flb.size.x) / 2.f - flb.position.x,
                            btns[i].y + (luBtnH - flb.size.y) / 2.f - flb.position.y});
@@ -106,7 +111,7 @@ void drawLevelUp(sf::RenderWindow& window, sf::Font& font, Player* player) {
     }
 }
 
-void drawMoveSelect(sf::RenderWindow& window, sf::Font& font, Player* player) {
+void drawMoveSelect(sf::RenderWindow& window, sf::Font& font, Player* player, sf::Vector2f mousePos) {
     sf::RectangleShape overlay({800.f, 600.f});
     overlay.setFillColor(sf::Color(0, 0, 0, 210));
     window.draw(overlay);
@@ -118,7 +123,7 @@ void drawMoveSelect(sf::RenderWindow& window, sf::Font& font, Player* player) {
     window.draw(title);
 
     sf::Text newMove(font, "New move: " + player->getPendingMove().getName() +
-                     "  (Power: " + std::to_string(player->getPendingMove().getPower()) + ")", 20);
+                     "  (Power: " + std::to_string(player->getPendingMove().getPower()) + ")", 16);
     newMove.setFillColor(sf::Color(100, 220, 100));
     sf::FloatRect nb = newMove.getLocalBounds();
     newMove.setPosition({(800.f - nb.size.x) / 2.f - nb.position.x, 100.f});
@@ -138,22 +143,166 @@ void drawMoveSelect(sf::RenderWindow& window, sf::Font& font, Player* player) {
     for (int i = 0; i < 4; i++) {
         float by = msStartY + i * (msBtnH + 18.f);
 
+        // Check if mouse is hovering over this button
+        bool isHovered = (mousePos.x >= msBtnX && mousePos.x <= msBtnX + msBtnW &&
+                          mousePos.y >= by && mousePos.y <= by + msBtnH);
+
         sf::RectangleShape border({msBtnW + 4.f, msBtnH + 4.f});
         border.setPosition({msBtnX - 2.f, by - 2.f});
-        border.setFillColor(sf::Color(120, 80, 20));
+        border.setFillColor(isHovered ? sf::Color(200, 150, 50) : sf::Color(120, 80, 20));
         window.draw(border);
 
         sf::RectangleShape bg({msBtnW, msBtnH});
         bg.setPosition({msBtnX, by});
-        bg.setFillColor(sf::Color(20, 12, 5, 210));
+        bg.setFillColor(isHovered ? sf::Color(50, 35, 15, 210) : sf::Color(20, 12, 5, 210));
         window.draw(bg);
 
         sf::Text label(font, std::to_string(i + 1) + ".  " + moves[i].getName() +
-                       "  (Power: " + std::to_string(moves[i].getPower()) + ")", 20);
-        label.setFillColor(sf::Color(210, 160, 60));
+                       "  (Power: " + std::to_string(moves[i].getPower()) + ")", 16);
+        label.setFillColor(isHovered ? sf::Color(255, 200, 100) : sf::Color(210, 160, 60));
         sf::FloatRect flb = label.getLocalBounds();
         label.setPosition({msBtnX + (msBtnW - flb.size.x) / 2.f - flb.position.x,
                            by + (msBtnH - flb.size.y) / 2.f - flb.position.y});
         window.draw(label);
     }
 }
+
+void drawEventScreen(sf::RenderWindow& window, sf::Font& font, const std::string& description, Player* player, float time) {
+
+    // Dark overlay
+    sf::RectangleShape overlay({800.f, 600.f});
+    overlay.setFillColor(sf::Color(0, 0, 0, 170));
+    window.draw(overlay);
+
+    // Title
+    sf::Text title(font, "DUNGEON EVENT", 50);
+    title.setFillColor(sf::Color(210, 160, 60));
+    sf::FloatRect tb = title.getLocalBounds();
+    title.setPosition({(800.f - tb.size.x) / 2.f - tb.position.x, 48.f});
+    window.draw(title);
+
+    // Divider
+    sf::RectangleShape line({500.f, 2.f});
+    line.setFillColor(sf::Color(120, 80, 20));
+    line.setPosition({150.f, 115.f});
+    window.draw(line);
+
+    // Description panel
+    const float panelX = 110.f, panelY = 138.f;
+    const float panelW = 580.f, panelH = 230.f;
+
+    sf::RectangleShape border({panelW + 4.f, panelH + 4.f});
+    border.setPosition({panelX - 2.f, panelY - 2.f});
+    border.setFillColor(sf::Color(120, 80, 20));
+    window.draw(border);
+
+    sf::RectangleShape panel({panelW, panelH});
+    panel.setPosition({panelX, panelY});
+    panel.setFillColor(sf::Color(20, 12, 5, 220));
+    window.draw(panel);
+
+    sf::Text desc(font, description, 18);
+    desc.setFillColor(sf::Color(210, 195, 165));
+    desc.setPosition({panelX + 22.f, panelY + 18.f});
+    window.draw(desc);
+
+    // Player HP / level
+    if (player) {
+        std::string hpStr =
+            player->getName() +
+            "   HP: " + std::to_string(player->getHp()) + " / " + std::to_string(player->getMaxHp()) +
+            "   LVL: " + std::to_string(player->getLevel());
+        sf::Text hpText(font, hpStr, 17);
+        hpText.setFillColor(sf::Color(100, 220, 100));
+        sf::FloatRect hb = hpText.getLocalBounds();
+        hpText.setPosition({(800.f - hb.size.x) / 2.f - hb.position.x, 392.f});
+        window.draw(hpText);
+    }
+
+    float sineWave = std::sin(time * 3.f); 
+
+    // range para que no desaparezca completamente
+    int minAlpha = 5; 
+    int alphaRange = 255 - minAlpha;
+    int alpha = minAlpha + static_cast<int>((sineWave + 1.f) * 0.5f * alphaRange);
+
+
+    // Continue hint
+    sf::Text hint(font, "Press  ENTER  to continue.", 19);
+    hint.setFillColor(sf::Color(150, 150, 150, alpha));
+    sf::FloatRect hb = hint.getLocalBounds();
+    hint.setPosition({(800.f - hb.size.x) / 2.f - hb.position.x, 460.f});
+    window.draw(hint);
+}
+
+void drawRewardScreen(sf::RenderWindow& window, sf::Font& font, const std::string& description, Player* player, float time) {
+    // Dark overlay
+    sf::RectangleShape overlay({800.f, 600.f});
+    overlay.setFillColor(sf::Color(0, 0, 0, 210));
+    window.draw(overlay);
+
+    // Title
+    sf::Text title(font, "FLOOR CLEARED!", 50);
+    title.setFillColor(sf::Color(210, 160, 60));
+    sf::FloatRect tb = title.getLocalBounds();
+    title.setPosition({(800.f - tb.size.x) / 2.f - tb.position.x, 48.f});
+    window.draw(title);
+
+    // Divider
+    sf::RectangleShape line({500.f, 2.f});
+    line.setFillColor(sf::Color(120, 80, 20));
+    line.setPosition({150.f, 115.f});
+    window.draw(line);
+
+    // Description panel
+    const float panelX = 110.f, panelY = 138.f;
+    const float panelW = 580.f, panelH = 230.f;
+
+    sf::RectangleShape border({panelW + 4.f, panelH + 4.f});
+    border.setPosition({panelX - 2.f, panelY - 2.f});
+    border.setFillColor(sf::Color(120, 80, 20));
+    window.draw(border);
+
+    sf::RectangleShape panel({panelW, panelH});
+    panel.setPosition({panelX, panelY});
+    panel.setFillColor(sf::Color(20, 12, 5, 220));
+    window.draw(panel);
+
+    sf::Text desc(font, description, 18);
+    desc.setFillColor(sf::Color(210, 195, 165));
+    desc.setPosition({panelX + 22.f, panelY + 18.f});
+    window.draw(desc);
+
+    // Player HP / level
+    if (player) {
+        std::string hpStr =
+            player->getName() +
+            "   HP: " + std::to_string(player->getHp()) + " / " + std::to_string(player->getMaxHp()) +
+            "   LVL: " + std::to_string(player->getLevel());
+        sf::Text hpText(font, hpStr, 17);
+        hpText.setFillColor(sf::Color(100, 220, 100));
+        sf::FloatRect hb = hpText.getLocalBounds();
+        hpText.setPosition({(800.f - hb.size.x) / 2.f - hb.position.x, 392.f});
+        window.draw(hpText);
+    }
+
+    float sineWave = std::sin(time * 3.f); 
+
+    // range para que no desaparezca completamente
+    int minAlpha = 5; 
+    int alphaRange = 255 - minAlpha;
+    int alpha = minAlpha + static_cast<int>((sineWave + 1.f) * 0.5f * alphaRange);
+
+
+    // Continue hint
+    sf::Text hint(font, "Press  ENTER  to continue.", 19);
+    hint.setFillColor(sf::Color(150, 150, 150, alpha));
+    sf::FloatRect hb = hint.getLocalBounds();
+    hint.setPosition({(800.f - hb.size.x) / 2.f - hb.position.x, 460.f});
+    window.draw(hint);
+}
+
+
+
+
+
