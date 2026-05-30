@@ -15,4 +15,4 @@ void drawCombat(sf::RenderWindow& window, sf::Font& font,
                 sf::Text& logText, sf::Text& resultText,
                 sf::Text& instructionText, sf::Text& combatTitleText,
                 bool& rewardGiven, const sf::Sprite& combatSprite,
-                Floor* floor, bool isMiniBoss);
+                Floor* floor, bool isMiniBoss, std::string& rewardDescription);

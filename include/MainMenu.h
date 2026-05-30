@@ -8,6 +8,7 @@ enum class GameScreen {
     CHARACTER_SELECT,
     DOOR_SELECT,   // door select screen
     COMBAT,        // regular combat
+    REWARDS,    // pantalla de recompensa despues de ganar un combate, antes de elegir puerta siguiente piso
     EVENT,         // combatless event (no hace nada aun)
     GAME_OVER,     // died
     WIN           // completo los 10 pisos y boss final
