@@ -486,8 +486,9 @@ int main() {
         }
         else if (currentScreen == GameScreen::COMBAT && player && gameLoop.getCombat() && gameLoop.getCurrentFloor() && gameLoop.getCurrentEnemy()) {
             drawCombat(window, font, player, gameLoop.getCurrentEnemy(), gameLoop.getCombat(), playerText, enemyText, 
-                        logText, resultText, instructionText, combatTitleText, rewardGiven, combatSprite, 
-                        gameLoop.getCurrentFloor(), gameLoop.getIsMiniBoss(), combatRewardDescription);
+            logText, resultText, instructionText, combatTitleText, rewardGiven, combatSprite, 
+            gameLoop.getCurrentFloor(), gameLoop.getIsMiniBoss(), combatRewardDescription,
+            gameLoop.getIsFinalBoss());
             
             // Pop-ups encima del combate
             if (showLevelUp) {
@@ -528,7 +529,7 @@ int main() {
             // Dibuja el ultimo frame de combate como fondo (si existe)
             if (gameLoop.getCurrentFloor() && gameLoop.getCurrentEnemy() && gameLoop.getCombat() && player) {
                 drawCombat(window, font, player, gameLoop.getCurrentEnemy(), gameLoop.getCombat(), playerText, enemyText, logText, resultText,
-                           instructionText, combatTitleText, rewardGiven, combatSprite, gameLoop.getCurrentFloor(), gameLoop.getIsMiniBoss(), combatRewardDescription);
+                instructionText, combatTitleText, rewardGiven, combatSprite, gameLoop.getCurrentFloor(), gameLoop.getIsMiniBoss(), combatRewardDescription, gameLoop.getIsFinalBoss());
             }
             drawGameOver(window, font);
         }

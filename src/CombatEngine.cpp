@@ -1,5 +1,6 @@
 #include "../include/CombatEngine.h"
-#include <cstdlib> //rand
+#include "../include/FinalBoss.h"
+#include <cstdlib> //rand   
 #include <ctime> //time for seeding rand
 #include <iostream> // temp for testing
 
@@ -53,6 +54,12 @@ void CombatEngine::executeTurn(int playerMoveIndex) {
         } else combatLog += first->getName() + "'s " + firstMove.getName() + " missed!\n";
         
     }
+
+    if (enemy->isAlive()) {
+        if (FinalBoss* boss = dynamic_cast<FinalBoss*>(enemy)) {
+        boss->updatePhase();
+    }
+}
     
     // Check if battle ended (died from first move so second doesnt get to move)
     if (isBattleOver()) {
@@ -90,6 +97,12 @@ void CombatEngine::executeTurn(int playerMoveIndex) {
         } else combatLog += second->getName() + "'s " + secondMove.getName() + " missed!\n";
     
     }
+
+    if (enemy->isAlive()) {
+        if (FinalBoss* boss = dynamic_cast<FinalBoss*>(enemy)) {
+        boss->updatePhase();
+    }
+}
 
     if (isBattleOver()) {
         endReset(player, enemy);
