@@ -3,7 +3,8 @@
 #include <cstdlib>
 
 GameLoop::GameLoop():player(nullptr), currentFloor(nullptr), currentEnemy(nullptr), combat(nullptr), 
-                     currentFloorNumber(1), isMiniBoss(false), previewEnemies{nullptr, nullptr, nullptr} {}
+                     currentFloorNumber(1), isMiniBoss(false), previewEnemies{nullptr, nullptr, nullptr}, 
+                     lastEventDescription(""), eventResultScreen(GameScreen::DOOR_SELECT) {}
 
 GameLoop::~GameLoop() {
     // player NO se destruye aqui: main.cpp se encarga de crear/destruir
@@ -39,8 +40,9 @@ GameScreen GameLoop::selectDoor(int doorIndex) {
     if (door.isEvent()) {
         // Evento: aplica efecto inmediato (curacion, pocion o reliquia)
         // y avanza de piso sin combate
-        currentFloor->triggerEvent(*player, door);
-        return advanceFloor();
+        lastEventDescription = currentFloor->triggerEvent(*player, door);
+        eventResultScreen = advanceFloor();   // builds next floor, returns DOOR_SELECT or WIN
+        return GameScreen::EVENT;
     }
 
     // Puerta normal o corrupta -> combate
