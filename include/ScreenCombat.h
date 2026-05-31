@@ -3,6 +3,7 @@
 #include "Floor.h"
 #include "Player.h"
 #include "Enemy.h"
+#include "FinalBoss.h"
 #include "CombatEngine.h"
 
 // Maneja teclas en combate (SPACE avanza turno, P usa pocion)
@@ -15,4 +16,4 @@ void drawCombat(sf::RenderWindow& window, sf::Font& font,
                 sf::Text& logText, sf::Text& resultText,
                 sf::Text& instructionText, sf::Text& combatTitleText,
                 bool& rewardGiven, const sf::Sprite& combatSprite,
-                Floor* floor, bool isMiniBoss, std::string& rewardDescription);
+                Floor* floor, bool isMiniBoss, std::string& rewardDescription, bool isFinalBoss = false);

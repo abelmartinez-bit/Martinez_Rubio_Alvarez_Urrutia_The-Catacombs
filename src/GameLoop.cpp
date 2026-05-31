@@ -3,9 +3,8 @@
 #include <cstdlib>
 
 GameLoop::GameLoop():player(nullptr), currentFloor(nullptr), currentEnemy(nullptr), combat(nullptr), 
-                     currentFloorNumber(1), isMiniBoss(false), previewEnemies{nullptr, nullptr, nullptr}, 
+                     currentFloorNumber(1), isMiniBoss(false), isFinalBoss(false),  previewEnemies{nullptr, nullptr, nullptr}, 
                      rewardDescription(""), eventResultScreen(GameScreen::DOOR_SELECT) {}
-
 GameLoop::~GameLoop() {
     // player NO se destruye aqui: main.cpp se encarga de crear/destruir
     delete combat;
@@ -24,6 +23,7 @@ void GameLoop::startRun(Player* p) {
     player = p;
     currentFloorNumber = 1;
     isMiniBoss = false;
+    isFinalBoss = false;
     buildFloor();
 }
 
@@ -56,6 +56,9 @@ GameScreen GameLoop::onCombatFinished() {
     if (!player->isAlive()) {
         return GameScreen::GAME_OVER;
     }
+    if (isFinalBoss) {
+        return GameScreen::WIN;
+    }
     return GameScreen::REWARDS;
 }
 
@@ -68,7 +71,8 @@ GameScreen GameLoop::onRewardsDismissed() {
 GameScreen GameLoop::advanceFloor() {
     currentFloorNumber++;
     if (currentFloorNumber > MAX_FLOORS) {
-        return GameScreen::WIN; // aqui podriamos poner la llamada a el final boss
+        startFinalBossCombat();
+         return GameScreen::COMBAT; // se realizo el combate contra el boss final, main.cpp se encargara de verificar victoria o derrota
     }
     buildFloor();
     if (player->hasRelic("Healing Charm")) {
@@ -121,6 +125,25 @@ void GameLoop::spawnFromDoor(const Door& door, int doorIndex) {
 
 void GameLoop::startCombat() {
     delete combat;
+    combat = nullptr;
+
+    delete currentEnemy;
+    currentEnemy = nullptr;
+
+    for (int i = 0; i < 3; i++) {
+        delete previewEnemies[i];
+        previewEnemies[i] = nullptr;
+    }
+
+    isMiniBoss = false;
+    isFinalBoss = true;
+
+    currentEnemy = new FinalBoss(
+        "The Catacomb Lord",
+        EnemyType::SENTINEL,
+        450, 55, 40, 55, 40, 28
+    );
+
     // CombatEngine acepta Entity* para el enemigo
     combat = new CombatEngine(player, currentEnemy);
 }
@@ -163,4 +186,5 @@ void GameLoop::reset() {
     player = nullptr;
     currentFloorNumber = 1;
     isMiniBoss = false;
+    isFinalBoss = false;
 }

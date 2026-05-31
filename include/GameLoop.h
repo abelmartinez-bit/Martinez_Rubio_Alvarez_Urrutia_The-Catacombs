@@ -2,6 +2,7 @@
 #include "Player.h"
 #include "Floor.h"
 #include "Enemy.h"
+#include "FinalBoss.h"
 #include "CombatEngine.h"
 #include "MainMenu.h"   // GameScreen enum
 
@@ -18,6 +19,7 @@ private:
 
     int  currentFloorNumber;
     bool isMiniBoss;
+    bool isFinalBoss;
 
     static const int MAX_FLOORS = 10; // can be changed
 
@@ -26,6 +28,7 @@ private:
     void buildPreviewEnemies();
     void spawnFromDoor(const Door& door, int doorIndex);
     void startCombat();
+    void startFinalBossCombat();
     GameScreen advanceFloor();   // incrementa piso, genera doors o declara WIN
 
     std::string rewardDescription;
@@ -66,4 +69,5 @@ public:
     CombatEngine* getCombat()        const { return combat; }
     int getFloorNumber()   const { return currentFloorNumber; }
     bool getIsMiniBoss()    const { return isMiniBoss; }
+    bool getIsFinalBoss() const { return isFinalBoss; } 
 };

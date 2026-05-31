@@ -22,8 +22,8 @@
 int main() {
     srand(static_cast<unsigned int>(time(nullptr))); // seed para aleatoriedad
     //creacion de la ventana, ahora abre en fullscreen, pero se puede cambiar a 800x600 para pruebas
-    sf::RenderWindow window(sf::VideoMode::getFullscreenModes()[0], "The Catacombs", sf::State::Fullscreen);
-    window.setFramerateLimit(60);
+    sf::RenderWindow window(sf::VideoMode({800, 600}), "The Catacombs");
+        window.setFramerateLimit(60);
 
     sf::Clock flashClock; // Reloj para animaciones de flashing
 
@@ -541,8 +541,9 @@ int main() {
         }
         else if (currentScreen == GameScreen::COMBAT && player && gameLoop.getCombat() && gameLoop.getCurrentFloor() && gameLoop.getCurrentEnemy()) {
             drawCombat(window, font, player, gameLoop.getCurrentEnemy(), gameLoop.getCombat(), playerText, enemyText, 
-                        logText, resultText, instructionText, combatTitleText, rewardGiven, combatSprite, 
-                        gameLoop.getCurrentFloor(), gameLoop.getIsMiniBoss(), combatRewardDescription);
+            logText, resultText, instructionText, combatTitleText, rewardGiven, combatSprite, 
+            gameLoop.getCurrentFloor(), gameLoop.getIsMiniBoss(), combatRewardDescription,
+            gameLoop.getIsFinalBoss());
             
             // Pop-ups encima del combate
             if (showLevelUp) {
@@ -583,7 +584,7 @@ int main() {
             // Dibuja el ultimo frame de combate como fondo (si existe)
             if (gameLoop.getCurrentFloor() && gameLoop.getCurrentEnemy() && gameLoop.getCombat() && player) {
                 drawCombat(window, font, player, gameLoop.getCurrentEnemy(), gameLoop.getCombat(), playerText, enemyText, logText, resultText,
-                           instructionText, combatTitleText, rewardGiven, combatSprite, gameLoop.getCurrentFloor(), gameLoop.getIsMiniBoss(), combatRewardDescription);
+                instructionText, combatTitleText, rewardGiven, combatSprite, gameLoop.getCurrentFloor(), gameLoop.getIsMiniBoss(), combatRewardDescription, gameLoop.getIsFinalBoss());
             }
             drawGameOver(window, font);
         }
