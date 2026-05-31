@@ -68,7 +68,7 @@ void drawLevelUp(sf::RenderWindow& window, sf::Font& font, Player* player, sf::V
     lvlText.setPosition({(800.f - lb.size.x) / 2.f - lb.position.x, 110.f});
     window.draw(lvlText);
 
-    sf::Text hint(font, "Click a stat to boost:", 18);
+    sf::Text hint(font, "Click two stats to boost:", 18);
     hint.setFillColor(sf::Color(180, 180, 180));
     sf::FloatRect hb = hint.getLocalBounds();
     hint.setPosition({(800.f - hb.size.x) / 2.f - hb.position.x, 148.f});
@@ -221,7 +221,7 @@ void drawEventScreen(sf::RenderWindow& window, sf::Font& font, const std::string
 
     float sineWave = std::sin(time * 3.f); 
 
-    // range para que no desaparezca completamente
+    // Range p que no desaparezca completamente
     int minAlpha = 5; 
     int alphaRange = 255 - minAlpha;
     int alpha = minAlpha + static_cast<int>((sineWave + 1.f) * 0.5f * alphaRange);
@@ -288,7 +288,7 @@ void drawRewardScreen(sf::RenderWindow& window, sf::Font& font, const std::strin
 
     float sineWave = std::sin(time * 3.f); 
 
-    // range para que no desaparezca completamente
+    // Range p que no desaparezca completamente
     int minAlpha = 5; 
     int alphaRange = 255 - minAlpha;
     int alpha = minAlpha + static_cast<int>((sineWave + 1.f) * 0.5f * alphaRange);

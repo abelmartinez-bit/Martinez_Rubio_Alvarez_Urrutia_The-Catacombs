@@ -329,7 +329,7 @@ void Player::initializeMovePool() {
         switch(preset) {
             case 0:
                 movePool = {
-                Move("Soul Drain", MoveType::SPECIAL, 80, 90),
+                Move("Soul Drain", MoveType::SPECIAL, 80, 90, MoveEffect::HEAL, MoveTarget::ENEMY, 15),
                 Move("Curse", MoveType::EFFECT, 0, 100, MoveEffect::SPATK_DOWN, MoveTarget::ENEMY),
                 Move("Thunderbolt", MoveType::SPECIAL, 90, 80, MoveEffect::SPD_DOWN, MoveTarget::ENEMY, 25),
                 Move("Ethereal Blast", MoveType::SPECIAL, 100, 75),
@@ -375,7 +375,7 @@ void Player::initializeMovePool() {
                 break;
             case 2:
                 movePool = {
-                Move("Mending Arrow", MoveType::EFFECT, 0, 100, MoveEffect::HEAL, MoveTarget::SELF, 30),
+                Move("Mending Arrow", MoveType::EFFECT, 0, 100, MoveEffect::HEAL, MoveTarget::SELF, 20),
                 Move("Poison Arrow", MoveType::SPECIAL, 60, 95, MoveEffect::ATK_DOWN, MoveTarget::ENEMY),
                 Move("Bow Block", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::ENEMY),
                 Move("Multi Shot", MoveType::SPECIAL, 90, 90)
