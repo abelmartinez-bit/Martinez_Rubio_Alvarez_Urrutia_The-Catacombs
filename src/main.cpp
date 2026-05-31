@@ -199,10 +199,6 @@ int main() {
 
     // Combat text
 
-    sf::Text combatTitleText(font, "THE CATACOMBS", 36);
-    combatTitleText.setFillColor(sf::Color::White);
-    combatTitleText.setPosition({250.f, 20.f});
-
     sf::Text playerText(font, "", 20);
     playerText.setFillColor(sf::Color::Green);
     playerText.setPosition({50.f, 100.f});
@@ -541,7 +537,7 @@ int main() {
         }
         else if (currentScreen == GameScreen::COMBAT && player && gameLoop.getCombat() && gameLoop.getCurrentFloor() && gameLoop.getCurrentEnemy()) {
             drawCombat(window, font, player, gameLoop.getCurrentEnemy(), gameLoop.getCombat(), playerText, enemyText, 
-                        logText, resultText, instructionText, combatTitleText, rewardGiven, combatSprite, 
+                        logText, resultText, instructionText, rewardGiven, combatSprite, 
                         gameLoop.getCurrentFloor(), gameLoop.getIsMiniBoss(), combatRewardDescription);
             
             // Pop-ups encima del combate
@@ -583,7 +579,7 @@ int main() {
             // Dibuja el ultimo frame de combate como fondo (si existe)
             if (gameLoop.getCurrentFloor() && gameLoop.getCurrentEnemy() && gameLoop.getCombat() && player) {
                 drawCombat(window, font, player, gameLoop.getCurrentEnemy(), gameLoop.getCombat(), playerText, enemyText, logText, resultText,
-                           instructionText, combatTitleText, rewardGiven, combatSprite, gameLoop.getCurrentFloor(), gameLoop.getIsMiniBoss(), combatRewardDescription);
+                           instructionText, rewardGiven, combatSprite, gameLoop.getCurrentFloor(), gameLoop.getIsMiniBoss(), combatRewardDescription);
             }
             drawGameOver(window, font);
         }

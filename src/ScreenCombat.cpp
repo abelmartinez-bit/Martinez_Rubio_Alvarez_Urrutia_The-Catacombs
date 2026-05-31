@@ -2,10 +2,36 @@
 #include <cstdlib>
 #include <iostream>
 
+//nueva funcion para dibujar barras de hp, con colores segun porcentaje
+void drawHpBar(sf::RenderWindow& window,
+                      float x, float y, float w, float h,
+                      int hp, int maxHp)
+{
+    // Calcular el ratio de HP y determinar el color de la barra
+    float ratio = (maxHp > 0) ? static_cast<float>(hp) / maxHp : 0.f;
+    if (ratio < 0.f) ratio = 0.f;
+    if (ratio > 1.f) ratio = 1.f;
 
+    sf::Color barColor = (ratio > 0.5f) ? sf::Color(80, 200, 80)
+                       : (ratio > 0.25f) ? sf::Color(220, 200, 40)
+                                         : sf::Color(210, 50, 50);
+
+    sf::RectangleShape bg({w, h});
+    bg.setPosition({x, y});
+    bg.setFillColor(sf::Color(60, 60, 60));
+    window.draw(bg);
+
+    sf::RectangleShape fill({w * ratio, h});
+    fill.setPosition({x, y});
+    fill.setFillColor(barColor);
+    window.draw(fill);
+}
+
+//funcion principal, con cambios para dibujar la pantalla de combate, tipo pokemon y entrega recompensa si termino
 void drawCombat(sf::RenderWindow& window, sf::Font& font, Player* player, Enemy* enemy, CombatEngine* combat, 
                 sf::Text& playerText, sf::Text& enemyText, sf::Text& logText, sf::Text& resultText, sf::Text& instructionText, 
-                sf::Text& combatTitleText, bool& rewardGiven, const sf::Sprite& combatSprite, Floor* floor, bool isMiniBoss, std::string& rewardDescription) {
+                bool& rewardGiven, const sf::Sprite& combatSprite, Floor* floor, bool isMiniBoss, 
+                std::string& rewardDescription) {
 
     // Actualizar textos con estado actual
     playerText.setString(
@@ -15,12 +41,7 @@ void drawCombat(sf::RenderWindow& window, sf::Font& font, Player* player, Enemy*
         "SPD: " + std::to_string(player->getSpd())
     );
 
-    enemyText.setString(
-        enemy->getName() + "\n" +
-        "HP: " + std::to_string(enemy->getHp()) + "/" + std::to_string(enemy->getMaxHp()) + "\n" +
-        enemy->getHighestAtkStr() + " | " + enemy->getHighestDefStr() + "\n" +
-        "SPD: " + std::to_string(enemy->getSpd())
-    );
+    //ya no mostramos stats de enemy, solo la caja con nombre y hp bar
 
     logText.setString("Log:\n" + combat->getCombatLog());
 
@@ -53,7 +74,68 @@ void drawCombat(sf::RenderWindow& window, sf::Font& font, Player* player, Enemy*
     // Dibujar
     window.clear(sf::Color(0, 0, 0));
     window.draw(combatSprite);
-    window.draw(combatTitleText);
+
+    //nuevas cajas de player y enemy
+    // Caja enemy (arriba derecha)
+    const float eBoxX = 430.f, eBoxY = 30.f, eBoxW = 330.f, eBoxH = 80.f;
+
+    sf::RectangleShape eBorder({eBoxW + 4.f, eBoxH + 4.f});
+    eBorder.setPosition({eBoxX - 2.f, eBoxY - 2.f});
+    eBorder.setFillColor(sf::Color(100, 65, 15));
+    window.draw(eBorder);
+
+    sf::RectangleShape eBox({eBoxW, eBoxH});
+    eBox.setPosition({eBoxX, eBoxY});
+    eBox.setFillColor(sf::Color(15, 8, 2, 215));
+    window.draw(eBox);
+
+    sf::Text eName(font, enemy->getName(), 20);
+    eName.setFillColor(sf::Color(240, 20, 20)); 
+    eName.setPosition({eBoxX + 10.f, eBoxY + 8.f});
+    window.draw(eName);
+
+    sf::Text eHpLbl(font, "HP", 14);
+    eHpLbl.setFillColor(sf::Color(180, 140, 80));
+    eHpLbl.setPosition({eBoxX + 10.f, eBoxY + 40.f});
+    window.draw(eHpLbl);
+
+    drawHpBar(window, eBoxX + 40.f, eBoxY + 44.f, eBoxW - 55.f, 12.f,
+            enemy->getHp(), enemy->getMaxHp());
+
+    // Caja player (abajo izquierda)
+    const float pBoxX = 30.f, pBoxY = 330.f, pBoxW = 330.f, pBoxH = 95.f;
+
+    sf::RectangleShape pBorder({pBoxW + 4.f, pBoxH + 4.f});
+    pBorder.setPosition({pBoxX - 2.f, pBoxY - 2.f});
+    pBorder.setFillColor(sf::Color(100, 65, 15));
+    window.draw(pBorder);
+
+    sf::RectangleShape pBox({pBoxW, pBoxH});
+    pBox.setPosition({pBoxX, pBoxY});
+    pBox.setFillColor(sf::Color(15, 8, 2, 215));
+    window.draw(pBox);
+
+    sf::Text pName(font, player->getName() + "   Lv." + std::to_string(player->getLevel()), 20);
+    pName.setFillColor(sf::Color(210, 160, 60));
+    pName.setPosition({pBoxX + 10.f, pBoxY + 8.f});
+    window.draw(pName);
+
+    sf::Text pHpLbl(font, "HP", 14);
+    pHpLbl.setFillColor(sf::Color(180, 140, 80));
+    pHpLbl.setPosition({pBoxX + 10.f, pBoxY + 42.f});
+    window.draw(pHpLbl);
+
+    drawHpBar(window, pBoxX + 40.f, pBoxY + 46.f, pBoxW - 55.f, 12.f,
+          player->getHp(), player->getMaxHp());
+
+    std::string hpStr = std::to_string(player->getHp()) + " / " + std::to_string(player->getMaxHp());
+    sf::Text pHpNum(font, hpStr, 14);
+    pHpNum.setFillColor(sf::Color(200, 185, 150));
+    sf::FloatRect hnb = pHpNum.getLocalBounds();
+    pHpNum.setPosition({pBoxX + pBoxW - hnb.size.x - hnb.position.x - 10.f, pBoxY + 68.f});
+    window.draw(pHpNum);
+    //fin cajas player y enemy
+
     window.draw(playerText);
     window.draw(enemyText);
     window.draw(logText);
