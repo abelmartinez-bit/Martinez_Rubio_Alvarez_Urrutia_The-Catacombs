@@ -28,6 +28,7 @@ void CombatEngine::executeTurn(int playerMoveIndex) {
     // First entity moves (efectos no ocupan acc check)
     if (firstMove.getType() == MoveType::EFFECT && firstMove.getEffect() != MoveEffect::BLOCK) {
         Entity* target = (firstMove.getTarget() == MoveTarget::SELF) ? first : second;
+        combatLog += first->getName() + " used " + firstMove.getName() + ", ";
         applyMoveEffect(firstMove, first, target);
         if (secondMove.getType() == MoveType::EFFECT && secondMove.getEffect() == MoveEffect::BLOCK) combatLog += second->getName() + " is blocking!\n"; 
         // para cuando bloquearon y no atacaron}
@@ -46,7 +47,7 @@ void CombatEngine::executeTurn(int playerMoveIndex) {
                 combatLog += std::to_string(damage) + " damage!\n";
 
                 if (firstMove.getEffect() != MoveEffect::NONE && firstMove.getEffect() != MoveEffect::BLOCK) {
-                    combatLog +=  first->getName() + "'s " + firstMove.getName() + " had an additional effect!\n";
+                    combatLog +=  first->getName() + "'s " + firstMove.getName() + " had an additional effect, ";
                     applyMoveEffect(firstMove, first, second); // para movimientos de dmg con efectos secundarios
                 }
             }
@@ -63,6 +64,7 @@ void CombatEngine::executeTurn(int playerMoveIndex) {
     // Second entity moves, same logic as first
     if (secondMove.getType() == MoveType::EFFECT && secondMove.getEffect() != MoveEffect::BLOCK) {
         Entity* target = (secondMove.getTarget() == MoveTarget::SELF) ? second : first;
+        combatLog += second->getName() + " used " + secondMove.getName() + ", ";
         applyMoveEffect(secondMove, second, target);
         if (firstMove.getEffect() == MoveEffect::BLOCK) combatLog += first->getName() + " is blocking!\n"; 
         // para cuando bloquearon y no atacaron
@@ -212,7 +214,7 @@ void CombatEngine::applyMoveEffect(Move move, Entity* user, Entity* target) {
 
 void CombatEngine::usePotion(Potion potion, Entity& target) {
     player->usePotion(0, target); // por ahora siempre usa la primera pocion, se puede mejorar para seleccionar cual usar (solo borra la usada)
-    combatLog += "Used " + potion.getName() + " on " + target.getName() + "!\n";
+    combatLog += "Used " + potion.getName() + " on " + target.getName() + ", ";
 
     switch(potion.getEffect()){
         case MoveEffect::HEAL:

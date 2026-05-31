@@ -221,7 +221,7 @@ void drawEventScreen(sf::RenderWindow& window, sf::Font& font, const std::string
 
     float sineWave = std::sin(time * 3.f); 
 
-    // range para que no desaparezca completamente
+    // Range p que no desaparezca completamente
     int minAlpha = 5; 
     int alphaRange = 255 - minAlpha;
     int alpha = minAlpha + static_cast<int>((sineWave + 1.f) * 0.5f * alphaRange);
@@ -288,7 +288,7 @@ void drawRewardScreen(sf::RenderWindow& window, sf::Font& font, const std::strin
 
     float sineWave = std::sin(time * 3.f); 
 
-    // range para que no desaparezca completamente
+    // Range p que no desaparezca completamente
     int minAlpha = 5; 
     int alphaRange = 255 - minAlpha;
     int alpha = minAlpha + static_cast<int>((sineWave + 1.f) * 0.5f * alphaRange);

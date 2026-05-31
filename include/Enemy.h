@@ -1,5 +1,6 @@
 #pragma once //que se incluya el archivo una sola vez
 #include "Entity.h" //porque enemy hereda de Entity
+#include "Move.h" //porque enemy tiene un vector de movimientos
 #include <vector>
 
 //opciones de enemigos
