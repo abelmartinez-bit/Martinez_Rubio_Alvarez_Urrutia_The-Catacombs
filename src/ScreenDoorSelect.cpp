@@ -2,7 +2,8 @@
 #include <string>
 
 void drawDoorSelect(sf::RenderWindow& window, sf::Font& font,const sf::Sprite& bgSprite, const Floor* floor, const Player* player,
-                    int floorNumber, Enemy* previewEnemies[3]) {
+                    int floorNumber, Enemy* previewEnemies[3], const sf::Sprite& doorSprite, const sf::Sprite& doorCorruptSprite,
+                    const std::array<std::string,3>& statOverrides) {
 
     if (!floor || !player) return;
 
@@ -22,14 +23,16 @@ void drawDoorSelect(sf::RenderWindow& window, sf::Font& font,const sf::Sprite& b
 
     window.draw(bgSprite);
 
-    sf::RectangleShape overlay({800.f, 600.f});
+    sf::Text floorTitle(font, "FLOOR " + std::to_string(floorNumber) + "  /  10", 44);
+    sf::FloatRect ftb = floorTitle.getLocalBounds();
+
+    sf::RectangleShape overlay({600.f, 128.f + ftb.size.y });
+    overlay.setPosition({100.f, 20.f});
     overlay.setFillColor(sf::Color(0, 0, 0, 155));
     window.draw(overlay);
 
     // Floor title
-    sf::Text floorTitle(font, "FLOOR " + std::to_string(floorNumber) + "  /  10", 44);
-    floorTitle.setFillColor(sf::Color(210, 160, 60));
-    sf::FloatRect ftb = floorTitle.getLocalBounds();
+    floorTitle.setFillColor(sf::Color(160, 120, 50));
     floorTitle.setPosition({(800.f - ftb.size.x) / 2.f - ftb.position.x, 38.f});
     window.draw(floorTitle);
 
@@ -59,71 +62,61 @@ void drawDoorSelect(sf::RenderWindow& window, sf::Font& font,const sf::Sprite& b
     sf::FloatRect psb = playerStats.getLocalBounds();
     playerStats.setPosition({(800.f - psb.size.x) / 2.f - psb.position.x, 148.f});
     window.draw(playerStats);
-
-    // Doors cards
+    
+    // Door cards
     std::vector<Door> doors = floor->getDoors();
-    const float DOOR_W = 190.f;
-    const float DOOR_H = 140.f;
-    const float GAP = 35.f;
+    const float DOOR_W = 200.f;
+    const float DOOR_H = 200.f;
+    const float GAP = 50.f;
     const float TOTAL_W = DOOR_W * 3.f + GAP * 2.f;
-    const float START_X = (800.f - TOTAL_W) / 2.f;
-    const float DOOR_TOP = 220.f;
+    const float START_X = 815.f - TOTAL_W - DOOR_W / 3.f; // start a half door width from the left edge, so that the 4th door is also half a door width from the right edge
+    const float DOOR_TOP = 320.f;
 
     for (int i = 0; i < static_cast<int>(doors.size()); i++) {
         float dx = START_X + i * (DOOR_W + GAP);
-
         bool corrupt = doors[i].isCorrupt();
 
-        // Color del borde segun tipo
-        sf::Color borderColor = corrupt ? sf::Color(160, 40, 40) : sf::Color(120, 80, 20);
+        // Door image fills the card
+        sf::Sprite selectedDoorSprite = corrupt ? doorCorruptSprite : doorSprite;
+        sf::FloatRect doorBounds = selectedDoorSprite.getLocalBounds();
+        selectedDoorSprite.setScale({DOOR_W / doorBounds.size.x, DOOR_H / doorBounds.size.y});
+        selectedDoorSprite.setPosition({dx, DOOR_TOP});
+        window.draw(selectedDoorSprite);
 
-        sf::RectangleShape border({DOOR_W + 4.f, DOOR_H + 4.f});
-        border.setPosition({dx - 2.f, DOOR_TOP - 2.f});
-        border.setFillColor(borderColor);
-        window.draw(border);
+        // Gradient overlays, dark band at top and bottom for text legibility
+        sf::RectangleShape topBand({DOOR_W - 36.f, 48.f});
+        topBand.setPosition({dx + 18.f, DOOR_TOP - 46.f});
+        topBand.setFillColor(sf::Color(0, 0, 0, 150));
+        window.draw(topBand);
 
-        sf::RectangleShape bg({DOOR_W, DOOR_H});
-        bg.setPosition({dx, DOOR_TOP});
-        bg.setFillColor(sf::Color(20, 12, 5, 215));
-        window.draw(bg);
+        sf::RectangleShape botBand({DOOR_W - 36.f, 36.f});
+        botBand.setPosition({dx + 18.f, DOOR_TOP + DOOR_H - 36.f});
+        botBand.setFillColor(sf::Color(0, 0, 0, 150));
+        window.draw(botBand);
 
-        // Numero de puerta
-        sf::Text doorNum(font, "Door " + std::to_string(i + 1), 24);
+        // "Door X" — top of card
+        sf::Text doorNum(font, "Door " + std::to_string(i + 1), 26);
         doorNum.setFillColor(sf::Color(210, 160, 60));
         sf::FloatRect dnb = doorNum.getLocalBounds();
-        doorNum.setPosition({dx + (DOOR_W - dnb.size.x) / 2.f - dnb.position.x, DOOR_TOP + 16.f});
+        doorNum.setPosition({dx + (DOOR_W - dnb.size.x) / 2.f, DOOR_TOP - 40.f});
         window.draw(doorNum);
 
-        // Tipo de puerta
-        std::string typeStr = corrupt ? "[CORRUPT]" : "[NORMAL]";
-        sf::Color   typeCol = corrupt ? sf::Color(220, 80, 80) : sf::Color(160, 160, 160);
+        // Stat hint — bottom of card
+        std::string statStr;
+        if (!statOverrides[i].empty()) statStr = statOverrides[i];
+        else statStr = (i < 3 && previewEnemies[i]) ? highestStatName(previewEnemies[i]) : "ATK";
+        sf::Text statHint(font, statStr + " oriented", 14);
+        statHint.setFillColor(sf::Color(200, 170, 110));
+        sf::FloatRect shb = statHint.getLocalBounds();
+        statHint.setPosition({dx + (DOOR_W - shb.size.x) / 2.f, DOOR_TOP + DOOR_H - 28.f});
+        window.draw(statHint);
 
-        sf::Text typeLabel(font, typeStr, 17);
-        typeLabel.setFillColor(typeCol);
-        sf::FloatRect tlb = typeLabel.getLocalBounds();
-        typeLabel.setPosition({dx + (DOOR_W - tlb.size.x) / 2.f - tlb.position.x, DOOR_TOP + 58.f});
-        window.draw(typeLabel);
-
-        // corrupt hint indicator
-        std::string hintStr = corrupt ? "Mini-Boss!" : "Enemy"; // aqui falta algun indicator del highest stat (excluding HP) del enemy
-        sf::Text hint(font, hintStr, 14);
-        hint.setFillColor(sf::Color(130, 110, 80));
-        sf::FloatRect hb = hint.getLocalBounds();
-        hint.setPosition({dx + (DOOR_W - hb.size.x) / 2.f - hb.position.x, DOOR_TOP + 88.f});
-        window.draw(hint);
-
-        // Tecla a presionar p/ hint (resaltada)
+        // "Press X" — below card
         sf::Text keyHint(font, "Press  " + std::to_string(i + 1), 18);
         keyHint.setFillColor(sf::Color::White);
         sf::FloatRect kb = keyHint.getLocalBounds();
-        keyHint.setPosition({dx + (DOOR_W - kb.size.x) / 2.f - kb.position.x, DOOR_TOP + DOOR_H + 16.f});
+        keyHint.setPosition({dx + (DOOR_W - kb.size.x) / 2.f - kb.position.x,
+                             DOOR_TOP + DOOR_H + 14.f});
         window.draw(keyHint);
-
-        std::string statStr = (i < 3 && previewEnemies[i]) ? highestStatName(previewEnemies[i]) : " ATK";
-        sf::Text statHint(font, statStr + " oriented", 13);
-        statHint.setFillColor(sf::Color(180, 140, 100));
-        sf::FloatRect shb = statHint.getLocalBounds();
-        statHint.setPosition({dx + (DOOR_W - shb.size.x) / 2.f - shb.position.x, DOOR_TOP + DOOR_H - 18.f});
-        window.draw(statHint);
     }
 }

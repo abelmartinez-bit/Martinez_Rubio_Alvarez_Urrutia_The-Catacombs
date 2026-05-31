@@ -66,27 +66,27 @@ Entity* Floor::spawnEnemyFromDoor(const Door& door) {
     switch (door.getEnemyType()) {
         case EnemyType::SENTINEL:
             name = "Sentinel";
-            hp = 60; atk = 15; def = 14; spAtk = 5; spDef = 14; spd = 6;
+            hp = 60; atk = 15; def = 14; spAtk = 5; spDef = 14; spd = 12;
             break;
         case EnemyType::SHADE:
             name = "Shade";
-            hp = 40; atk = 20; def = 6; spAtk = 5; spDef = 6; spd = 20;
+            hp = 40; atk = 18; def = 10; spAtk = 8; spDef = 8; spd = 26;
             break;
         case EnemyType::WRAITH:
             name = "Wraith";
-            hp = 50; atk = 5; def = 10; spAtk = 20; spDef = 12; spd = 12;
+            hp = 50; atk = 5; def = 10; spAtk = 20; spDef = 12; spd = 16;
             break;
         case EnemyType::GOLEM:
             name = "Golem";
-            hp = 70; atk = 8; def = 22; spAtk = 5; spDef = 22; spd = 4;
+            hp = 70; atk = 8; def = 24; spAtk = 6; spDef = 22; spd = 8;
             break;
         case EnemyType::SHAMAN:
             name = "Shaman";
-            hp = 50; atk = 12; def = 12; spAtk = 14; spDef = 16; spd = 14;
+            hp = 50; atk = 12; def = 12; spAtk = 14; spDef = 16; spd = 18;
             break;
         case EnemyType::SPECTER:
             name = "Specter";
-            hp = 35; atk = 15; def = 6; spAtk = 22; spDef = 8; spd = 24;
+            hp = 35; atk = 15; def = 6; spAtk = 22; spDef = 8; spd = 30;
             break;
     }
     
@@ -157,7 +157,8 @@ std::string Floor::giveRewards(Player& player, Entity* enemy, bool isMiniBoss) {
         expGained = e->getExpReward();
         player.gainExp(expGained);
     }
-    result += "+" + std::to_string(expGained) + " EXP gained!\n\n";
+    result += "+" + std::to_string(expGained) + " EXP gained!\n";
+    result += "EXP: " + std::to_string(player.getExp()) + " / " + std::to_string(player.getExpToNextLevel()) + "\n\n";
 
     // --- Potion drop (30% chance) ---
     if (rand() % 100 < 30) {
