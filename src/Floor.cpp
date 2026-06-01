@@ -144,6 +144,7 @@ std::string Floor::triggerEvent(Player& player, const Door& door) {
     }
 
     result += "\n\nGained " + std::to_string(expGained) + " EXP!";
+    result += "\n\nYou advance to the next floor...";
     return result;
 }
 
@@ -158,7 +159,7 @@ std::string Floor::giveRewards(Player& player, Entity* enemy, bool isMiniBoss) {
         player.gainExp(expGained);
     }
     result += "+" + std::to_string(expGained) + " EXP gained!\n";
-    result += "EXP: " + std::to_string(player.getExp()) + " / " + std::to_string(player.getExpToNextLevel()) + "\n\n";
+    result += "EXP to next level: " + std::to_string(player.getExp()) + " / " + std::to_string(player.getExpToNextLevel()) + "\n\n";
 
     // --- Potion drop (30% chance) ---
     if (rand() % 100 < 30) {
