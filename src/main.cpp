@@ -73,7 +73,7 @@ int main() {
     }
 
     sf::Texture combatTexture; //fondo del combate
-    if (!combatTexture.loadFromFile("assets/images/Corridor.jpeg")) {
+    if (!combatTexture.loadFromFile("assets/images/CombatBG2.jpg")) {
         std::cerr << "Error: no se pudo cargar el fondo de combate\n";
         return 1;
     }
