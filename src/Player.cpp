@@ -424,8 +424,8 @@ void Player::initializeMovePool() {
             case 1:
                 movePool = {
                 Move("Shield Bash", MoveType::PHYSICAL, 60, 100, MoveEffect::SPD_DOWN, MoveTarget::ENEMY, 20),
-                Move("Fortify", MoveType::EFFECT, 0, 100, MoveEffect::DEF_UP, MoveTarget::SELF, 35),
-                Move("Magic Armor", MoveType::EFFECT, 0, 100, MoveEffect::SPDEF_UP, MoveTarget::SELF),
+                Move("Fortify", MoveType::EFFECT, 0, 100, MoveEffect::DEF_UP, MoveTarget::SELF, 45),
+                Move("Magic Armor", MoveType::EFFECT, 0, 100, MoveEffect::SPDEF_UP, MoveTarget::SELF, 40),
                 Move("Overhead Strike", MoveType::PHYSICAL, 90, 100)
                 };
                 break;
@@ -434,7 +434,7 @@ void Player::initializeMovePool() {
                 Move("Shield Block", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::ENEMY),
                 Move("Shield Throw", MoveType::SPECIAL, 130, 90, MoveEffect::SPD_UP, MoveTarget::SELF, 20),
                 Move("Taunt", MoveType::EFFECT, 0, 100, MoveEffect::DEF_DOWN, MoveTarget::ENEMY),
-                Move("Leech Strike", MoveType::PHYSICAL, 100, 60, MoveEffect::HEAL, MoveTarget::SELF, 20)
+                Move("Leech Strike", MoveType::PHYSICAL, 100, 55, MoveEffect::HEAL, MoveTarget::SELF, 20)
                 };
             };
             break;

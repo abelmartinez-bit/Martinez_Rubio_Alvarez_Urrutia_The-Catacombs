@@ -269,8 +269,7 @@ void drawCombat(sf::RenderWindow& window, sf::Font& font, Player* player, Enemy*
     pHpLbl.setPosition({pBoxX + 10.f, pBoxY + 42.f});
     window.draw(pHpLbl);
 
-    drawHpBar(window, pBoxX + 40.f, pBoxY + 46.f, pBoxW - 55.f, 12.f,
-          player->getHp(), player->getMaxHp());
+    drawHpBar(window, pBoxX + 40.f, pBoxY + 46.f, pBoxW - 55.f, 12.f, player->getHp(), player->getMaxHp());
 
     std::string hpStr = std::to_string(player->getHp()) + " / " + std::to_string(player->getMaxHp());
     sf::Text pHpNum(font, hpStr, 14);
@@ -538,7 +537,7 @@ void drawFinalBossCombat(sf::RenderWindow& window, sf::Font& font, Player* playe
     }
 
     // ---- Player info box (bottom-left, like in drawCombat) ----
-    const float pBoxX = 30.f, pBoxY = 330.f, pBoxW = 330.f, pBoxH = 95.f;
+    const float pBoxX = 30.f, pBoxY = 80.f, pBoxW = 330.f, pBoxH = 95.f;
 
     sf::RectangleShape pBorder({pBoxW + 4.f, pBoxH + 4.f});
     pBorder.setPosition({pBoxX - 2.f, pBoxY - 2.f});

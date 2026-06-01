@@ -869,6 +869,7 @@ int main() {
         // COMBAT SCREEN — branches for regular vs. final boss
         else if (currentScreen == GameScreen::COMBAT && player && gameLoop.getCombat() && gameLoop.getCurrentFloor() && gameLoop.getCurrentEnemy()) {
             if (gameLoop.getIsFinalBoss()) {
+                
                 drawFinalBossCombat(window, font, player, gameLoop.getCurrentEnemy(), gameLoop.getCombat(), playerText, enemyText, logText, resultText,
                                     instructionText, rewardGiven, finalBossSprite, gameLoop.getCurrentFloor(), combatRewardDescription, showingMoves, window.mapPixelToCoords(sf::Mouse::getPosition(window)));
             } 
@@ -904,7 +905,18 @@ int main() {
                         else currentPlayerSprite = &archerIdleSprite;
                         break;
                 }
+                
+                // Adjust player sprite Y position for final boss fight only
+                if (gameLoop.getIsFinalBoss()) {
+                    currentPlayerSprite->setPosition({playerSpriteX, 275.f});
+                }
+                
                 window.draw(*currentPlayerSprite);
+                
+                // Restore to normal position for other combats
+                if (gameLoop.getIsFinalBoss()) {
+                    currentPlayerSprite->setPosition({playerSpriteX, playerSpriteY});
+                }
 
                 const sf::Sprite* currentEnemySprite = &enemyIdleSprite;
                 if (gameLoop.getIsFinalBoss()) {
