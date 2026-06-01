@@ -191,19 +191,19 @@ void CombatEngine::applyMoveEffect(Move move, Entity* user, Entity* target) {
             break;
         case MoveEffect::SPATK_UP:
             user->setSpAtk(user->getSpAtk() + (user->getSpAtk() * potency / 100));
-            combatLog += user->getName() + "'s SP.ATK rose!\n";
+            combatLog += user->getName() + "'s SP,ATK rose!\n";
             break;
         case MoveEffect::SPATK_DOWN:
             target->setSpAtk(target->getSpAtk() - (target->getSpAtk() * potency / 100));
-            combatLog += target->getName() + "'s SP.ATK fell!\n";
+            combatLog += target->getName() + "'s SP,ATK fell!\n";
             break;
         case MoveEffect::SPDEF_UP:
             user->setSpDef(user->getSpDef() + (user->getSpDef() * potency / 100));
-            combatLog += user->getName() + "'s SP.DEF rose!\n";
+            combatLog += user->getName() + "'s SP,DEF rose!\n";
             break;
         case MoveEffect::SPDEF_DOWN:
             target->setSpDef(target->getSpDef() - (target->getSpDef() * potency / 100));
-            combatLog += target->getName() + "'s SP.DEF fell!\n";
+            combatLog += target->getName() + "'s SP,DEF fell!\n";
             break;
         case MoveEffect::SPD_UP:
             user->setSpd(user->getSpd() + (user->getSpd() * potency / 100));
@@ -239,16 +239,16 @@ void CombatEngine::usePotion(Potion potion, Entity& target) {
             combatLog += target.getName() + "'s DEF fell!\n";
             break;
         case MoveEffect::SPATK_UP:
-            combatLog += target.getName() + "'s SP.ATK rose!\n";
+            combatLog += target.getName() + "'s SP,ATK rose!\n";
             break;
         case MoveEffect::SPATK_DOWN:
-            combatLog += target.getName() + "'s SP.ATK fell!\n";
+            combatLog += target.getName() + "'s SP,ATK fell!\n";
             break;
         case MoveEffect::SPDEF_UP:
-            combatLog += target.getName() + "'s SP.DEF rose!\n";
+            combatLog += target.getName() + "'s SP,DEF rose!\n";
             break;
         case MoveEffect::SPDEF_DOWN:
-            combatLog += target.getName() + "'s SP.DEF fell!\n";
+            combatLog += target.getName() + "'s SP,DEF fell!\n";
             break;
         case MoveEffect::SPD_UP:
             combatLog += target.getName() + "'s SPD rose!\n";

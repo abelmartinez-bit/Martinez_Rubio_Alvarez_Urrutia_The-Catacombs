@@ -80,8 +80,8 @@ int main() {
         return 1;
     }
 
-    sf::Texture combatTexture; //fondo del combate regular
-    if (!combatTexture.loadFromFile("assets/images/Corridor.jpeg")) {
+    sf::Texture combatTexture; //fondo del combate
+    if (!combatTexture.loadFromFile("assets/images/CombatBG2.jpg")) {
         std::cerr << "Error: no se pudo cargar el fondo de combate\n";
         return 1;
     }
@@ -160,6 +160,7 @@ int main() {
     // rewardGiven se pasa por referencia a drawCombat, que lo pone en true
     // cuando entrega las recompensas. main.cpp lo usa para poder presionar ENTER.
     bool rewardGiven = false;
+    bool showingMoves = false; // true = panel de moves, false = menu principal
     std::string combatRewardDescription;   // set by drawCombat when rewards are given
 
     // Transitions
@@ -222,10 +223,6 @@ int main() {
 
     // Combat text
 
-    sf::Text combatTitleText(font, "THE CATACOMBS", 36);
-    combatTitleText.setFillColor(sf::Color::White);
-    combatTitleText.setPosition({250.f, 20.f});
-
     sf::Text playerText(font, "", 20);
     playerText.setFillColor(sf::Color::Green);
     playerText.setPosition({50.f, 100.f});
@@ -235,7 +232,7 @@ int main() {
     enemyText.setPosition({500.f, 100.f});
 
     sf::Text logText(font, "", 16);
-    logText.setFillColor(sf::Color::Yellow);
+    logText.setFillColor(sf::Color(0, 0, 0, 0)); //ahora invisible porque el log lo maneja el nuevo panel
     logText.setPosition({50.f, 350.f});
 
     sf::Text instructionText(font, "SPACE: avanzar turno   |   P: usar pocion", 16);
@@ -324,22 +321,49 @@ int main() {
                         if (clicked != -1) selectedCard = clicked;
                     }
 
-                    //Nueva, seleccion de move en combate
+                    //Nueva, seleccion de move en combate, ahora con botones estilo pokemon
                     else if (currentScreen == GameScreen::COMBAT && player && gameLoop.getCombat() 
                             && !gameLoop.getCombat()->isBattleOver()) {
-                        // Los 4 botones de move en la parte de abajo de la pantalla
-                        const float moveBtnW = 155.f, moveBtnH = 50.f;
-                        // Final boss buttons are at Y=470, regular combat at Y=480
-                        const float moveBtnY = gameLoop.getIsFinalBoss() ? 470.f : 480.f;
-                        const float startX = (800.f - (moveBtnW * 4 + 20.f * 3)) / 2.f;
 
-                        for (int i = 0; i < 4; i++) {
-                            float bx = startX + i * (moveBtnW + 20.f);
-                            if (mouse.x >= bx && mouse.x <= bx + moveBtnW &&
-                                mouse.y >= moveBtnY && mouse.y <= moveBtnY + moveBtnH) {
-                                gameLoop.advanceTurn(i);
-                                break;
+                        // medidas de los botones, igual que en drawCombat
+                        const float bW = 170.f, bH = 58.f, bGap = 8.f;
+                        const float btnAreaX = 390.f;
+                        const float btnAreaW = 800.f - btnAreaX;
+                        const float bStartX = btnAreaX + (btnAreaW - bW * 2.f - bGap) / 2.f;
+                        const float panelY  = 440.f;
+                        const float bRow1Y  = panelY + 20.f;
+                        const float bRow2Y  = panelY + 20.f + bH + bGap;
+                        float bx[4] = { bStartX, bStartX+bW+bGap, bStartX, bStartX+bW+bGap };
+                        float by[4] = { bRow1Y, bRow1Y, bRow2Y, bRow2Y };
+
+                        if (showingMoves) { //si se dio click en moves, ahora los 4 botones son los moves
+                            
+                            // click en BACK regresa al menu sin atacar, ahora primero por el overlay
+                            const float backW = 100.f, backH = 30.f;
+                            float backX = btnAreaX + (btnAreaW - backW) / 2.f;
+                            float backY = panelY + 185.f - backH - 20.f;
+                            if (mouse.x >= backX && mouse.x <= backX+backW &&
+                                mouse.y >= backY && mouse.y <= backY+backH) {
+                                showingMoves = false;
                             }
+                            else {
+                                // click en un move ataca con ese move
+                                for (int i = 0; i < 4; i++) {
+                                    if (mouse.x >= bx[i] && mouse.x <= bx[i]+bW &&
+                                        mouse.y >= by[i] && mouse.y <= by[i]+bH) {
+                                        gameLoop.advanceTurn(i);
+                                        break;
+                                    }
+                                }
+                            }
+                        } 
+                        else {
+                            // click en MOVES abre el panel de moves
+                            if (mouse.x >= bx[0] && mouse.x <= bx[0]+bW &&
+                                mouse.y >= by[0] && mouse.y <= by[0]+bH) {
+                                showingMoves = true;
+                            }
+                            // STATS/RELICS/POTIONS son solo hover, no necesitan click
                         }
                     }
 
@@ -429,7 +453,8 @@ int main() {
                     else if (keyEvent->code == sf::Keyboard::Key::Num3) doorIdx = 2;
 
                     if (doorIdx != -1) {
-                        rewardGiven = false;
+                        rewardGiven = false; 
+                        showingMoves = false; //resetear ambos
                             // Capture current preview stat strings so the UI doesn't
                             // immediately update when selectDoor mutates floors/previews.
                             auto highestStatName = [&](const Enemy* e) -> std::string {
@@ -552,12 +577,8 @@ int main() {
                             delete player;
                             player = nullptr;
                             selectedCard = -1;
-                            rewardGiven = false;
-                            showLevelUp = false;
-                            showMoveSelect = false;
-                            combatRewardDescription = "";
-                            // Stop boss music (no-op if not playing) and restart regular music
-                            bossMusic.stop();
+                            rewardGiven = false; 
+                            showingMoves = false;
                             music.setLooping(true);
                             music.setVolume(50.f);
                             music.play(); 
@@ -602,19 +623,10 @@ int main() {
 
         // COMBAT SCREEN — branches for regular vs. final boss
         else if (currentScreen == GameScreen::COMBAT && player && gameLoop.getCombat() && gameLoop.getCurrentFloor() && gameLoop.getCurrentEnemy()) {
-
-            if (gameLoop.getIsFinalBoss()) {
-                // Final boss: dedicated draw with custom background & phase UI
-                drawFinalBossCombat(window, font, player, gameLoop.getCurrentEnemy(),
-                                    gameLoop.getCombat(), playerText, enemyText,
-                                    logText, resultText, instructionText,
-                                    rewardGiven, finalBossSprite,
-                                    gameLoop.getCurrentFloor(), combatRewardDescription);
-            } else {
-                drawCombat(window, font, player, gameLoop.getCurrentEnemy(), gameLoop.getCombat(), playerText, enemyText, 
-                            logText, resultText, instructionText, combatTitleText, rewardGiven, combatSprite, 
-                            gameLoop.getCurrentFloor(), gameLoop.getIsMiniBoss(), combatRewardDescription);
-            }
+            drawCombat(window, font, player, gameLoop.getCurrentEnemy(), gameLoop.getCombat(), playerText, enemyText, 
+                        logText, resultText, instructionText, rewardGiven, combatSprite, 
+                        gameLoop.getCurrentFloor(), gameLoop.getIsMiniBoss(), combatRewardDescription,
+                        showingMoves, window.mapPixelToCoords(sf::Mouse::getPosition(window)));
             
             // Pop-ups encima del combate (same for both)
             if (showLevelUp) {
@@ -655,17 +667,9 @@ int main() {
         else if (currentScreen == GameScreen::GAME_OVER) {
             // Dibuja el ultimo frame de combate como fondo (si existe)
             if (gameLoop.getCurrentFloor() && gameLoop.getCurrentEnemy() && gameLoop.getCombat() && player) {
-                if (gameLoop.getIsFinalBoss()) {
-                    // Use boss screen as game-over background if we died to NECRON
-                    drawFinalBossCombat(window, font, player, gameLoop.getCurrentEnemy(),
-                                        gameLoop.getCombat(), playerText, enemyText,
-                                        logText, resultText, instructionText,
-                                        rewardGiven, finalBossSprite,
-                                        gameLoop.getCurrentFloor(), combatRewardDescription);
-                } else {
-                    drawCombat(window, font, player, gameLoop.getCurrentEnemy(), gameLoop.getCombat(), playerText, enemyText, logText, resultText,
-                               instructionText, combatTitleText, rewardGiven, combatSprite, gameLoop.getCurrentFloor(), gameLoop.getIsMiniBoss(), combatRewardDescription);
-                }
+                drawCombat(window, font, player, gameLoop.getCurrentEnemy(), gameLoop.getCombat(), playerText, enemyText, logText, resultText,
+                           instructionText, rewardGiven, combatSprite, gameLoop.getCurrentFloor(), gameLoop.getIsMiniBoss(), combatRewardDescription,
+                           false, {0.f, 0.f}); //en esta pantalla no se muestra el menu
             }
             drawGameOver(window, font);
         }
