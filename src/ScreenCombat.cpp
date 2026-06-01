@@ -342,7 +342,7 @@ void drawCombat(sf::RenderWindow& window, sf::Font& font, Player* player, Enemy*
         int startLine = std::max(0, (int)logLines.size() - 6);
         float ly = panelY + 16.f;
         for (int i = startLine; i < (int)logLines.size(); i++) {
-            sf::Text logTxt(font, logLines[i], 16);
+            sf::Text logTxt(font, logLines[i], 14);
             logTxt.setFillColor(sf::Color(210, 195, 165));
             logTxt.setPosition({18.f, ly});
             window.draw(logTxt);

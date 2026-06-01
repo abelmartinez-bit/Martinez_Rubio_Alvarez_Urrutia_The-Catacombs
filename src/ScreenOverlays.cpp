@@ -201,7 +201,7 @@ void drawEventScreen(sf::RenderWindow& window, sf::Font& font, const std::string
     panel.setFillColor(sf::Color(20, 12, 5, 220));
     window.draw(panel);
 
-    sf::Text desc(font, description, 18);
+    sf::Text desc(font, description, 16);
     desc.setFillColor(sf::Color(210, 195, 165));
     desc.setPosition({panelX + 22.f, panelY + 18.f});
     window.draw(desc);
@@ -318,8 +318,8 @@ void drawRewardScreen(sf::RenderWindow& window, sf::Font& font, const std::strin
     window.draw(line);
 
     // Description panel
-    const float panelW = 680.f, panelH = 360.f;
-    const float panelX = 90.f, panelY = 138.f;
+    const float panelW = 580.f, panelH = 360.f;
+    const float panelX = 110.f, panelY = 138.f;
 
     sf::RectangleShape border({panelW + 4.f, panelH + 4.f});
     border.setPosition({panelX - 2.f, panelY - 2.f});
@@ -331,7 +331,7 @@ void drawRewardScreen(sf::RenderWindow& window, sf::Font& font, const std::strin
     panel.setFillColor(sf::Color(20, 12, 5, 220));
     window.draw(panel);
 
-    const unsigned int rewardTextSize = 13;
+    const unsigned int rewardTextSize = 16;
     const float rewardTextMaxWidth = panelW - 44.f;
 
     std::string wrappedDescription = wrapText(description, font, rewardTextSize, rewardTextMaxWidth);

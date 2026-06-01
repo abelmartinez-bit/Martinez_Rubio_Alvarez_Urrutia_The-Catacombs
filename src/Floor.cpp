@@ -144,7 +144,7 @@ std::string Floor::triggerEvent(Player& player, const Door& door) {
        
         result += "Ancient relic found: " + relicName + "\n" + relicDesc;
        
-        if (synergyMessages.empty()) {
+        if (!synergyMessages.empty()) {
             result += "\n\n" + synergyMessages; // se añaden los mensajes de sinergias si es que se activaron
     }
 

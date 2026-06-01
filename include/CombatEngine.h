@@ -35,6 +35,7 @@ public:
     void startTurn(int playerMoveIndex);
     void executePendingSecondMove();
     bool hasPendingSecondMove() const { return pendingSecondMove; }
+    bool firstActorIsPlayer() const { return firstActor == player; }
     /// 
     int calculateDamage(Entity* attacker, Entity* defender, Move move);
     void applyMoveEffect(Move move, Entity* user, Entity* target);

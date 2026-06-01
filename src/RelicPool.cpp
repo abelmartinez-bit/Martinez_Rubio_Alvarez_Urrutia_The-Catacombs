@@ -288,8 +288,8 @@ Relic* RelicPool::getRandomRareRelic() {
                     "Ice Shard",
                     MoveType::PHYSICAL,
                     90,
-                    95,
-                    MoveEffect::NONE,
+                    100,
+                    MoveEffect::SPD_DOWN,
                     MoveTarget::ENEMY
                 ),
                 50
@@ -404,8 +404,8 @@ Relic* RelicPool::getRandomLegendaryRelic() {
                     "Earthquake",
                     MoveType::PHYSICAL,
                     120,
-                    85,
-                    MoveEffect::NONE,
+                    90,
+                    MoveEffect::DEF_DOWN,
                     MoveTarget::ENEMY
                 ),
                 50
@@ -419,8 +419,8 @@ Relic* RelicPool::getRandomLegendaryRelic() {
                     "Wind Slash",
                     MoveType::PHYSICAL,
                     100,
-                    95,
-                    MoveEffect::NONE,
+                    100,
+                    MoveEffect::SPD_UP,
                     MoveTarget::ENEMY
                 ),
                 50

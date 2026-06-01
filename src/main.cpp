@@ -318,7 +318,7 @@ int main() {
     std::string combatRewardDescription;   // set by drawCombat when rewards are given
     bool waitingSecondMove = false;
     sf::Clock secondMoveClock;
-    const float SECOND_MOVE_DELAY = 2.0f;
+    const float SECOND_MOVE_DELAY = 1.2f;
     // Transitions
 
     enum class TransitionPhase { NONE, FADE_OUT, FADE_IN };
@@ -436,14 +436,29 @@ int main() {
         }
 
         if (currentScreen == GameScreen::COMBAT &&
-        waitingSecondMove &&
-        gameLoop.hasPendingSecondMove() &&
-        secondMoveClock.getElapsedTime().asSeconds() >= SECOND_MOVE_DELAY) {
+            waitingSecondMove &&
+            gameLoop.hasPendingSecondMove() &&
+            secondMoveClock.getElapsedTime().asSeconds() >= SECOND_MOVE_DELAY) {
 
-        gameLoop.advancePendingSecondMove();
-        waitingSecondMove = false;
+            gameLoop.advancePendingSecondMove();
+            waitingSecondMove = false;
+
+            // Animate whoever moved second
+            if (gameLoop.getCombat() && !gameLoop.getCombat()->isBattleOver()) {
+                if (gameLoop.getCombat()->firstActorIsPlayer()) {
+                    if (gameLoop.getCurrentEnemy() && gameLoop.getCurrentEnemy()->isAlive()) {
+                        enemySpriteState = EnemySpriteState::ATTACK;
+                        enemyAttackAnimClock.restart();
+                    }
+                } else {
+                    if (player && player->isAlive()) {
+                        playerSpriteState = PlayerSpriteState::ATTACK;
+                        attackAnimClock.restart();
+                    }
+                }
+            }
+        }
         
-    }
         transitionOverlay.setFillColor(sf::Color(0, 0, 0, static_cast<uint8_t>(transitionAlpha)));
 
         while (const std::optional event = window.pollEvent()) {
@@ -527,17 +542,18 @@ int main() {
                                         showingMoves = false;
 
                                         if (gameLoop.hasPendingSecondMove()) {
-                                        waitingSecondMove = true;
-                                        secondMoveClock.restart();
+                                            waitingSecondMove = true;
+                                            secondMoveClock.restart();
                                         }
-                                        // Cambiar sprite a ataque por 1 segundo
-                                        playerSpriteState = PlayerSpriteState::ATTACK;
-                                        attackAnimClock.restart();
-                                        if (gameLoop.getCurrentEnemy() && gameLoop.getCurrentEnemy()->isAlive()) {
+                                        // Only animate whoever moves first
+                                        if (gameLoop.getCombat()->firstActorIsPlayer()) {
+                                            playerSpriteState = PlayerSpriteState::ATTACK;
+                                            attackAnimClock.restart();
+                                        } else if (gameLoop.getCurrentEnemy() && gameLoop.getCurrentEnemy()->isAlive()) {
                                             enemySpriteState = EnemySpriteState::ATTACK;
                                             enemyAttackAnimClock.restart();
-                                        }                                       
-                                        break   ;
+                                        }
+                                        break;
                                     }
                                 }
                             }
