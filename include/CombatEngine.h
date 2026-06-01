@@ -11,6 +11,19 @@ private:
     Player* player;
     Entity* enemy;
     std::string combatLog;
+    // 
+    Entity* firstActor = nullptr;
+    Entity* secondActor = nullptr;
+
+    Move firstMove = Move("Empty", MoveType::EFFECT, 0, 0);
+    Move secondMove = Move("Empty", MoveType::EFFECT, 0, 0);
+
+    bool pendingSecondMove = false;
+
+    void executeSingleMove(Entity* attacker, Entity* defender, Move attackMove, Move defenseMove);
+    void updateFinalBossPhaseIfNeeded();
+
+    ///////
 
 public:
     CombatEngine(Player* p, Entity* e);
@@ -18,6 +31,11 @@ public:
     Entity* getEnemy() const { return enemy; }
 
     void executeTurn(int playerMoveIndex);
+    ///
+    void startTurn(int playerMoveIndex);
+    void executePendingSecondMove();
+    bool hasPendingSecondMove() const { return pendingSecondMove; }
+    /// 
     int calculateDamage(Entity* attacker, Entity* defender, Move move);
     void applyMoveEffect(Move move, Entity* user, Entity* target);
     void usePotion(Potion potion, Entity& target);

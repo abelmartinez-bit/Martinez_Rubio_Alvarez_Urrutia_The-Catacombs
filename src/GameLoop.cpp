@@ -192,7 +192,16 @@ void GameLoop::startFinalBossCombat() {
 // ahora recibe parametro del move
 void GameLoop::advanceTurn(int moveIndex) {
     if (!combat || combat->isBattleOver()) return;
-    combat->executeTurn(moveIndex);
+    combat->startTurn(moveIndex);
+}
+
+void GameLoop::advancePendingSecondMove() {
+    if (!combat || combat->isBattleOver()) return;
+    combat->executePendingSecondMove();
+}
+
+bool GameLoop::hasPendingSecondMove() const {
+    return combat && combat->hasPendingSecondMove();
 }
 
 void GameLoop::usePotionInCombat() {

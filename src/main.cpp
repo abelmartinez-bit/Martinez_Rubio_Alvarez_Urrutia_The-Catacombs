@@ -162,7 +162,9 @@ int main() {
     bool rewardGiven = false;
     bool showingMoves = false; // true = panel de moves, false = menu principal
     std::string combatRewardDescription;   // set by drawCombat when rewards are given
-
+    bool waitingSecondMove = false;
+    sf::Clock secondMoveClock;
+    const float SECOND_MOVE_DELAY = 2.0f;
     // Transitions
 
     enum class TransitionPhase { NONE, FADE_OUT, FADE_IN };
@@ -275,6 +277,16 @@ int main() {
                 transitionPhase = TransitionPhase::NONE;
             }
         }
+
+        if (currentScreen == GameScreen::COMBAT &&
+        waitingSecondMove &&
+        gameLoop.hasPendingSecondMove() &&
+        secondMoveClock.getElapsedTime().asSeconds() >= SECOND_MOVE_DELAY) {
+
+        gameLoop.advancePendingSecondMove();
+        waitingSecondMove = false;
+        
+    }
         transitionOverlay.setFillColor(sf::Color(0, 0, 0, static_cast<uint8_t>(transitionAlpha)));
 
         while (const std::optional event = window.pollEvent()) {
@@ -323,7 +335,8 @@ int main() {
 
                     //Nueva, seleccion de move en combate, ahora con botones estilo pokemon
                     else if (currentScreen == GameScreen::COMBAT && player && gameLoop.getCombat() 
-                            && !gameLoop.getCombat()->isBattleOver()) {
+                            && !gameLoop.getCombat()->isBattleOver()
+                            && !waitingSecondMove) {
 
                         // medidas de los botones, igual que en drawCombat
                         const float bW = 170.f, bH = 58.f, bGap = 8.f;
@@ -352,7 +365,13 @@ int main() {
                                     if (mouse.x >= bx[i] && mouse.x <= bx[i]+bW &&
                                         mouse.y >= by[i] && mouse.y <= by[i]+bH) {
                                         gameLoop.advanceTurn(i);
-                                        break;
+                                        showingMoves = false;
+
+                                        if (gameLoop.hasPendingSecondMove()) {
+                                        waitingSecondMove = true;
+                                        secondMoveClock.restart();
+                                        }                                       
+                                        break   ;
                                     }
                                 }
                             }
