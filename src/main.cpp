@@ -86,6 +86,145 @@ int main() {
         return 1;
     }
 
+    // Warrior sprites
+    sf::Texture warriorIdleTexture, warriorAtkTexture, warriorDeadTexture;
+    warriorIdleTexture.loadFromFile("assets/images/warrioridle.png");
+    warriorAtkTexture.loadFromFile("assets/images/warrioratk.png");
+    warriorDeadTexture.loadFromFile("assets/images/warriordead.png");
+
+    sf::Sprite warriorIdleSprite(warriorIdleTexture);
+    sf::Sprite warriorAtkSprite(warriorAtkTexture);
+    sf::Sprite warriorDeadSprite(warriorDeadTexture);
+
+    // Mage sprites
+    sf::Texture mageIdleTexture, mageAtkTexture, mageDeadTexture;
+    mageIdleTexture.loadFromFile("assets/images/mageidle.png");
+    mageAtkTexture.loadFromFile("assets/images/mageatk.png");
+    mageDeadTexture.loadFromFile("assets/images/magedead.png");
+
+    sf::Sprite mageIdleSprite(mageIdleTexture);
+    sf::Sprite mageAtkSprite(mageAtkTexture);
+    sf::Sprite mageDeadSprite(mageDeadTexture);
+
+    // Rogue sprites
+    sf::Texture rogueIdleTexture, rogueAtkTexture, rogueDeadTexture;
+    rogueIdleTexture.loadFromFile("assets/images/rogueidle.png");
+    rogueAtkTexture.loadFromFile("assets/images/rogueatk.png");
+    rogueDeadTexture.loadFromFile("assets/images/roguedead.png");
+
+    sf::Sprite rogueIdleSprite(rogueIdleTexture);
+    sf::Sprite rogueAtkSprite(rogueAtkTexture);
+    sf::Sprite rogueDeadSprite(rogueDeadTexture);
+
+    // Archer sprites
+    sf::Texture archerIdleTexture, archerAtkTexture, archerDeadTexture;
+    archerIdleTexture.loadFromFile("assets/images/archeridle.png");
+    archerAtkTexture.loadFromFile("assets/images/archeratk.png");
+    archerDeadTexture.loadFromFile("assets/images/archerdead.png");
+
+    sf::Sprite archerIdleSprite(archerIdleTexture);
+    sf::Sprite archerAtkSprite(archerAtkTexture);
+    sf::Sprite archerDeadSprite(archerDeadTexture);
+
+    // Escala todos al mismo tamaño (se puede ajustar el 150.f a lo que se vea bien)
+    float spriteW = 150.f, spriteH = 150.f;
+    warriorIdleSprite.setScale({spriteW / warriorIdleTexture.getSize().x, spriteH / warriorIdleTexture.getSize().y});
+    warriorAtkSprite.setScale({spriteW / warriorAtkTexture.getSize().x, spriteH / warriorAtkTexture.getSize().y});
+    warriorDeadSprite.setScale({spriteW / warriorDeadTexture.getSize().x, spriteH / warriorDeadTexture.getSize().y});
+
+    // Posicion del player en combat screen (lado izquierdo)
+    float playerSpriteX = 60.f, playerSpriteY = 150.f;
+    warriorIdleSprite.setPosition({playerSpriteX, playerSpriteY});
+    warriorAtkSprite.setPosition({playerSpriteX, playerSpriteY});
+    warriorDeadSprite.setPosition({playerSpriteX, playerSpriteY});
+
+    //setscale y position para los otros personajes
+    mageIdleSprite.setScale({spriteW / mageIdleTexture.getSize().x, spriteH / mageIdleTexture.getSize().y});
+    mageAtkSprite.setScale({spriteW / mageAtkTexture.getSize().x, spriteH / mageAtkTexture.getSize().y});
+    mageDeadSprite.setScale({spriteW / mageDeadTexture.getSize().x, spriteH / mageDeadTexture.getSize().y});
+
+    rogueIdleSprite.setScale({spriteW / rogueIdleTexture.getSize().x, spriteH / rogueIdleTexture.getSize().y});
+    rogueAtkSprite.setScale({spriteW / rogueAtkTexture.getSize().x, spriteH / rogueAtkTexture.getSize().y});
+    rogueDeadSprite.setScale({spriteW / rogueDeadTexture.getSize().x, spriteH / rogueDeadTexture.getSize().y});
+
+    archerIdleSprite.setScale({spriteW / archerIdleTexture.getSize().x, spriteH / archerIdleTexture.getSize().y});
+    archerAtkSprite.setScale({spriteW / archerAtkTexture.getSize().x, spriteH / archerAtkTexture.getSize().y});
+    archerDeadSprite.setScale({spriteW / archerDeadTexture.getSize().x, spriteH / archerDeadTexture.getSize().y});
+
+    mageIdleSprite.setPosition({playerSpriteX, playerSpriteY});
+    mageAtkSprite.setPosition({playerSpriteX, playerSpriteY});
+    mageDeadSprite.setPosition({playerSpriteX, playerSpriteY});
+
+    rogueIdleSprite.setPosition({playerSpriteX, playerSpriteY});
+    rogueAtkSprite.setPosition({playerSpriteX, playerSpriteY});
+    rogueDeadSprite.setPosition({playerSpriteX, playerSpriteY});
+
+    archerIdleSprite.setPosition({playerSpriteX, playerSpriteY});
+    archerAtkSprite.setPosition({playerSpriteX, playerSpriteY});
+    archerDeadSprite.setPosition({playerSpriteX, playerSpriteY});
+
+    // Enemy sprites
+    sf::Texture enemyIdleTexture, enemyAtkTexture, enemyDeadTexture;
+    enemyIdleTexture.loadFromFile("assets/images/enemyidle.png");
+    enemyAtkTexture.loadFromFile("assets/images/enemyatk.png");
+    enemyDeadTexture.loadFromFile("assets/images/enemydead.png");
+
+    sf::Sprite enemyIdleSprite(enemyIdleTexture);
+    sf::Sprite enemyAtkSprite(enemyAtkTexture);
+    sf::Sprite enemyDeadSprite(enemyDeadTexture);
+
+    sf::Texture minibossIdleTexture, minibossAtkTexture, minibossDeadTexture;
+    minibossIdleTexture.loadFromFile("assets/images/minibossidle.png");
+    minibossAtkTexture.loadFromFile("assets/images/minibossatk.png");
+    minibossDeadTexture.loadFromFile("assets/images/minibossdead.png");
+
+    sf::Sprite minibossIdleSprite(minibossIdleTexture);
+    sf::Sprite minibossAtkSprite(minibossAtkTexture);
+    sf::Sprite minibossDeadSprite(minibossDeadTexture);
+
+    sf::Texture bossIdleTexture, bossAtkTexture, bossDeadTexture;
+    bossIdleTexture.loadFromFile("assets/images/bossidle.png");
+    bossAtkTexture.loadFromFile("assets/images/bossatk.png");
+    bossDeadTexture.loadFromFile("assets/images/bossdead.png");
+
+    sf::Sprite bossIdleSprite(bossIdleTexture);
+    sf::Sprite bossAtkSprite(bossAtkTexture);
+    sf::Sprite bossDeadSprite(bossDeadTexture);
+
+    enemyIdleSprite.setScale({spriteW / enemyIdleTexture.getSize().x, spriteH / enemyIdleTexture.getSize().y});
+    enemyAtkSprite.setScale({spriteW / enemyAtkTexture.getSize().x, spriteH / enemyAtkTexture.getSize().y});
+    enemyDeadSprite.setScale({spriteW / enemyDeadTexture.getSize().x, spriteH / enemyDeadTexture.getSize().y});
+
+    minibossIdleSprite.setScale({spriteW / minibossIdleTexture.getSize().x, spriteH / minibossIdleTexture.getSize().y});
+    minibossAtkSprite.setScale({spriteW / minibossAtkTexture.getSize().x, spriteH / minibossAtkTexture.getSize().y});
+    minibossDeadSprite.setScale({spriteW / minibossDeadTexture.getSize().x, spriteH / minibossDeadTexture.getSize().y});
+
+    bossIdleSprite.setScale({spriteW / bossIdleTexture.getSize().x, spriteH / bossIdleTexture.getSize().y});
+    bossAtkSprite.setScale({spriteW / bossAtkTexture.getSize().x, spriteH / bossAtkTexture.getSize().y});
+    bossDeadSprite.setScale({spriteW / bossDeadTexture.getSize().x, spriteH / bossDeadTexture.getSize().y});
+
+    const float enemySpriteX = 500.f, enemySpriteY = 160.f;
+    enemyIdleSprite.setPosition({enemySpriteX, enemySpriteY});
+    enemyAtkSprite.setPosition({enemySpriteX, enemySpriteY});
+    enemyDeadSprite.setPosition({enemySpriteX, enemySpriteY});
+
+    minibossIdleSprite.setPosition({enemySpriteX, enemySpriteY});
+    minibossAtkSprite.setPosition({enemySpriteX, enemySpriteY});
+    minibossDeadSprite.setPosition({enemySpriteX, enemySpriteY});
+
+    bossIdleSprite.setPosition({enemySpriteX, enemySpriteY});
+    bossAtkSprite.setPosition({enemySpriteX, enemySpriteY});
+    bossDeadSprite.setPosition({enemySpriteX, enemySpriteY});
+
+    // Variables para el estado del sprite del player
+    enum class PlayerSpriteState { IDLE, ATTACK, DEAD }; //los estados posibles del sprite del player
+    PlayerSpriteState playerSpriteState = PlayerSpriteState::IDLE; // empieza en idle
+    sf::Clock attackAnimClock; // para el timer de 1 segundo
+    enum class EnemySpriteState { IDLE, ATTACK, DEAD }; // estados posibles del enemy
+    EnemySpriteState enemySpriteState = EnemySpriteState::IDLE;
+    sf::Clock enemyAttackAnimClock; // para el timer de 1 segundo del enemigo
+        
+
     // temp test while no final boss bg, uses wall3
     sf::Texture finalBossTexture;
     {
@@ -352,6 +491,13 @@ int main() {
                                     if (mouse.x >= bx[i] && mouse.x <= bx[i]+bW &&
                                         mouse.y >= by[i] && mouse.y <= by[i]+bH) {
                                         gameLoop.advanceTurn(i);
+                                        // Cambiar sprite a ataque por 1 segundo
+                                        playerSpriteState = PlayerSpriteState::ATTACK;
+                                        attackAnimClock.restart();
+                                        if (gameLoop.getCurrentEnemy() && gameLoop.getCurrentEnemy()->isAlive()) {
+                                            enemySpriteState = EnemySpriteState::ATTACK;
+                                            enemyAttackAnimClock.restart();
+                                        }
                                         break;
                                     }
                                 }
@@ -437,6 +583,8 @@ int main() {
                     if (handleCharacterSelectKey(keyEvent->code, selectedCard, cards, player)) {
                         // Jugador creado: iniciamos partida en piso 1
                         gameLoop.startRun(player);
+                        playerSpriteState = PlayerSpriteState::IDLE;
+                        attackAnimClock.restart();
                         rewardGiven = false;
                         showLevelUp = false;
                         showMoveSelect = false;
@@ -579,6 +727,8 @@ int main() {
                             selectedCard = -1;
                             rewardGiven = false; 
                             showingMoves = false;
+                            playerSpriteState = PlayerSpriteState::IDLE;
+                            attackAnimClock.restart();
                             music.setLooping(true);
                             music.setVolume(50.f);
                             music.play(); 
@@ -588,11 +738,35 @@ int main() {
                 }
             }
         }
-  
-        
-        window.clear(sf::Color(10, 5, 0));
 
-        //bloques de dibujo por pantalla
+        // Regresar a idle después de 1 segundo
+        if (playerSpriteState == PlayerSpriteState::ATTACK && 
+            attackAnimClock.getElapsedTime().asSeconds() >= 1.0f) {
+            playerSpriteState = PlayerSpriteState::IDLE;
+        }
+
+        if (enemySpriteState == EnemySpriteState::ATTACK && 
+            enemyAttackAnimClock.getElapsedTime().asSeconds() >= 1.0f) {
+            enemySpriteState = EnemySpriteState::IDLE;
+        }
+
+        // Si el player murió, cambiar a dead
+        if (player && !player->isAlive()) {
+            playerSpriteState = PlayerSpriteState::DEAD;
+        }
+
+        if (gameLoop.getCurrentEnemy() && !gameLoop.getCurrentEnemy()->isAlive()) {
+            enemySpriteState = EnemySpriteState::DEAD;
+        }
+
+        if (currentScreen == GameScreen::COMBAT) {
+            if (player && player->isAlive() && playerSpriteState == PlayerSpriteState::DEAD) {
+                playerSpriteState = PlayerSpriteState::IDLE;
+            }
+            if (gameLoop.getCurrentEnemy() && gameLoop.getCurrentEnemy()->isAlive() && enemySpriteState == EnemySpriteState::DEAD) {
+                enemySpriteState = EnemySpriteState::IDLE;
+            }
+        }
 
         if (currentScreen == GameScreen::MAIN_MENU) {
             sf::Vector2f mouse = window.mapPixelToCoords(sf::Mouse::getPosition(window));
@@ -626,13 +800,58 @@ int main() {
             if (gameLoop.getIsFinalBoss()) {
                 drawFinalBossCombat(window, font, player, gameLoop.getCurrentEnemy(), gameLoop.getCombat(), playerText, enemyText, logText, resultText,
                                     instructionText, rewardGiven, finalBossSprite, gameLoop.getCurrentFloor(), combatRewardDescription, showingMoves, window.mapPixelToCoords(sf::Mouse::getPosition(window)));
-            } else {
+            } 
+            else {
                 drawCombat(window, font, player, gameLoop.getCurrentEnemy(), gameLoop.getCombat(), playerText, enemyText, logText, resultText,
                            instructionText, rewardGiven, combatSprite, gameLoop.getCurrentFloor(), gameLoop.getIsMiniBoss(), combatRewardDescription,
                            showingMoves, window.mapPixelToCoords(sf::Mouse::getPosition(window)));
             }
-            
-            
+
+            // Seleccionar qué sprite dibujar según el estado
+            if (currentScreen == GameScreen::COMBAT && player) {
+                sf::Sprite* currentPlayerSprite = &warriorIdleSprite;
+
+                switch (player->getPlayerType()) {
+                    case PlayerType::WARRIOR:
+                        if (playerSpriteState == PlayerSpriteState::ATTACK) currentPlayerSprite = &warriorAtkSprite;
+                        else if (playerSpriteState == PlayerSpriteState::DEAD) currentPlayerSprite = &warriorDeadSprite;
+                        else currentPlayerSprite = &warriorIdleSprite;
+                        break;
+                    case PlayerType::MAGE:
+                        if (playerSpriteState == PlayerSpriteState::ATTACK) currentPlayerSprite = &mageAtkSprite;
+                        else if (playerSpriteState == PlayerSpriteState::DEAD) currentPlayerSprite = &mageDeadSprite;
+                        else currentPlayerSprite = &mageIdleSprite;
+                        break;
+                    case PlayerType::ROGUE:
+                        if (playerSpriteState == PlayerSpriteState::ATTACK) currentPlayerSprite = &rogueAtkSprite;
+                        else if (playerSpriteState == PlayerSpriteState::DEAD) currentPlayerSprite = &rogueDeadSprite;
+                        else currentPlayerSprite = &rogueIdleSprite;
+                        break;
+                    case PlayerType::ARCHER:
+                        if (playerSpriteState == PlayerSpriteState::ATTACK) currentPlayerSprite = &archerAtkSprite;
+                        else if (playerSpriteState == PlayerSpriteState::DEAD) currentPlayerSprite = &archerDeadSprite;
+                        else currentPlayerSprite = &archerIdleSprite;
+                        break;
+                }
+                window.draw(*currentPlayerSprite);
+
+                const sf::Sprite* currentEnemySprite = &enemyIdleSprite;
+                if (gameLoop.getIsFinalBoss()) {
+                    if (enemySpriteState == EnemySpriteState::ATTACK) currentEnemySprite = &bossAtkSprite;
+                    else if (enemySpriteState == EnemySpriteState::DEAD) currentEnemySprite = &bossDeadSprite;
+                    else currentEnemySprite = &bossIdleSprite;
+                } else if (gameLoop.getIsMiniBoss()) {
+                    if (enemySpriteState == EnemySpriteState::ATTACK) currentEnemySprite = &minibossAtkSprite;
+                    else if (enemySpriteState == EnemySpriteState::DEAD) currentEnemySprite = &minibossDeadSprite;
+                    else currentEnemySprite = &minibossIdleSprite;
+                } else {
+                    if (enemySpriteState == EnemySpriteState::ATTACK) currentEnemySprite = &enemyAtkSprite;
+                    else if (enemySpriteState == EnemySpriteState::DEAD) currentEnemySprite = &enemyDeadSprite;
+                    else currentEnemySprite = &enemyIdleSprite;
+                }
+                window.draw(*currentEnemySprite);
+            }
+
             // Pop-ups encima del combate (same for both)
             if (showLevelUp) {
                 sf::Vector2f mouse = window.mapPixelToCoords(sf::Mouse::getPosition(window));

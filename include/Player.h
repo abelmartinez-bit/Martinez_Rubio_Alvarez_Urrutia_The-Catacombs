@@ -57,6 +57,7 @@ public:
     int getPendingStatBoosts() const { return pendingStatBoosts; }
     bool getHasPendingMove() const { return hasPendingMove; }
     Move getPendingMove() const { return pendingMove; }
+    PlayerType getPlayerType() const { return type; }
 
     //acciones por ahora, adicionales a las heredadas
     void gainExp(int amount);
