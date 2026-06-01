@@ -385,7 +385,7 @@ void drawCombat(sf::RenderWindow& window, sf::Font& font, Player* player, Enemy*
 
                 // popups de hover
                 if (hov && i > 0) {
-                    const float popW = 320.f;
+                    const float popW = 260.f;
                     float popX = bx[i] - popW - 10.f;
                     if (popX < 5.f) popX = bx[i] + bW + 10.f;
                     float popY, popH;
@@ -401,7 +401,7 @@ void drawCombat(sf::RenderWindow& window, sf::Font& font, Player* player, Enemy*
                         };
                         popH = 38.f + lines.size() * 20.f + 10.f;
                         popY = panelY - popH - 6.f;
-                        drawPopup(window, font, popX, popY, popW, popH, "PLAYER STATS", lines);
+                        drawPopup(window, font, popX, popY, popW, popH, "PLAYER | ENEMY", lines);
                     }
                     else if (i == 2) { // RELICS
                         std::vector<Relic*> relics = player->getRelics();
@@ -410,7 +410,7 @@ void drawCombat(sf::RenderWindow& window, sf::Font& font, Player* player, Enemy*
                             lines.push_back("No relics yet.");
                         } else {
                             for (Relic* r : relics) {
-                                std::string item = r->getName() + ": " + r->getDescription();
+                                std::string item = r->getName(); // desc. doesnt fit, maybe add short descs
                                 auto wrapped = wrapLines(item, 34);
                                 lines.insert(lines.end(), wrapped.begin(), wrapped.end());
                             }
