@@ -68,11 +68,29 @@ int main() {
         bossMusic.setVolume(70.f);   // Boss music slightly louder for impact
     }
 
+    // Combat background music
+    sf::Music combatMusic;
+    combatMusic.openFromFile("assets/audio/combatBGmusic.wav");
+    combatMusic.setLooping(true);
+    combatMusic.setVolume(50.f);
+
     // Click sound
     sf::SoundBuffer clickBuffer;
     clickBuffer.loadFromFile("assets/audio/click.wav");
     sf::Sound clickSound(clickBuffer);
     clickSound.setVolume(50.f);
+
+    // Cleared/Victory sound
+    sf::SoundBuffer clearedBuffer;
+    clearedBuffer.loadFromFile("assets/audio/cleared.wav");
+    sf::Sound clearedSound(clearedBuffer);
+    clearedSound.setVolume(60.f);
+
+    // Game over sound
+    sf::SoundBuffer gameOverBuffer;
+    gameOverBuffer.loadFromFile("assets/audio/gameover.wav");
+    sf::Sound gameOverSound(gameOverBuffer);
+    gameOverSound.setVolume(70.f);
 
     sf::Texture bgTexture; //fondo del main menu
     if (!bgTexture.loadFromFile("assets/images/CTHomeScreen1.jpg")) {
@@ -409,6 +427,11 @@ int main() {
                 currentScreen = pendingScreen;
                 if (currentScreen == GameScreen::COMBAT) {
                     music.stop();
+                    combatMusic.play();
+                } else if (currentScreen == GameScreen::GAME_OVER) {
+                    gameOverSound.play();
+                } else if (currentScreen == GameScreen::REWARDS || currentScreen == GameScreen::WIN) {
+                    clearedSound.play();
                 }
                 if (onScreenFlip) { 
                     onScreenFlip(); 
@@ -666,6 +689,7 @@ int main() {
                         CombatEngine* combat = gameLoop.getCombat();
                         if (combat && combat->isBattleOver() && rewardGiven) {
                             if (player->needsStatBoost()) {
+                                combatMusic.stop();
                                 showLevelUp = true; //nuevo pop up para elegir stat boost
                                 nextScreenAfterLevelUp = GameScreen::COMBAT; // Mark we came from combat
                             }
@@ -673,17 +697,7 @@ int main() {
                                 showMoveSelect = true; //new pop up para elegir que move boostear o reemplazar con MoveRelic
                             else {
                                 GameScreen next = gameLoop.onCombatFinished();
-                                if (gameLoop.getIsFinalBoss()) {
-                                    onScreenFlip = [&] {
-                                        bossMusic.stop();
-                                        if (next == GameScreen::WIN) {
-                                            // Optionally restart regular music on win screen
-                                            // music.setLooping(true);
-                                            // music.setVolume(30.f);
-                                            // music.play();
-                                        }
-                                    };
-                                }
+                                combatMusic.stop();
                                 startTransition(next);
                             }
                         }
@@ -693,6 +707,7 @@ int main() {
                 else if (currentScreen == GameScreen::EVENT) {
                     if (keyEvent->code == sf::Keyboard::Key::Enter || keyEvent->code == sf::Keyboard::Key::Space) {
                         if (player->needsStatBoost()) {
+                        combatMusic.stop();
                         showLevelUp = true;
                         // nextScreenAfterLevelUp already set when we entered EVENT
                         } else if (player->hasPendingMoveRelic()) {
@@ -708,12 +723,6 @@ int main() {
 
                         onScreenFlip = [&, nextScreen] {
                             combatRewardDescription = "";
-                            if (gameLoop.getIsFinalBoss()) {
-                                music.stop();
-                                if (bossAudioLoaded) {
-                                    bossMusic.play();
-                                }
-                            }
                         };
                         startTransition(nextScreen);
                     }
