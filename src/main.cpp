@@ -432,10 +432,9 @@ int main() {
                 currentScreen = pendingScreen;
                 if (currentScreen == GameScreen::COMBAT) {
                     music.stop();
-                    combatMusic.play();
                 } else if (currentScreen == GameScreen::GAME_OVER) {
                     gameOverSound.play();
-                } else if (currentScreen == GameScreen::REWARDS || currentScreen == GameScreen::WIN) {
+                } else if (currentScreen == GameScreen::REWARDS || currentScreen == GameScreen::WIN || (currentScreen == GameScreen::EVENT)) {
                     clearedSound.play();
                 }
                 if (onScreenFlip) { 
@@ -729,7 +728,6 @@ int main() {
                         CombatEngine* combat = gameLoop.getCombat();
                         if (combat && combat->isBattleOver() && rewardGiven) {
                             if (player->needsStatBoost()) {
-                                combatMusic.stop();
                                 showLevelUp = true; //nuevo pop up para elegir stat boost
                                 nextScreenAfterLevelUp = GameScreen::COMBAT; // Mark we came from combat
                             }
@@ -757,7 +755,6 @@ int main() {
                 else if (currentScreen == GameScreen::EVENT) {
                     if (keyEvent->code == sf::Keyboard::Key::Enter || keyEvent->code == sf::Keyboard::Key::Space) {
                         if (player->needsStatBoost()) {
-                        combatMusic.stop();
                         showLevelUp = true;
                         // nextScreenAfterLevelUp already set when we entered EVENT
                         } else if (player->hasPendingMoveRelic()) {
