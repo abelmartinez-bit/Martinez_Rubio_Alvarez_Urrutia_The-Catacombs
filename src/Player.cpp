@@ -49,12 +49,12 @@ void Player::levelUp() {
 
 void Player::boostStat(int statChoice) {
     switch (statChoice) {
-        case 1: maxHp += 20; hp += 20; break;
-        case 2: atk += 10; break;
-        case 3: def += 10; break;
-        case 4: spAtk += 10; break;
-        case 5: spDef += 10; break;
-        case 6: spd += 6; break;
+        case 1: maxHp += 30; hp += 20; break;
+        case 2: atk += 15; break;
+        case 3: def += 15; break;
+        case 4: spAtk += 15; break;
+        case 5: spDef += 15; break;
+        case 6: spd += 9; break;
         default: std::cout << "Invalid choice!\n"; break;
     }
 }
@@ -78,11 +78,12 @@ void Player::applyPendingMove(int slotIndex) {
     hasPendingMove = false; //resetear la variable
 }
 
-void Player::addRelic(Relic* relic) {
+std::string Player::addRelic(Relic* relic) {
     relics.push_back(relic);
     relic->applyEffect(*this);
     RelicTracker::unlockRelic(relic->getName(), relic->getDescription()); // se desbloquea en el tracker
-    checkRelicSynergies(); // revisar  sinergias cada vez que se agrega una reliquia
+   
+   return checkRelicSynergies(); // revisar  sinergias cada vez que se agrega una reliquia
 }
 
 // funciones para sinergias     
@@ -104,24 +105,28 @@ bool Player::hasSynergy(const std::string& synergyName) const {
     return false;
 }
 
-void Player::checkRelicSynergies() {
+std::string Player::checkRelicSynergies() {
+    std::string synergyMessages = "";
     if (hasRelic("Dragon Heart") && hasRelic("Golden Ring") && !hasSynergy("Dragon Wisdom")) {
         setMaxHp(getMaxHp() + 20);
         setSpAtk(getSpAtk() + 10);
         activeSynergies.push_back("Dragon Wisdom");
-        std::cout << "Synergy activated: Dragon Wisdom! Max HP +20 and SP.ATK +10.\n";
+        
+        synergyMessages += "Synergy activated: Dragon Wisdom! \nMax HP +20 and SP.ATK +10.\n";
     }
 
     if (hasRelic("Ancient Blade") && hasRelic("Warrior Fang") && !hasSynergy("Warrior Legacy")) {
         setAtk(getAtk() + 10);
         activeSynergies.push_back("Warrior Legacy");
-        std::cout << "Synergy activated: Warrior Legacy! ATK +10.\n";
+
+        synergyMessages += "Synergy activated: \nWarrior Legacy! ATK +10.\n";
     }
 
     if (hasRelic("Phoenix Feather") && hasRelic("Healing Charm") && !hasSynergy("Rebirth Blessing")) {
         addRestoreOnLevelUp(10);
         activeSynergies.push_back("Rebirth Blessing");
-        std::cout << "Synergy activated: Rebirth Blessing! Extra level-up restore +10%.\n";
+
+        synergyMessages += "Synergy activated: \nRebirth Blessing! Extra level-up restore +10%.\n";
     }
 
     if (hasRelic("Sharp Eye") && hasRelic("Steady Hand") && !hasSynergy("Perfect Aim")) {
@@ -133,62 +138,72 @@ void Player::checkRelicSynergies() {
         }
 
         activeSynergies.push_back("Perfect Aim");
-        std::cout << "Synergy activated: Perfect Aim! All moves accuracy +5.\n";
+
+        synergyMessages += "Synergy activated: \nPerfect Aim! All moves accuracy +5.\n";
     }
 
     if (hasRelic("Stone Shield") && hasRelic("Iron Helmet") && !hasSynergy("Iron Defense")) {
         setDef(getDef() + 8);
         activeSynergies.push_back("Iron Defense");
-        std::cout << "Synergy activated: Iron Defense! DEF +8.\n";
+
+        synergyMessages += "Synergy activated: \nIron Defense! DEF +8.\n";
     }
 
     if (hasRelic("Cloth Mantle") && hasRelic("Silver Thread") && !hasSynergy("Mystic Protection")) {
         setSpDef(getSpDef() + 8);
         activeSynergies.push_back("Mystic Protection");
-        std::cout << "Synergy activated: Mystic Protection! SP.DEF +8.\n";
+
+        synergyMessages += "Synergy activated: \nMystic Protection! SP.DEF +8.\n";
     }
 
     if (hasRelic("Traveler Boots") && hasRelic("Light Sandals") && !hasSynergy("Swift Step")) {
         setSpd(getSpd() + 5);
         activeSynergies.push_back("Swift Step");
-        std::cout << "Synergy activated: Swift Step! SPD +5.\n";
+
+        synergyMessages += "Synergy activated: \nSwift Step! SPD +5.\n";
     }
 
     if (hasRelic("Heart Stone") && hasRelic("Old Medal") && !hasSynergy("Vital Core")) {
         setMaxHp(getMaxHp() + 15);
         heal(15);
         activeSynergies.push_back("Vital Core");
-        std::cout << "Synergy activated: Vital Core! Max HP +15 and healed 15 HP.\n";
+
+        synergyMessages += "Synergy activated: \nVital Core! Max HP +15 and healed 15 HP.\n";
     }
 
     if (hasRelic("Potion Belt") && hasRelic("Large Potion Belt") && !hasSynergy("Alchemist Pack")) {
         expandPotionSlots(1);
         activeSynergies.push_back("Alchemist Pack");
-        std::cout << "Synergy activated: Alchemist Pack! Extra potion slot +1.\n";
+
+        synergyMessages += "Synergy activated: \nAlchemist Pack! Extra potion slot +1.\n";
     }
 
     if (hasRelic("Minor Scholar Coin") && hasRelic("Scholar Coin") && !hasSynergy("Scholar Fortune")) {
         addExpBoost(10);
         activeSynergies.push_back("Scholar Fortune");
-        std::cout << "Synergy activated: Scholar Fortune! Extra EXP boost +10%.\n";
+
+        synergyMessages += "Synergy activated: \nScholar Fortune! Extra EXP boost +10%.\n";
     }
 
     if (hasRelic("Small Ruby") && hasRelic("Ancient Blade") && !hasSynergy("Crimson Edge")) {
         setAtk(getAtk() + 8);
         activeSynergies.push_back("Crimson Edge");
-        std::cout << "Synergy activated: Crimson Edge! ATK +8.\n";
+
+        synergyMessages += "Synergy activated: \nCrimson Edge! ATK +8.\n";
     }
     if (hasRelic("Blue Crystal") && hasRelic("Golden Ring") && !hasSynergy("Arcane Focus")) {
         setSpAtk(getSpAtk() + 8);
         activeSynergies.push_back("Arcane Focus");
-        std::cout << "Synergy activated: Arcane Focus! SP.ATK +8.\n";
+
+        synergyMessages += "Synergy activated: \nArcane Focus! SP.ATK +8.\n";
     }
 
     if (hasRelic("Knight Armor") && hasRelic("Mystic Cape") && !hasSynergy("Guardian Balance")) {
         setDef(getDef() + 6);
         setSpDef(getSpDef() + 6);
         activeSynergies.push_back("Guardian Balance");
-        std::cout << "Synergy activated: Guardian Balance! DEF +6 and SP.DEF +6.\n";
+
+        synergyMessages += "Synergy activated: \nGuardian Balance! DEF +6 and SP.DEF +6.\n";
     }
 
     if (hasRelic("Hunter Boots") && hasRelic("Sharp Eye") && !hasSynergy("Predator Instinct")) {
@@ -202,9 +217,136 @@ void Player::checkRelicSynergies() {
         }
 
         activeSynergies.push_back("Predator Instinct");
-        std::cout << "Synergy activated: Predator Instinct! SPD +4 and all moves accuracy +3.\n";
+
+        synergyMessages += "Synergy activated: \nPredator Instinct! SPD +4 and all moves accuracy +3.\n";
     }
+
+    if (hasRelic("Iron Knuckle") && hasRelic("Berserker's Axe") && !hasSynergy("Berserker Grip")) {
+        setAtk(getAtk() + 12);
+        activeSynergies.push_back("Berserker Grip");
+
+        synergyMessages += "Synergy activated: \nBerserker Grip! ATK +12.\n";
+    }
+
+    if (hasRelic("Stone Guard") && hasRelic("Guardian Shield") && !hasSynergy("Stonewall Guard")) {
+    setDef(getDef() + 12);
+    activeSynergies.push_back("Stonewall Guard");
+
+    synergyMessages += "Synergy activated: \nStonewall Guard! DEF +12.\n";
+    }
+
+    if (hasRelic("Sage's Amulet") && hasRelic("Sage's Robe") && !hasSynergy("Sage's Awakening")) {
+    setSpAtk(getSpAtk() + 15);
+    setSpDef(getSpDef() + 8);
+    activeSynergies.push_back("Sage's Awakening");
+
+    synergyMessages += "Synergy activated: \nSage's Awakening! SP.ATK +15 and SP.DEF +8.\n";
+    }
+
+    if (hasRelic("Healing Talisman") && hasRelic("Healing Pendant") && !hasSynergy("Blessed Recovery")) {
+    addRestoreOnLevelUp(10);
+    heal(20);
+    activeSynergies.push_back("Blessed Recovery");
+
+    synergyMessages += "Synergy activated: \nBlessed Recovery! Extra level-up restore +10% and healed 20 HP.\n";
+    }
+
+    if (hasRelic("Apprentice's Coin") && hasRelic("Scholar Coin") && !hasSynergy("Scholar's Path")) {
+    addExpBoost(10);
+    activeSynergies.push_back("Scholar's Path");
+
+    synergyMessages += "Synergy activated: \nScholar's Path! Extra EXP boost +10%.\n";
+    }
+
+    if (hasRelic("Scholar Coin") && hasRelic("Timekeeper's Hourglass") && !hasSynergy("Accelerated Learning")) {
+    addExpBoost(15);
+    activeSynergies.push_back("Accelerated Learning");
+
+    synergyMessages += "Synergy activated: \nAccelerated Learning! Extra EXP boost +15%.\n";
+    }
+
+    if (hasRelic("Ice Scroll") && hasRelic("Mystic Cape") && !hasSynergy("Frozen Veil")) {
+    setSpDef(getSpDef() + 10);
+    setSpAtk(getSpAtk() + 6);
+    activeSynergies.push_back("Frozen Veil");
+
+    synergyMessages += "Synergy activated: \nFrozen Veil! SP.DEF +10 and SP.ATK +6.\n";
+    }
+
+    if (hasRelic("Flame Scroll") && hasRelic("Berserker's Axe") && !hasSynergy("Flame Rage")) {
+    setAtk(getAtk() + 8);
+    setSpAtk(getSpAtk() + 8);
+    activeSynergies.push_back("Flame Rage");
+
+    synergyMessages += "Synergy activated: \nFlame Rage! ATK +8 and SP.ATK +8.\n";
+    }
+
+    if (hasRelic("Earth Tome") && hasRelic("Eternal Shield") && !hasSynergy("Earthbound Guardian")) {
+    setDef(getDef() + 15);
+    setMaxHp(getMaxHp() + 20);
+    heal(20);
+    activeSynergies.push_back("Earthbound Guardian");
+
+    synergyMessages += "Synergy activated: \nEarthbound Guardian! DEF +15, Max HP +20 and healed 20 HP.\n";
+    }
+
+    if (hasRelic("Wind Scroll") && hasRelic("Hunter Boots") && !hasSynergy("Storm Hunter")) {
+    setSpd(getSpd() + 8);
+    setAtk(getAtk() + 6);
+    activeSynergies.push_back("Storm Hunter");
+
+    synergyMessages += "Synergy activated: \nStorm Hunter! SPD +8 and ATK +6.\n";
+    }
+
+    if (hasRelic("Thunder Tome") && hasRelic("Sharp Eye") && !hasSynergy("Thunder Precision")) {
+    std::vector<Move> moves = getMoves();
+
+    for (int i = 0; i < 4; i++) {
+        moves[i].addAccuracy(4);
+        setMove(i, moves[i]);
+    }
+
+    setSpAtk(getSpAtk() + 6);
+    activeSynergies.push_back("Thunder Precision");
+
+    synergyMessages += "Synergy activated: \nThunder Precision! SP.ATK +6 and all moves accuracy +4.\n";
+    }
+
+    if (hasRelic("Ancient Blade") && hasRelic("Berserker's Axe") && !hasSynergy("Ancient Rage")) {
+    setAtk(getAtk() + 18);
+    activeSynergies.push_back("Ancient Rage");
+
+    synergyMessages += "Synergy activated: \nAncient Rage! ATK +18.\n";
+    }
+
+    if (hasRelic("Dragon Heart") && hasRelic("Healing Pendant") && !hasSynergy("Dragon Recovery")) {
+    setMaxHp(getMaxHp() + 20);
+    heal(30);
+    activeSynergies.push_back("Dragon Recovery");
+
+    synergyMessages += "Synergy activated: \nDragon Recovery! Max HP +20 and healed 30 HP.\n";
+    }
+
+    if (hasRelic("Eternal Shield") && hasRelic("Guardian Shield") && !hasSynergy("Eternal Guardian")) {
+    setDef(getDef() + 15);
+    setSpDef(getSpDef() + 8);
+    activeSynergies.push_back("Eternal Guardian");
+
+    synergyMessages += "Synergy activated: \nEternal Guardian! DEF +15 and SP.DEF +8.\n";
+    }
+
+    if (hasRelic("Potion Belt") && hasRelic("Healing Talisman") && !hasSynergy("Field Medic")) {
+    expandPotionSlots(1);
+    addRestoreOnLevelUp(5);
+    activeSynergies.push_back("Field Medic");
+
+    synergyMessages += "Synergy activated: \nField Medic! Potion slots +1 and extra level-up restore +5%.\n";
+    }
+
+    return synergyMessages; // se devuelve el mensaje con las sinergias activadas para mostrarlo en el log del combate
+
 }
+    
 
 void Player::addPotion(Potion potion) {
     if (potions.size() < potionSlots)
@@ -273,7 +415,7 @@ void Player::initializeMovePool() {
             case 0:
                 movePool = {
                 // Name, Type, Power, Accuracy, Effect, Target (los non effects no ocupan los ultimos 2 [o 3] parametros)
-                Move("Crush", MoveType::PHYSICAL, 90, 90),
+                Move("Crush", MoveType::PHYSICAL, 90, 90, MoveEffect::DEF_DOWN, MoveTarget::ENEMY, 10),
                 Move("Slam", MoveType::PHYSICAL, 100, 80),
                 Move("Iron Wall", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::ENEMY),
                 Move("Berserk", MoveType::EFFECT, 0, 100, MoveEffect::ATK_UP, MoveTarget::SELF, 30)
@@ -281,18 +423,18 @@ void Player::initializeMovePool() {
                 break;
             case 1:
                 movePool = {
-                Move("Shield Bash", MoveType::PHYSICAL, 70, 100),
+                Move("Shield Bash", MoveType::PHYSICAL, 60, 100, MoveEffect::SPD_DOWN, MoveTarget::ENEMY, 20),
                 Move("Fortify", MoveType::EFFECT, 0, 100, MoveEffect::DEF_UP, MoveTarget::SELF, 35),
                 Move("Magic Armor", MoveType::EFFECT, 0, 100, MoveEffect::SPDEF_UP, MoveTarget::SELF),
-                Move("Overhead Strike", MoveType::PHYSICAL, 80, 95)
+                Move("Overhead Strike", MoveType::PHYSICAL, 90, 100)
                 };
                 break;
             case 2:
                 movePool = {
                 Move("Shield Block", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::ENEMY),
-                Move("Shield Throw", MoveType::SPECIAL, 130, 90),
+                Move("Shield Throw", MoveType::SPECIAL, 130, 90, MoveEffect::SPD_UP, MoveTarget::SELF, 20),
                 Move("Taunt", MoveType::EFFECT, 0, 100, MoveEffect::DEF_DOWN, MoveTarget::ENEMY),
-                Move("Slam", MoveType::PHYSICAL, 100, 80)
+                Move("Leech Strike", MoveType::PHYSICAL, 100, 60, MoveEffect::HEAL, MoveTarget::SELF, 20)
                 };
             };
             break;
@@ -312,13 +454,13 @@ void Player::initializeMovePool() {
                 Move("Poison Dagger", MoveType::PHYSICAL, 60, 95, MoveEffect::ATK_DOWN, MoveTarget::ENEMY),
                 Move("Exploit Weakness", MoveType::PHYSICAL, 80, 90, MoveEffect::DEF_DOWN, MoveTarget::ENEMY),
                 Move("Quickstep", MoveType::EFFECT, 0, 100, MoveEffect::SPD_UP, MoveTarget::SELF, 45),
-                Move("Eviscerate", MoveType::PHYSICAL, 90, 85)
+                Move("Eviscerate", MoveType::PHYSICAL, 100, 85)
                 };
                 break;
             case 2:
                 movePool = {
                 Move("Lethal Strike", MoveType::PHYSICAL, 120, 80),
-                Move("Distract", MoveType::EFFECT, 0, 100, MoveEffect::SPATK_DOWN, MoveTarget::ENEMY),
+                Move("Distract", MoveType::EFFECT, 0, 100, MoveEffect::SPATK_DOWN, MoveTarget::ENEMY, 30),
                 Move("Vanish", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::ENEMY),
                 Move("Garrote", MoveType::PHYSICAL, 70, 100, MoveEffect::DEF_DOWN, MoveTarget::ENEMY)
                 };
@@ -329,24 +471,24 @@ void Player::initializeMovePool() {
         switch(preset) {
             case 0:
                 movePool = {
-                Move("Soul Drain", MoveType::SPECIAL, 80, 90, MoveEffect::HEAL, MoveTarget::ENEMY, 15),
-                Move("Curse", MoveType::EFFECT, 0, 100, MoveEffect::SPATK_DOWN, MoveTarget::ENEMY),
-                Move("Thunderbolt", MoveType::SPECIAL, 90, 80, MoveEffect::SPD_DOWN, MoveTarget::ENEMY, 25),
-                Move("Ethereal Blast", MoveType::SPECIAL, 100, 75),
-                Move("Arcane Shot", MoveType::SPECIAL, 75, 100)
+                Move("Soul Drain", MoveType::SPECIAL, 80, 70, MoveEffect::HEAL, MoveTarget::ENEMY, 15),
+                Move("Curse", MoveType::EFFECT, 0, 100, MoveEffect::SPATK_DOWN, MoveTarget::ENEMY, 30),
+                Move("Thunderbolt", MoveType::SPECIAL, 90, 80, MoveEffect::SPD_DOWN, MoveTarget::ENEMY),
+                Move("Ethereal Blast", MoveType::SPECIAL, 120, 75),
+                Move("Arcane Shot", MoveType::SPECIAL, 85, 100)
                 };
                 break;
             case 1:
                 movePool = {
                 Move("Weaken", MoveType::EFFECT, 0, 100, MoveEffect::SPDEF_DOWN, MoveTarget::ENEMY, 40),
                 Move("Mana Shield", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::ENEMY),
-                Move("Fireball", MoveType::SPECIAL, 90, 85),
+                Move("Fireball", MoveType::SPECIAL, 105, 85),
                 Move("Frost Nova", MoveType::SPECIAL, 70, 95, MoveEffect::SPDEF_DOWN, MoveTarget::ENEMY, 25)
                 };
                 break;
             case 2:
                 movePool = {
-                Move("Arcane Missiles", MoveType::SPECIAL, 75, 95),
+                Move("Arcane Missiles", MoveType::SPECIAL, 90, 100),
                 Move("Silence", MoveType::EFFECT, 0, 100, MoveEffect::ATK_DOWN, MoveTarget::ENEMY, 40),
                 Move("Magic Barrier", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::ENEMY),
                 Move("Meteor Strike", MoveType::SPECIAL, 130, 70)
@@ -358,19 +500,19 @@ void Player::initializeMovePool() {
         switch(preset) {
             case 0:
             movePool = {
-                Move("Cripple", MoveType::EFFECT, 0, 100, MoveEffect::ATK_DOWN, MoveTarget::ENEMY),
-                Move("Clean Shot", MoveType::SPECIAL, 70, 100),
+                Move("Cripple", MoveType::EFFECT, 0, 100, MoveEffect::ATK_DOWN, MoveTarget::ENEMY, 35),
+                Move("Clean Shot", MoveType::SPECIAL, 85, 100),
                 Move("Trap", MoveType::EFFECT, 0, 100, MoveEffect::SPDEF_DOWN, MoveTarget::ENEMY, 30),
-                Move("Arrow Storm", MoveType::SPECIAL, 90, 85),
-                Move("Piercing Shot", MoveType::SPECIAL, 85, 90)
+                Move("Arrow Storm", MoveType::SPECIAL, 95, 85),
+                Move("Piercing Shot", MoveType::SPECIAL, 85, 90, MoveEffect::DEF_DOWN, MoveTarget::ENEMY, 20)
             };
                 break;
             case 1:
                 movePool = {
-                Move("Weaken", MoveType::EFFECT, 0, 100, MoveEffect::SPATK_DOWN, MoveTarget::ENEMY),
-                Move("Armored", MoveType::EFFECT, 0, 100, MoveEffect::DEF_UP, MoveTarget::SELF),
+                Move("Weaken", MoveType::EFFECT, 0, 100, MoveEffect::SPATK_DOWN, MoveTarget::ENEMY, 35),
+                Move("Armored", MoveType::EFFECT, 0, 100, MoveEffect::DEF_UP, MoveTarget::SELF, 30),
                 Move("Lightning Arrow", MoveType::SPECIAL, 80, 90, MoveEffect::SPD_DOWN, MoveTarget::ENEMY, 20),
-                Move("Snipe", MoveType::SPECIAL, 110, 80)
+                Move("Snipe", MoveType::SPECIAL, 115, 80)
                  };
                 break;
             case 2:
@@ -378,7 +520,7 @@ void Player::initializeMovePool() {
                 Move("Mending Arrow", MoveType::EFFECT, 0, 100, MoveEffect::HEAL, MoveTarget::SELF, 20),
                 Move("Poison Arrow", MoveType::SPECIAL, 60, 95, MoveEffect::ATK_DOWN, MoveTarget::ENEMY),
                 Move("Bow Block", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::ENEMY),
-                Move("Multi Shot", MoveType::SPECIAL, 90, 90)
+                Move("Multi Shot", MoveType::SPECIAL, 100, 90)
 
                 };
             };

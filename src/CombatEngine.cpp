@@ -10,113 +10,125 @@ CombatEngine::CombatEngine(Player* p, Entity* e) : player(p), enemy(e) {
 }
 
 void CombatEngine::executeTurn(int playerMoveIndex) {
-    clearLog();
-    
-    int enemyMoveIndex = rand() % 4; // random move for enemy, se puede mejorar con IA mas adelante, por ahora es random
+    // Compatibilidad por si alguna parte vieja del codigo todavía llama executeTurn().
+    // Ejecuta el turno completo sin delay.
+    startTurn(playerMoveIndex);
 
-    // "->"" ya que tenemos entity como pointer, cant use "."
+    if (pendingSecondMove) {
+        executePendingSecondMove();
+    }
+}
+
+void CombatEngine::startTurn(int playerMoveIndex) {
+    if (isBattleOver() || pendingSecondMove) return;
+
+    clearLog();
+
+    int enemyMoveIndex = rand() % 4;
+
     Move playerMove = player->getMoves()[playerMoveIndex];
     Move enemyMove = enemy->getMoves()[enemyMoveIndex];
-    
-    // Turn order basado en SPD, si empate player va primero
-    Entity* first = (player->getSpd() >= enemy->getSpd()) ? (Entity*)player : enemy;
-    Entity* second = (first == player) ? enemy : (Entity*)player;
-    Move firstMove = (first == player) ? playerMove : enemyMove;
-    Move secondMove = (first == player) ? enemyMove : playerMove;
-    
-    // First entity moves (efectos no ocupan acc check)
-    if (firstMove.getType() == MoveType::EFFECT && firstMove.getEffect() != MoveEffect::BLOCK) {
-        Entity* target = (firstMove.getTarget() == MoveTarget::SELF) ? first : second;
-        combatLog += first->getName() + " used " + firstMove.getName() + ", ";
-        applyMoveEffect(firstMove, first, target);
-        if (secondMove.getType() == MoveType::EFFECT && secondMove.getEffect() == MoveEffect::BLOCK) combatLog += second->getName() + " is blocking!\n"; 
-        // para cuando bloquearon y no atacaron}
-    } else {
-        // Accuracy check
-        int roll = rand() % 100; 
-        if (secondMove.getEffect() == MoveEffect::BLOCK) applyMoveEffect(secondMove, second, first);
-        // el bloque se aplica antes del daño para que el efecto de bloquear afecte el ataque del segundo movimiento
-        if (roll < firstMove.getAccuracy()) { // si el segundo movimiento fue block, el primero no puede fallar porque el bloque ya se aplico antes del accuracy check
 
-            if (firstMove.getEffect() != MoveEffect::BLOCK){
-                int damage = calculateDamage(first, second, firstMove);
-                second->takeDamage(damage);
-                combatLog += first->getName() + " used " + firstMove.getName() + " for ";
-                if (second->getIsBlocking()) combatLog += "a reduced ";
-                combatLog += std::to_string(damage) + " damage!\n";
+    firstActor = (player->getSpd() >= enemy->getSpd()) ? static_cast<Entity*>(player) : enemy;
+    secondActor = (firstActor == player) ? enemy : static_cast<Entity*>(player);
 
-                if (firstMove.getEffect() != MoveEffect::NONE && firstMove.getEffect() != MoveEffect::BLOCK) {
-                    combatLog +=  first->getName() + "'s " + firstMove.getName() + " had an additional effect, ";
-                    applyMoveEffect(firstMove, first, second); // para movimientos de dmg con efectos secundarios
-                }
-            }
-        } else combatLog += first->getName() + "'s " + firstMove.getName() + " missed!\n";
-        
-    }
+    firstMove = (firstActor == player) ? playerMove : enemyMove;
+    secondMove = (firstActor == player) ? enemyMove : playerMove;
 
-    
-    // Check if battle ended (died from first move so second doesnt get to move)
+    executeSingleMove(firstActor, secondActor, firstMove, secondMove);
+    updateFinalBossPhaseIfNeeded();
+
     if (isBattleOver()) {
         endReset(player, enemy);
+        pendingSecondMove = false;
         return;
     }
-    
-    // Second entity moves, same logic as first
-    if (secondMove.getType() == MoveType::EFFECT && secondMove.getEffect() != MoveEffect::BLOCK) {
-        Entity* target = (secondMove.getTarget() == MoveTarget::SELF) ? second : first;
-        combatLog += second->getName() + " used " + secondMove.getName() + ", ";
-        applyMoveEffect(secondMove, second, target);
-        if (firstMove.getEffect() == MoveEffect::BLOCK) combatLog += first->getName() + " is blocking!\n"; 
-        // para cuando bloquearon y no atacaron
-    } else {
-        int roll = rand() % 100;
 
-        if (firstMove.getEffect() == MoveEffect::BLOCK) applyMoveEffect(firstMove, first, second); 
-        // el bloque se aplica antes del daño para que el efecto de bloquear afecte el ataque del segundo movimiento
-
-        if (roll < secondMove.getAccuracy()) { // si el primer movimiento fue block, el segundo no puede fallar porque el bloque ya se aplico antes del accuracy check
-
-            if (secondMove.getEffect() != MoveEffect::BLOCK){ 
-                int damage = calculateDamage(second, first, secondMove);
-                first->takeDamage(damage);
-                combatLog += second->getName() + " used " + secondMove.getName() + " for ";
-                if (first->getIsBlocking()) combatLog += "a reduced ";
-                combatLog += std::to_string(damage) + " damage!\n"; 
-                
-                if (secondMove.getEffect() != MoveEffect::NONE && secondMove.getEffect() != MoveEffect::BLOCK) {
-                    combatLog +=  second->getName() + "'s " + secondMove.getName() + " had an additional effect; ";
-                    applyMoveEffect(secondMove, second, first); // para movimientos de dmg con efectos secundarios
-                }
-            }
-
-        } else combatLog += second->getName() + "'s " + secondMove.getName() + " missed!\n";
-    
-    }
-
-    if (enemy->isAlive()) {
-        if (FinalBoss* boss = dynamic_cast<FinalBoss*>(enemy)) {
-        boss->updatePhase();
-    }
+    pendingSecondMove = true;
 }
 
+void CombatEngine::executePendingSecondMove() {
+    if (!pendingSecondMove || isBattleOver()) return;
+
+    executeSingleMove(secondActor, firstActor, secondMove, firstMove);
+    updateFinalBossPhaseIfNeeded();
+
+    pendingSecondMove = false;
+
     if (isBattleOver()) {
         endReset(player, enemy);
         return;
     }
 
-    // Reset blocking state after turn
-    if (first->getIsBlocking()) first->setBlocking(false);
-    if (second->getIsBlocking()) second->setBlocking(false);
+    if (firstActor && firstActor->getIsBlocking()) {
+        firstActor->setBlocking(false);
+    }
 
-    // temp for testing
+    if (secondActor && secondActor->getIsBlocking()) {
+        secondActor->setBlocking(false);
+    }
+
     std::cout << "---- End of Turn Stats ----\n";
-    first->displayBaseStats();
-    first->displayStats();
+    firstActor->displayBaseStats();
+    firstActor->displayStats();
     std::cout << "------------------\n";
-    second->displayBaseStats();
-    second->displayStats();
+    secondActor->displayBaseStats();
+    secondActor->displayStats();
     std::cout << "\n\n";
 }
+
+void CombatEngine::executeSingleMove(Entity* attacker, Entity* defender, Move attackMove, Move defenseMove) {
+    if (!attacker || !defender) return;
+
+    if (attackMove.getType() == MoveType::EFFECT && attackMove.getEffect() != MoveEffect::BLOCK) {
+        Entity* target = (attackMove.getTarget() == MoveTarget::SELF) ? attacker : defender;
+
+        combatLog += attacker->getName() + " used " + attackMove.getName() + ", ";
+        applyMoveEffect(attackMove, attacker, target);
+
+        if (defenseMove.getType() == MoveType::EFFECT && defenseMove.getEffect() == MoveEffect::BLOCK) {
+            combatLog += defender->getName() + " is blocking!\n";
+        }
+    } 
+    else {
+        int roll = rand() % 100;
+
+        if (defenseMove.getEffect() == MoveEffect::BLOCK) {
+            applyMoveEffect(defenseMove, defender, attacker);
+        }
+
+        if (roll < attackMove.getAccuracy()) {
+            if (attackMove.getEffect() != MoveEffect::BLOCK) {
+                int damage = calculateDamage(attacker, defender, attackMove);
+                defender->takeDamage(damage);
+
+                combatLog += attacker->getName() + " used " + attackMove.getName() + " for ";
+
+                if (defender->getIsBlocking()) {
+                    combatLog += "a reduced ";
+                }
+
+                combatLog += std::to_string(damage) + " damage!\n";
+
+                if (attackMove.getEffect() != MoveEffect::NONE && attackMove.getEffect() != MoveEffect::BLOCK) {
+                    combatLog += attacker->getName() + "'s " + attackMove.getName() + " had an additional effect; ";
+                    applyMoveEffect(attackMove, attacker, defender);
+                }
+            }
+        } 
+        else {
+            combatLog += attacker->getName() + "'s " + attackMove.getName() + " missed!\n";
+        }
+    }
+}
+
+void CombatEngine::updateFinalBossPhaseIfNeeded() {
+    if (enemy->isAlive()) {
+        if (FinalBoss* boss = dynamic_cast<FinalBoss*>(enemy)) {
+            boss->updatePhase();
+        }
+    }
+}   
 
 int CombatEngine::calculateDamage(Entity* attacker, Entity* defender, Move move) {
     int attackStat = (move.getType() == MoveType::PHYSICAL) ? attacker->getAtk() : attacker->getSpAtk();
@@ -154,7 +166,7 @@ int CombatEngine::calculateDamage(Entity* attacker, Entity* defender, Move move)
     }
     
     // Simple damage formula
-    int damage = static_cast<int>(((attackStat * move.getPower()) / defenseStat) / 5);
+    int damage = static_cast<int>(((attackStat * move.getPower()) / defenseStat) / 6);
     
     if (damage < 1) damage = 1; // minimum 1 damage
     
@@ -174,43 +186,43 @@ void CombatEngine::applyMoveEffect(Move move, Entity* user, Entity* target) {
             combatLog += user->getName() + " anticipated the attack and is blocking!\n";
             break;
         case MoveEffect::ATK_UP:
-            user->setAtk(user->getAtk() + (user->getAtk() * potency / 100));
+            user->setAtk(user->getAtk() + (user->getAtk() * potency / 150));
             combatLog += user->getName() + "'s ATK rose!\n";
             break;
         case MoveEffect::ATK_DOWN:
-            target->setAtk(target->getAtk() - (target->getAtk() * potency / 100));
+            target->setAtk(target->getAtk() - (target->getAtk() * potency / 150));
             combatLog += target->getName() + "'s ATK fell!\n";
             break;
         case MoveEffect::DEF_UP:
-            user->setDef(user->getDef() + (user->getDef() * potency / 100));
+            user->setDef(user->getDef() + (user->getDef() * potency / 150));
             combatLog += user->getName() + "'s DEF rose!\n";
             break;
         case MoveEffect::DEF_DOWN:
-            target->setDef(target->getDef() - (target->getDef() * potency / 100));
+            target->setDef(target->getDef() - (target->getDef() * potency / 150));
             combatLog += target->getName() + "'s DEF fell!\n";
             break;
         case MoveEffect::SPATK_UP:
-            user->setSpAtk(user->getSpAtk() + (user->getSpAtk() * potency / 100));
+            user->setSpAtk(user->getSpAtk() + (user->getSpAtk() * potency / 150));
             combatLog += user->getName() + "'s SP,ATK rose!\n";
             break;
         case MoveEffect::SPATK_DOWN:
-            target->setSpAtk(target->getSpAtk() - (target->getSpAtk() * potency / 100));
+            target->setSpAtk(target->getSpAtk() - (target->getSpAtk() * potency / 150));
             combatLog += target->getName() + "'s SP,ATK fell!\n";
             break;
         case MoveEffect::SPDEF_UP:
-            user->setSpDef(user->getSpDef() + (user->getSpDef() * potency / 100));
+            user->setSpDef(user->getSpDef() + (user->getSpDef() * potency / 150));
             combatLog += user->getName() + "'s SP,DEF rose!\n";
             break;
         case MoveEffect::SPDEF_DOWN:
-            target->setSpDef(target->getSpDef() - (target->getSpDef() * potency / 100));
+            target->setSpDef(target->getSpDef() - (target->getSpDef() * potency / 150));
             combatLog += target->getName() + "'s SP,DEF fell!\n";
             break;
         case MoveEffect::SPD_UP:
-            user->setSpd(user->getSpd() + (user->getSpd() * potency / 100));
+            user->setSpd(user->getSpd() + (user->getSpd() * potency / 150));
             combatLog += user->getName() + "'s SPD rose!\n";
             break;
         case MoveEffect::SPD_DOWN:
-            target->setSpd(target->getSpd() - (target->getSpd() * potency / 100));
+            target->setSpd(target->getSpd() - (target->getSpd() * potency / 150));
             combatLog += target->getName() + "'s SPD fell!\n";
             break;
         default:

@@ -9,7 +9,7 @@
 
 // GameLoop coordina el flujo completo de una partida
 
-class GameLoop {
+class GameLoop {    
 private:
     Player* player;          // not owned, main.cpp crea y destruye
     Floor*  currentFloor;    // owned
@@ -54,6 +54,8 @@ public:
     GameScreen performPendingEventFloorAdvance();  // Performs deferred floor advance after event
 
     void advanceTurn(int moveIndex); //ahora recibe el index del movimiento del player
+    void advancePendingSecondMove();
+    bool hasPendingSecondMove() const;
     void usePotionInCombat(); // P: usa la primera pocion del inventario
 
     void reset(); // back to main menu

@@ -3,6 +3,7 @@
 #include "Relic.h" //para el vector
 #include "Potion.h" //para el vector
 #include <vector>
+#include <string>
 
 enum class PlayerType {
     ARCHER, 
@@ -57,16 +58,19 @@ public:
     int getPendingStatBoosts() const { return pendingStatBoosts; }
     bool getHasPendingMove() const { return hasPendingMove; }
     Move getPendingMove() const { return pendingMove; }
+    PlayerType getPlayerType() const { return type; }
 
     //acciones por ahora, adicionales a las heredadas
     void gainExp(int amount);
     void levelUp();
     void boostStat(int statChoice);
-    void addRelic(Relic* relic);
+    // funcion para agregar reliquia, devuelve string para mostrar en el log del combate
+    std::string addRelic(Relic* relic);
+
     // funciones para sinergias
     bool hasRelic(const std::string& relicName) const;
     bool hasSynergy(const std::string& synergyName) const;
-    void checkRelicSynergies();
+    std::string checkRelicSynergies();
     //funciones para pociones 
     void addPotion(Potion potion);
     void usePotion(int index, Entity& target);

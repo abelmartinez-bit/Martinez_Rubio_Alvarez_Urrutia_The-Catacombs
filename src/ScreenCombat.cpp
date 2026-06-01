@@ -2,6 +2,7 @@
 #include "../include/FinalBoss.h"
 #include <cstdlib>
 #include <iostream>
+#include <sstream>
 
 //nueva funcion para dibujar barras de hp, con colores segun porcentaje
 void drawHpBar(sf::RenderWindow& window,
@@ -151,6 +152,30 @@ void drawPopup(sf::RenderWindow& window, sf::Font& font,
     }
 }
 
+static std::vector<std::string> wrapLines(const std::string& text, int maxChars) {
+    std::vector<std::string> lines;
+    std::istringstream iss(text);
+    std::string word;
+    std::string current;
+
+    while (iss >> word) {
+        if (current.empty()) {
+            current = word;
+        } else if ((int)current.size() + 1 + (int)word.size() <= maxChars) {
+            current += ' ';
+            current += word;
+        } else {
+            lines.push_back(current);
+            current = word;
+            while ((int)current.size() > maxChars) {
+                lines.push_back(current.substr(0, maxChars));
+                current = current.substr(maxChars);
+            }
+        }
+    }
+    if (!current.empty()) lines.push_back(current);
+    return lines;
+}
 
 //funcion principal, con cambios para dibujar la pantalla de combate, tipo pokemon y entrega recompensa si termino
 void drawCombat(sf::RenderWindow& window, sf::Font& font, Player* player, Enemy* enemy, CombatEngine* combat, 
@@ -301,45 +326,27 @@ void drawCombat(sf::RenderWindow& window, sf::Font& font, Player* player, Enemy*
         std::string logStr = combat->getCombatLog();
         if (logStr.empty()) logStr = "What will " + player->getName() + " do?";
 
-        //Separar el log en lineas por \n y por puntos, y limites de caracteres, para que quepan en la caja del panel
         std::vector<std::string> logLines;
-        std::string line;
-        const int maxChars = 38;
+        std::istringstream stream(logStr);
+        std::string paragraph;
+        const int maxChars = 36;
 
-        for (char c : logStr) {
-            if (c == '\n') {
-                if (!line.empty()) logLines.push_back(line);
-                line = "";
-            } 
-            else {
-                line += c;
-                if (c == '.') { //si se llega a un punto, cortar la linea ahi para que no se amontonen las oraciones
-                    logLines.push_back(line);
-                    line = "";
-                } 
-                else if ((int)line.size() >= maxChars) { //si se pasa el limite de caracteres, cortar la linea
-                    int cutPos = line.rfind(' ');
-                    if (cutPos != (int)std::string::npos) {
-                        logLines.push_back(line.substr(0, cutPos));
-                        line = line.substr(cutPos + 1);
-                    } else {
-                        logLines.push_back(line);
-                        line = "";
-                    }
-                }
-            }
+        while (std::getline(stream, paragraph, '\n')) {
+            if (paragraph.empty()) continue;
+            auto wrapped = wrapLines(paragraph, maxChars);
+            logLines.insert(logLines.end(), wrapped.begin(), wrapped.end());
         }
-        if (!line.empty()) logLines.push_back(line);
 
-        // Tomar solo las ultimas 6 lineas para que quepan en la caja
+        if (logLines.empty()) logLines.push_back("What will " + player->getName() + " do?");
+
         int startLine = std::max(0, (int)logLines.size() - 6);
         float ly = panelY + 16.f;
         for (int i = startLine; i < (int)logLines.size(); i++) {
-            sf::Text logTxt(font, logLines[i], 16);
+            sf::Text logTxt(font, logLines[i], 14);
             logTxt.setFillColor(sf::Color(210, 195, 165));
             logTxt.setPosition({18.f, ly});
             window.draw(logTxt);
-            ly += 26.f;
+            ly += 24.f;
         }
     }
 
@@ -378,7 +385,7 @@ void drawCombat(sf::RenderWindow& window, sf::Font& font, Player* player, Enemy*
 
                 // popups de hover
                 if (hov && i > 0) {
-                    const float popW = 320.f;
+                    const float popW = 260.f;
                     float popX = bx[i] - popW - 10.f;
                     if (popX < 5.f) popX = bx[i] + bW + 10.f;
                     float popY, popH;
@@ -390,22 +397,32 @@ void drawCombat(sf::RenderWindow& window, sf::Font& font, Player* player, Enemy*
                             "SP.ATK: " + std::to_string(player->getSpAtk()) + " | " + std::to_string(enemy->getSpAtk()),
                             "SP.DEF: " + std::to_string(player->getSpDef()) + " | " + std::to_string(enemy->getSpDef()),
                             "SPD:     " + std::to_string(player->getSpd()) + " | " + std::to_string(enemy->getSpd()),
-                            "EXP: " + std::to_string(player->getExp()) +
-                                " / " + std::to_string(player->getExpToNextLevel()),
+                            "EXP: " + std::to_string(player->getExp()) + " / " + std::to_string(player->getExpToNextLevel()),
                         };
                         popH = 38.f + lines.size() * 20.f + 10.f;
                         popY = panelY - popH - 6.f;
-                        drawPopup(window, font, popX, popY, popW, popH, "PLAYER  |  ENEMY", lines);
+                        drawPopup(window, font, popX, popY, popW, popH, "PLAYER | ENEMY", lines);
                     }
                     else if (i == 2) { // RELICS
                         std::vector<Relic*> relics = player->getRelics();
                         std::vector<std::string> lines;
-                        if (relics.empty()) lines.push_back("No relics yet.");
-                        for (Relic* r : relics)
-                            lines.push_back(r->getName() + ": " + r->getDescription());
+                        if (relics.empty()) {
+                            lines.push_back("No relics yet.");
+                        } else {
+                            for (Relic* r : relics) {
+                                std::string item = r->getName(); // desc. doesnt fit, maybe add short descs
+                                auto wrapped = wrapLines(item, 34);
+                                lines.insert(lines.end(), wrapped.begin(), wrapped.end());
+                            }
+                        }
+                        const int maxLines = 12;
+                        if ((int)lines.size() > maxLines) {
+                            lines.resize(maxLines);
+                            lines.back() = "...more relics...";
+                        }
                         popH = 38.f + std::max((int)lines.size(), 1) * 20.f + 10.f;
                         if (popH > 300.f) popH = 300.f;
-                        popY = panelY - popH - 6.f;
+                        popY = std::max(10.f, panelY - popH - 6.f);
                         popX = (800.f - popW) / 2.f;
                         drawPopup(window, font, popX, popY, popW, popH, "RELICS", lines);
                     }

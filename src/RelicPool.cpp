@@ -19,7 +19,7 @@ Relic* RelicPool::getRandomRelic() {
 }
 
 Relic* RelicPool::getRandomCommonRelic() {
-    int roll = rand() % 16;
+    int roll = rand() % 20;
 
     switch (roll) {
         case 0:
@@ -156,6 +156,50 @@ Relic* RelicPool::getRandomCommonRelic() {
                 ProbabilityType::MOVE_ACCURACY,
                 5
             );
+        
+        case  15:
+            return new StatRelic(
+                "Iron Knuckle",
+                "Increases ATK by 8.",
+                RelicRarity::COMMON,
+                StatType::ATK,
+                8
+            );
+    
+        case 16:
+              return new StatRelic(
+                "Stone Guard",
+                "Increases DEF by 8.",
+                RelicRarity::COMMON,
+                StatType::DEF,
+                8
+             );
+        case 17:
+            return new StatRelic(
+                "Sage's Amulet",
+                "Increases SP.ATK by 8.",
+                RelicRarity::COMMON,
+                StatType::SPATK,
+                8
+            );
+
+        case 18:
+            return new UtilityRelic(
+                "Healing Talisman",
+                "Heals 15% HP when going up a floor.",
+                RelicRarity::COMMON,
+                UtilityType::HEAL_ON_FLOOR,
+                15
+            );
+
+        case 19:
+            return new UtilityRelic(
+                "Apprentice's Coin",
+                "Increases EXP gained by 15%.",
+                RelicRarity::COMMON,
+                UtilityType::EXP_BOOST,
+                15
+            );
 
         default:
             return new UtilityRelic(
@@ -169,7 +213,7 @@ Relic* RelicPool::getRandomCommonRelic() {
 }
 
 Relic* RelicPool::getRandomRareRelic() {
-    int roll = rand() % 8;
+    int roll = rand() % 12;
 
     switch (roll) {
         case 0:
@@ -235,6 +279,48 @@ Relic* RelicPool::getRandomRareRelic() {
                 2
             );
 
+        case 7:
+            return new MoveRelic(
+                "Ice Scroll",
+                "Adds Ice Shard or boosts it if already owned.",
+                RelicRarity::RARE,
+                Move(
+                    "Ice Shard",
+                    MoveType::PHYSICAL,
+                    90,
+                    100,
+                    MoveEffect::SPD_DOWN,
+                    MoveTarget::ENEMY
+                ),
+                50
+            );
+        case 8:
+            return new StatRelic(
+                "Berserker's Axe",
+                "Increases ATK by 20.",
+                RelicRarity::RARE,
+                StatType::ATK,
+                20
+            );
+        
+        case 9:
+            return new StatRelic(
+                "Guardian Shield",
+                "Increases DEF by 20.",
+                RelicRarity::RARE,
+                StatType::DEF,
+                20
+            );
+
+        case 10:
+            return new UtilityRelic(
+                "Healing Pendant",
+                "Heals 20% HP when going up a floor.",
+                RelicRarity::RARE,
+                UtilityType::HEAL_ON_FLOOR,
+                20
+            );
+
         default:
             return new MoveRelic(
                 "Flame Scroll",
@@ -244,8 +330,8 @@ Relic* RelicPool::getRandomRareRelic() {
                     "Flame Burst",
                     MoveType::SPECIAL,
                     110,
-                    90,
-                    MoveEffect::NONE,
+                    100,
+                    MoveEffect::ATK_UP,
                     MoveTarget::ENEMY
                 ),
                 50
@@ -254,7 +340,7 @@ Relic* RelicPool::getRandomRareRelic() {
 }
 
 Relic* RelicPool::getRandomLegendaryRelic() {
-    int roll = rand() % 4;
+    int roll = rand() % 12;
 
     switch (roll) {
         case 0:
@@ -283,6 +369,62 @@ Relic* RelicPool::getRandomLegendaryRelic() {
                 StatType::ATK,
                 30
             );
+        
+        case 3:
+            return new StatRelic(
+                "Eternal Shield",
+                "Increases DEF by 30.",
+                RelicRarity::LEGENDARY,
+                StatType::DEF,
+                30
+            );
+        
+        case 4:
+            return new StatRelic(
+                "Sage's Robe",
+                "Increases SP.ATK by 30.",
+                RelicRarity::LEGENDARY,
+                StatType::SPATK,
+                30
+            );
+        case 5: 
+            return new UtilityRelic(
+                "Timekeeper's Hourglass",
+                "Increases EXP gained by 30%.",
+                RelicRarity::LEGENDARY,
+                UtilityType::EXP_BOOST,
+                30
+            );
+        case 6:
+            return new MoveRelic(
+                "Earth Tome",
+                "Adds Earthquake or boosts it if already owned.",
+                RelicRarity::LEGENDARY,
+                Move(
+                    "Earthquake",
+                    MoveType::PHYSICAL,
+                    120,
+                    90,
+                    MoveEffect::DEF_DOWN,
+                    MoveTarget::ENEMY
+                ),
+                50
+            );
+        case 10:
+            return new MoveRelic(
+                "Wind Scroll",
+                "Adds Wind Slash or boosts it if already owned.",
+                RelicRarity::LEGENDARY,
+                Move(
+                    "Wind Slash",
+                    MoveType::PHYSICAL,
+                    100,
+                    100,
+                    MoveEffect::SPD_UP,
+                    MoveTarget::ENEMY
+                ),
+                50
+            );
 
         default:
             return new MoveRelic(
@@ -294,7 +436,7 @@ Relic* RelicPool::getRandomLegendaryRelic() {
                     MoveType::SPECIAL,
                     100,
                     100,
-                    MoveEffect::NONE,
+                    MoveEffect::SPD_DOWN,
                     MoveTarget::ENEMY
                 ),
                 50

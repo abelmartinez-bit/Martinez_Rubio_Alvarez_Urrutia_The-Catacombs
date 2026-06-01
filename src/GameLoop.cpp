@@ -180,7 +180,7 @@ void GameLoop::startFinalBossCombat() {
     isFinalBoss = true;
     isMiniBoss = false;
 
-    FinalBoss* boss = new FinalBoss("NECRON", EnemyType::SENTINEL, 500, 50, 45, 50, 45, 40);
+    FinalBoss* boss = new FinalBoss("NECRON", EnemyType::SENTINEL, 500, 50, 65, 50, 65, 40);
 
     currentEnemy = boss;
 
@@ -192,7 +192,16 @@ void GameLoop::startFinalBossCombat() {
 // ahora recibe parametro del move
 void GameLoop::advanceTurn(int moveIndex) {
     if (!combat || combat->isBattleOver()) return;
-    combat->executeTurn(moveIndex);
+    combat->startTurn(moveIndex);
+}
+
+void GameLoop::advancePendingSecondMove() {
+    if (!combat || combat->isBattleOver()) return;
+    combat->executePendingSecondMove();
+}
+
+bool GameLoop::hasPendingSecondMove() const {
+    return combat && combat->hasPendingSecondMove();
 }
 
 void GameLoop::usePotionInCombat() {
