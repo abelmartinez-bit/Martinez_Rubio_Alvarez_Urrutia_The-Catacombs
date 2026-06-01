@@ -180,6 +180,8 @@ void GameLoop::startFinalBossCombat() {
     isFinalBoss = true;
     isMiniBoss = false;
 
+    player->heal(player->getMaxHp() * 0.75); // 75% heal before final boss
+
     FinalBoss* boss = new FinalBoss("NECRON", EnemyType::SENTINEL, 500, 50, 65, 50, 65, 40);
 
     currentEnemy = boss;

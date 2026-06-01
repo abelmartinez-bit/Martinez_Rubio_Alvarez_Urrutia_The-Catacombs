@@ -148,7 +148,6 @@ int CombatEngine::calculateDamage(Entity* attacker, Entity* defender, Move move)
         
         if (defender->getIsBlocking()) {
             combatLog += defender->getName() + "'s block broke because ";
-            defenseStat = static_cast<int>(defenseStat * 2.4);
             defender->setBlocking(false); // el bloque se rompe si le pegan un crit
         }
 

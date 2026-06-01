@@ -87,13 +87,13 @@ int main() {
     sf::SoundBuffer clearedBuffer;
     clearedBuffer.loadFromFile("assets/audio/cleared.wav");
     sf::Sound clearedSound(clearedBuffer);
-    clearedSound.setVolume(60.f);
+    clearedSound.setVolume(80.f);
 
     // Game over sound
     sf::SoundBuffer gameOverBuffer;
     gameOverBuffer.loadFromFile("assets/audio/gameover.wav");
     sf::Sound gameOverSound(gameOverBuffer);
-    gameOverSound.setVolume(70.f);
+    gameOverSound.setVolume(80.f);
 
     sf::Texture bgTexture; //fondo del main menu
     if (!bgTexture.loadFromFile("assets/images/CTHomeScreen1.jpg")) {
@@ -380,7 +380,7 @@ int main() {
     //crear array de structs para las cards de seleccion de personaje
     CharacterCard cards[4] = {
         //centerX, name, PlayerType, hp, atk, def, spAtk, spDef, spd
-        { 117.f, "Warrior", PlayerType::WARRIOR, 1300, 30, 35, 10, 25, 10 }, // testing
+        { 117.f, "Warrior", PlayerType::WARRIOR, 130, 30, 35, 10, 25, 10 },
         { 306.f, "Mage",    PlayerType::MAGE,    100, 10, 25, 35, 35, 15 },
         { 498.f, "Rogue",   PlayerType::ROGUE,   110, 40, 22, 15, 22, 40 },
         { 689.f, "Archer",  PlayerType::ARCHER,  100, 15, 30, 30, 25, 25 }
@@ -555,7 +555,6 @@ int main() {
                                     if (mouse.x >= bx[i] && mouse.x <= bx[i]+bW &&
                                         mouse.y >= by[i] && mouse.y <= by[i]+bH) {
                                         gameLoop.advanceTurn(i);
-                                        showingMoves = false;
 
                                         if (gameLoop.hasPendingSecondMove()) {
                                             waitingSecondMove = true;
@@ -870,6 +869,7 @@ int main() {
         // COMBAT SCREEN — branches for regular vs. final boss
         else if (currentScreen == GameScreen::COMBAT && player && gameLoop.getCombat() && gameLoop.getCurrentFloor() && gameLoop.getCurrentEnemy()) {
             if (gameLoop.getIsFinalBoss()) {
+                
                 drawFinalBossCombat(window, font, player, gameLoop.getCurrentEnemy(), gameLoop.getCombat(), playerText, enemyText, logText, resultText,
                                     instructionText, rewardGiven, finalBossSprite, gameLoop.getCurrentFloor(), combatRewardDescription, showingMoves, window.mapPixelToCoords(sf::Mouse::getPosition(window)));
             } 
@@ -905,7 +905,18 @@ int main() {
                         else currentPlayerSprite = &archerIdleSprite;
                         break;
                 }
+                
+                // Adjust player sprite Y position for final boss fight only
+                if (gameLoop.getIsFinalBoss()) {
+                    currentPlayerSprite->setPosition({playerSpriteX, 275.f});
+                }
+                
                 window.draw(*currentPlayerSprite);
+                
+                // Restore to normal position for other combats
+                if (gameLoop.getIsFinalBoss()) {
+                    currentPlayerSprite->setPosition({playerSpriteX, playerSpriteY});
+                }
 
                 const sf::Sprite* currentEnemySprite = &enemyIdleSprite;
                 if (gameLoop.getIsFinalBoss()) {
