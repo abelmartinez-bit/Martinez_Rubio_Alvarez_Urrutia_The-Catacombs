@@ -3,6 +3,7 @@
 #include "Relic.h" //para el vector
 #include "Potion.h" //para el vector
 #include <vector>
+#include <string>
 
 enum class PlayerType {
     ARCHER, 
@@ -62,11 +63,13 @@ public:
     void gainExp(int amount);
     void levelUp();
     void boostStat(int statChoice);
-    void addRelic(Relic* relic);
+    // funcion para agregar reliquia, devuelve string para mostrar en el log del combate
+    std::string addRelic(Relic* relic);
+
     // funciones para sinergias
     bool hasRelic(const std::string& relicName) const;
     bool hasSynergy(const std::string& synergyName) const;
-    void checkRelicSynergies();
+    std::string checkRelicSynergies();
     //funciones para pociones 
     void addPotion(Potion potion);
     void usePotion(int index, Entity& target);
