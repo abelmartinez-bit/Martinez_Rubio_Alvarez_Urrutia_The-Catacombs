@@ -154,7 +154,7 @@ int CombatEngine::calculateDamage(Entity* attacker, Entity* defender, Move move)
     }
     
     // Simple damage formula
-    int damage = static_cast<int>(((attackStat * move.getPower()) / defenseStat) / 5);
+    int damage = static_cast<int>(((attackStat * move.getPower()) / defenseStat) / 6);
     
     if (damage < 1) damage = 1; // minimum 1 damage
     
@@ -174,43 +174,43 @@ void CombatEngine::applyMoveEffect(Move move, Entity* user, Entity* target) {
             combatLog += user->getName() + " anticipated the attack and is blocking!\n";
             break;
         case MoveEffect::ATK_UP:
-            user->setAtk(user->getAtk() + (user->getAtk() * potency / 100));
+            user->setAtk(user->getAtk() + (user->getAtk() * potency / 150));
             combatLog += user->getName() + "'s ATK rose!\n";
             break;
         case MoveEffect::ATK_DOWN:
-            target->setAtk(target->getAtk() - (target->getAtk() * potency / 100));
+            target->setAtk(target->getAtk() - (target->getAtk() * potency / 150));
             combatLog += target->getName() + "'s ATK fell!\n";
             break;
         case MoveEffect::DEF_UP:
-            user->setDef(user->getDef() + (user->getDef() * potency / 100));
+            user->setDef(user->getDef() + (user->getDef() * potency / 150));
             combatLog += user->getName() + "'s DEF rose!\n";
             break;
         case MoveEffect::DEF_DOWN:
-            target->setDef(target->getDef() - (target->getDef() * potency / 100));
+            target->setDef(target->getDef() - (target->getDef() * potency / 150));
             combatLog += target->getName() + "'s DEF fell!\n";
             break;
         case MoveEffect::SPATK_UP:
-            user->setSpAtk(user->getSpAtk() + (user->getSpAtk() * potency / 100));
+            user->setSpAtk(user->getSpAtk() + (user->getSpAtk() * potency / 150));
             combatLog += user->getName() + "'s SP,ATK rose!\n";
             break;
         case MoveEffect::SPATK_DOWN:
-            target->setSpAtk(target->getSpAtk() - (target->getSpAtk() * potency / 100));
+            target->setSpAtk(target->getSpAtk() - (target->getSpAtk() * potency / 150));
             combatLog += target->getName() + "'s SP,ATK fell!\n";
             break;
         case MoveEffect::SPDEF_UP:
-            user->setSpDef(user->getSpDef() + (user->getSpDef() * potency / 100));
+            user->setSpDef(user->getSpDef() + (user->getSpDef() * potency / 150));
             combatLog += user->getName() + "'s SP,DEF rose!\n";
             break;
         case MoveEffect::SPDEF_DOWN:
-            target->setSpDef(target->getSpDef() - (target->getSpDef() * potency / 100));
+            target->setSpDef(target->getSpDef() - (target->getSpDef() * potency / 150));
             combatLog += target->getName() + "'s SP,DEF fell!\n";
             break;
         case MoveEffect::SPD_UP:
-            user->setSpd(user->getSpd() + (user->getSpd() * potency / 100));
+            user->setSpd(user->getSpd() + (user->getSpd() * potency / 150));
             combatLog += user->getName() + "'s SPD rose!\n";
             break;
         case MoveEffect::SPD_DOWN:
-            target->setSpd(target->getSpd() - (target->getSpd() * potency / 100));
+            target->setSpd(target->getSpd() - (target->getSpd() * potency / 150));
             combatLog += target->getName() + "'s SPD fell!\n";
             break;
         default:

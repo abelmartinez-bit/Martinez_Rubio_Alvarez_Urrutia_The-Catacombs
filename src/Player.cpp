@@ -49,12 +49,12 @@ void Player::levelUp() {
 
 void Player::boostStat(int statChoice) {
     switch (statChoice) {
-        case 1: maxHp += 20; hp += 20; break;
-        case 2: atk += 10; break;
-        case 3: def += 10; break;
-        case 4: spAtk += 10; break;
-        case 5: spDef += 10; break;
-        case 6: spd += 6; break;
+        case 1: maxHp += 30; hp += 20; break;
+        case 2: atk += 15; break;
+        case 3: def += 15; break;
+        case 4: spAtk += 15; break;
+        case 5: spDef += 15; break;
+        case 6: spd += 9; break;
         default: std::cout << "Invalid choice!\n"; break;
     }
 }
@@ -273,7 +273,7 @@ void Player::initializeMovePool() {
             case 0:
                 movePool = {
                 // Name, Type, Power, Accuracy, Effect, Target (los non effects no ocupan los ultimos 2 [o 3] parametros)
-                Move("Crush", MoveType::PHYSICAL, 90, 90),
+                Move("Crush", MoveType::PHYSICAL, 90, 90, MoveEffect::DEF_DOWN, MoveTarget::ENEMY, 10),
                 Move("Slam", MoveType::PHYSICAL, 100, 80),
                 Move("Iron Wall", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::ENEMY),
                 Move("Berserk", MoveType::EFFECT, 0, 100, MoveEffect::ATK_UP, MoveTarget::SELF, 30)
@@ -281,18 +281,18 @@ void Player::initializeMovePool() {
                 break;
             case 1:
                 movePool = {
-                Move("Shield Bash", MoveType::PHYSICAL, 70, 100),
+                Move("Shield Bash", MoveType::PHYSICAL, 60, 100, MoveEffect::SPD_DOWN, MoveTarget::ENEMY, 20),
                 Move("Fortify", MoveType::EFFECT, 0, 100, MoveEffect::DEF_UP, MoveTarget::SELF, 35),
                 Move("Magic Armor", MoveType::EFFECT, 0, 100, MoveEffect::SPDEF_UP, MoveTarget::SELF),
-                Move("Overhead Strike", MoveType::PHYSICAL, 80, 95)
+                Move("Overhead Strike", MoveType::PHYSICAL, 90, 100)
                 };
                 break;
             case 2:
                 movePool = {
                 Move("Shield Block", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::ENEMY),
-                Move("Shield Throw", MoveType::SPECIAL, 130, 90),
+                Move("Shield Throw", MoveType::SPECIAL, 130, 90, MoveEffect::SPD_UP, MoveTarget::SELF, 20),
                 Move("Taunt", MoveType::EFFECT, 0, 100, MoveEffect::DEF_DOWN, MoveTarget::ENEMY),
-                Move("Slam", MoveType::PHYSICAL, 100, 80)
+                Move("Leech Strike", MoveType::PHYSICAL, 100, 60, MoveEffect::HEAL, MoveTarget::SELF, 20)
                 };
             };
             break;
@@ -312,13 +312,13 @@ void Player::initializeMovePool() {
                 Move("Poison Dagger", MoveType::PHYSICAL, 60, 95, MoveEffect::ATK_DOWN, MoveTarget::ENEMY),
                 Move("Exploit Weakness", MoveType::PHYSICAL, 80, 90, MoveEffect::DEF_DOWN, MoveTarget::ENEMY),
                 Move("Quickstep", MoveType::EFFECT, 0, 100, MoveEffect::SPD_UP, MoveTarget::SELF, 45),
-                Move("Eviscerate", MoveType::PHYSICAL, 90, 85)
+                Move("Eviscerate", MoveType::PHYSICAL, 100, 85)
                 };
                 break;
             case 2:
                 movePool = {
                 Move("Lethal Strike", MoveType::PHYSICAL, 120, 80),
-                Move("Distract", MoveType::EFFECT, 0, 100, MoveEffect::SPATK_DOWN, MoveTarget::ENEMY),
+                Move("Distract", MoveType::EFFECT, 0, 100, MoveEffect::SPATK_DOWN, MoveTarget::ENEMY, 30),
                 Move("Vanish", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::ENEMY),
                 Move("Garrote", MoveType::PHYSICAL, 70, 100, MoveEffect::DEF_DOWN, MoveTarget::ENEMY)
                 };
@@ -329,24 +329,24 @@ void Player::initializeMovePool() {
         switch(preset) {
             case 0:
                 movePool = {
-                Move("Soul Drain", MoveType::SPECIAL, 80, 90, MoveEffect::HEAL, MoveTarget::ENEMY, 15),
-                Move("Curse", MoveType::EFFECT, 0, 100, MoveEffect::SPATK_DOWN, MoveTarget::ENEMY),
-                Move("Thunderbolt", MoveType::SPECIAL, 90, 80, MoveEffect::SPD_DOWN, MoveTarget::ENEMY, 25),
-                Move("Ethereal Blast", MoveType::SPECIAL, 100, 75),
-                Move("Arcane Shot", MoveType::SPECIAL, 75, 100)
+                Move("Soul Drain", MoveType::SPECIAL, 80, 70, MoveEffect::HEAL, MoveTarget::ENEMY, 15),
+                Move("Curse", MoveType::EFFECT, 0, 100, MoveEffect::SPATK_DOWN, MoveTarget::ENEMY, 30),
+                Move("Thunderbolt", MoveType::SPECIAL, 90, 80, MoveEffect::SPD_DOWN, MoveTarget::ENEMY),
+                Move("Ethereal Blast", MoveType::SPECIAL, 120, 75),
+                Move("Arcane Shot", MoveType::SPECIAL, 85, 100)
                 };
                 break;
             case 1:
                 movePool = {
                 Move("Weaken", MoveType::EFFECT, 0, 100, MoveEffect::SPDEF_DOWN, MoveTarget::ENEMY, 40),
                 Move("Mana Shield", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::ENEMY),
-                Move("Fireball", MoveType::SPECIAL, 90, 85),
+                Move("Fireball", MoveType::SPECIAL, 105, 85),
                 Move("Frost Nova", MoveType::SPECIAL, 70, 95, MoveEffect::SPDEF_DOWN, MoveTarget::ENEMY, 25)
                 };
                 break;
             case 2:
                 movePool = {
-                Move("Arcane Missiles", MoveType::SPECIAL, 75, 95),
+                Move("Arcane Missiles", MoveType::SPECIAL, 90, 100),
                 Move("Silence", MoveType::EFFECT, 0, 100, MoveEffect::ATK_DOWN, MoveTarget::ENEMY, 40),
                 Move("Magic Barrier", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::ENEMY),
                 Move("Meteor Strike", MoveType::SPECIAL, 130, 70)
@@ -358,19 +358,19 @@ void Player::initializeMovePool() {
         switch(preset) {
             case 0:
             movePool = {
-                Move("Cripple", MoveType::EFFECT, 0, 100, MoveEffect::ATK_DOWN, MoveTarget::ENEMY),
-                Move("Clean Shot", MoveType::SPECIAL, 70, 100),
+                Move("Cripple", MoveType::EFFECT, 0, 100, MoveEffect::ATK_DOWN, MoveTarget::ENEMY, 35),
+                Move("Clean Shot", MoveType::SPECIAL, 85, 100),
                 Move("Trap", MoveType::EFFECT, 0, 100, MoveEffect::SPDEF_DOWN, MoveTarget::ENEMY, 30),
-                Move("Arrow Storm", MoveType::SPECIAL, 90, 85),
-                Move("Piercing Shot", MoveType::SPECIAL, 85, 90)
+                Move("Arrow Storm", MoveType::SPECIAL, 95, 85),
+                Move("Piercing Shot", MoveType::SPECIAL, 85, 90, MoveEffect::DEF_DOWN, MoveTarget::ENEMY, 20)
             };
                 break;
             case 1:
                 movePool = {
-                Move("Weaken", MoveType::EFFECT, 0, 100, MoveEffect::SPATK_DOWN, MoveTarget::ENEMY),
-                Move("Armored", MoveType::EFFECT, 0, 100, MoveEffect::DEF_UP, MoveTarget::SELF),
+                Move("Weaken", MoveType::EFFECT, 0, 100, MoveEffect::SPATK_DOWN, MoveTarget::ENEMY, 35),
+                Move("Armored", MoveType::EFFECT, 0, 100, MoveEffect::DEF_UP, MoveTarget::SELF, 30),
                 Move("Lightning Arrow", MoveType::SPECIAL, 80, 90, MoveEffect::SPD_DOWN, MoveTarget::ENEMY, 20),
-                Move("Snipe", MoveType::SPECIAL, 110, 80)
+                Move("Snipe", MoveType::SPECIAL, 115, 80)
                  };
                 break;
             case 2:
@@ -378,7 +378,7 @@ void Player::initializeMovePool() {
                 Move("Mending Arrow", MoveType::EFFECT, 0, 100, MoveEffect::HEAL, MoveTarget::SELF, 20),
                 Move("Poison Arrow", MoveType::SPECIAL, 60, 95, MoveEffect::ATK_DOWN, MoveTarget::ENEMY),
                 Move("Bow Block", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::ENEMY),
-                Move("Multi Shot", MoveType::SPECIAL, 90, 90)
+                Move("Multi Shot", MoveType::SPECIAL, 100, 90)
 
                 };
             };

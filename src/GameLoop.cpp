@@ -180,7 +180,7 @@ void GameLoop::startFinalBossCombat() {
     isFinalBoss = true;
     isMiniBoss = false;
 
-    FinalBoss* boss = new FinalBoss("NECRON", EnemyType::SENTINEL, 500, 50, 45, 50, 45, 40);
+    FinalBoss* boss = new FinalBoss("NECRON", EnemyType::SENTINEL, 500, 50, 65, 50, 65, 40);
 
     currentEnemy = boss;
 

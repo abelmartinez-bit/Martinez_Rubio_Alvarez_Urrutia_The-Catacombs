@@ -16,8 +16,8 @@ static const std::vector<Move> PRESET_AGGRESSIVE = {
     Move("Crush", MoveType::PHYSICAL, 80, 90),
     Move("Overhead Strike", MoveType::PHYSICAL, 75, 90),
     Move("Flurry", MoveType::PHYSICAL, 70, 95),
-    Move("Eviscerate", MoveType::PHYSICAL, 85, 80, MoveEffect::DEF_DOWN, MoveTarget::ENEMY, 20),
-    Move("Phase Strike", MoveType::SPECIAL, 95, 80, MoveEffect::SPD_DOWN, MoveTarget::ENEMY, 20),
+    Move("Eviscerate", MoveType::PHYSICAL, 85, 80, MoveEffect::DEF_DOWN, MoveTarget::ENEMY, 10),
+    Move("Phase Strike", MoveType::SPECIAL, 95, 80, MoveEffect::SPD_DOWN, MoveTarget::ENEMY, 10),
     // Effect
     Move("Berserk", MoveType::EFFECT, 0, 100, MoveEffect::ATK_UP, MoveTarget::SELF),
     Move("Shadowstep", MoveType::EFFECT, 0, 100, MoveEffect::SPD_UP, MoveTarget::SELF),
@@ -29,8 +29,8 @@ static const std::vector<Move> PRESET_DEFENSIVE = {
     Move("Shield Bash", MoveType::PHYSICAL, 70, 95),
     Move("Stone Fist", MoveType::PHYSICAL, 70, 90),
     Move("Boulder Toss", MoveType::PHYSICAL, 85, 80),
-    Move("Suppressing Shot", MoveType::SPECIAL, 65, 95, MoveEffect::ATK_DOWN, MoveTarget::ENEMY, 20),
-    Move("Soul Drain", MoveType::SPECIAL, 60, 90, MoveEffect::HEAL, MoveTarget::ENEMY, 20),
+    Move("Suppressing Shot", MoveType::SPECIAL, 65, 95, MoveEffect::ATK_DOWN, MoveTarget::ENEMY, 10),
+    Move("Soul Drain", MoveType::SPECIAL, 60, 90, MoveEffect::HEAL, MoveTarget::ENEMY, 10),
     // Effect
     Move("Fortify", MoveType::EFFECT, 0, 100, MoveEffect::DEF_UP, MoveTarget::SELF),
     Move("Harden", MoveType::EFFECT, 0, 100, MoveEffect::DEF_UP, MoveTarget::SELF),
@@ -40,16 +40,16 @@ static const std::vector<Move> PRESET_DEFENSIVE = {
 static const std::vector<Move> PRESET_DEBUFFER = {
     // Damage
     Move("Quick Strike", MoveType::PHYSICAL, 50, 100, MoveEffect::SPD_UP, MoveTarget::ENEMY, 15),
-    Move("Gutting Slash", MoveType::PHYSICAL, 75, 90, MoveEffect::DEF_DOWN, MoveTarget::ENEMY, 30),
+    Move("Gutting Slash", MoveType::PHYSICAL, 75, 90, MoveEffect::DEF_DOWN, MoveTarget::ENEMY, 15),
     Move("Spirit Strike", MoveType::SPECIAL, 70, 90),
-    Move("Soul Rend", MoveType::SPECIAL, 80, 85, MoveEffect::SPDEF_DOWN, MoveTarget::ENEMY, 20),
-    Move("Draining Touch", MoveType::SPECIAL, 65, 90, MoveEffect::HEAL, MoveTarget::ENEMY, 20),
+    Move("Soul Rend", MoveType::SPECIAL, 80, 85, MoveEffect::SPDEF_DOWN, MoveTarget::ENEMY, 10),
+    Move("Draining Touch", MoveType::SPECIAL, 65, 90, MoveEffect::HEAL, MoveTarget::ENEMY, 15),
     // Effect
-    Move("Cripple", MoveType::EFFECT, 0, 100, MoveEffect::SPD_DOWN, MoveTarget::ENEMY),
-    Move("Hex", MoveType::EFFECT, 0, 100, MoveEffect::ATK_DOWN, MoveTarget::ENEMY),
-    Move("Enfeeble", MoveType::EFFECT, 0, 100, MoveEffect::DEF_DOWN, MoveTarget::ENEMY),
-    Move("Wail", MoveType::EFFECT, 0, 100, MoveEffect::SPDEF_DOWN, MoveTarget::ENEMY),
-    Move("Mana Shield", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::ENEMY),
+    Move("Cripple", MoveType::EFFECT, 0, 100, MoveEffect::SPD_DOWN, MoveTarget::ENEMY, 20),
+    Move("Hex", MoveType::EFFECT, 0, 100, MoveEffect::ATK_DOWN, MoveTarget::ENEMY, 20),
+    Move("Enfeeble", MoveType::EFFECT, 0, 100, MoveEffect::DEF_DOWN, MoveTarget::ENEMY, 20),
+    Move("Wail", MoveType::EFFECT, 0, 100, MoveEffect::SPDEF_DOWN, MoveTarget::ENEMY, 20),
+    Move("Mana Shield", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::ENEMY, 20),
 };
 
 static const std::vector<Move> PRESET_BALANCED = {
@@ -62,8 +62,8 @@ static const std::vector<Move> PRESET_BALANCED = {
     Move("Ritual Bolt", MoveType::SPECIAL, 75, 85, MoveEffect::SPDEF_DOWN, MoveTarget::ENEMY, 20),
     // Effect
     Move("Fortify", MoveType::EFFECT, 0, 100, MoveEffect::DEF_UP, MoveTarget::SELF),
-    Move("Cripple", MoveType::EFFECT, 0, 100, MoveEffect::SPD_DOWN, MoveTarget::ENEMY),
-    Move("Phase Shield", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::ENEMY),
+    Move("Cripple", MoveType::EFFECT, 0, 100, MoveEffect::SPD_DOWN, MoveTarget::ENEMY, 20),
+    Move("Phase Shield", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::ENEMY, 20),
 };
 
 static const std::vector<Move> PRESET_BALANCED_PHYSICAL = {
@@ -73,12 +73,12 @@ static const std::vector<Move> PRESET_BALANCED_PHYSICAL = {
     Move("Boulder Toss", MoveType::PHYSICAL, 85, 80),
     Move("Overhead Strike", MoveType::PHYSICAL, 75, 90),
     Move("Crushing Advance", MoveType::PHYSICAL, 80, 85, MoveEffect::DEF_DOWN, MoveTarget::ENEMY, 20),
-    Move("Gutting Slash", MoveType::PHYSICAL, 75, 90, MoveEffect::DEF_DOWN, MoveTarget::ENEMY, 30),
+    Move("Gutting Slash", MoveType::PHYSICAL, 75, 90, MoveEffect::DEF_DOWN, MoveTarget::ENEMY, 20),
     // Effect
     Move("Fortify", MoveType::EFFECT, 0, 100, MoveEffect::DEF_UP, MoveTarget::SELF),
     Move("Berserk", MoveType::EFFECT, 0, 100, MoveEffect::ATK_UP, MoveTarget::SELF),
-    Move("Cripple", MoveType::EFFECT, 0, 90, MoveEffect::SPD_DOWN, MoveTarget::ENEMY),
-    Move("Stone Wall", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::ENEMY),
+    Move("Cripple", MoveType::EFFECT, 0, 90, MoveEffect::SPD_DOWN, MoveTarget::ENEMY, 20),
+    Move("Stone Wall", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::ENEMY, 20),
 };
 
 static const std::vector<Move> PRESET_BALANCED_SPECIAL = {
@@ -91,9 +91,9 @@ static const std::vector<Move> PRESET_BALANCED_SPECIAL = {
     Move("Draining Touch", MoveType::SPECIAL, 65, 90, MoveEffect::HEAL, MoveTarget::SELF, 20),
     // Effect
     Move("Shadowstep", MoveType::EFFECT, 0, 100, MoveEffect::SPD_UP, MoveTarget::SELF),
-    Move("Wail", MoveType::EFFECT, 0, 90, MoveEffect::SPDEF_DOWN, MoveTarget::ENEMY),
-    Move("Weaken", MoveType::EFFECT, 0, 90, MoveEffect::SPATK_DOWN, MoveTarget::ENEMY),
-    Move("Mana Shield", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::ENEMY),
+    Move("Wail", MoveType::EFFECT, 0, 90, MoveEffect::SPDEF_DOWN, MoveTarget::ENEMY, 20),
+    Move("Weaken", MoveType::EFFECT, 0, 90, MoveEffect::SPATK_DOWN, MoveTarget::ENEMY, 20),
+    Move("Mana Shield", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::ENEMY, 20),
 };
 
 // enemy signature moves by type
@@ -101,13 +101,13 @@ static std::vector<Move> getTypeMoves(EnemyType type) {
     switch (type) {
         case EnemyType::SENTINEL: 
             return std::vector<Move>{
-                    Move("Bulwark", MoveType::EFFECT, 0, 100, MoveEffect::DEF_UP, MoveTarget::SELF, 35),
-                    Move("Crushing Advance", MoveType::PHYSICAL, 85, 85, MoveEffect::DEF_DOWN, MoveTarget::ENEMY, 30) };
+                    Move("Bulwark", MoveType::EFFECT, 0, 100, MoveEffect::DEF_UP, MoveTarget::SELF, 30),
+                    Move("Crushing Advance", MoveType::PHYSICAL, 85, 85, MoveEffect::DEF_DOWN, MoveTarget::ENEMY) };
 
         case EnemyType::SHADE: 
             return std::vector<Move>{
-                    Move("Hemorrhage", MoveType::PHYSICAL, 90, 80, MoveEffect::DEF_DOWN, MoveTarget::ENEMY, 35),
-                    Move("Smoke Step", MoveType::EFFECT, 0, 100, MoveEffect::SPD_UP, MoveTarget::SELF, 35) };
+                    Move("Hemorrhage", MoveType::PHYSICAL, 90, 80, MoveEffect::DEF_DOWN, MoveTarget::ENEMY, 30),
+                    Move("Smoke Step", MoveType::EFFECT, 0, 100, MoveEffect::SPD_UP, MoveTarget::SELF, 30) };
 
         case EnemyType::WRAITH: 
             return std::vector<Move>{
@@ -116,19 +116,19 @@ static std::vector<Move> getTypeMoves(EnemyType type) {
 
         case EnemyType::GOLEM:
             return std::vector<Move>{
-                    Move("Tectonic Slam", MoveType::PHYSICAL, 95, 75, MoveEffect::SPD_DOWN, MoveTarget::ENEMY, 30),
-                    Move("Stone Skin", MoveType::EFFECT, 0, 100, MoveEffect::DEF_UP, MoveTarget::SELF, 35),
-                    Move("Stengthen Core", MoveType::EFFECT, 0, 100, MoveEffect::SPDEF_UP, MoveTarget::SELF, 35) };
+                    Move("Tectonic Slam", MoveType::PHYSICAL, 95, 75, MoveEffect::SPD_DOWN, MoveTarget::ENEMY),
+                    Move("Stone Skin", MoveType::EFFECT, 0, 100, MoveEffect::DEF_UP, MoveTarget::SELF, 30),
+                    Move("Stengthen Core", MoveType::EFFECT, 0, 100, MoveEffect::SPDEF_UP, MoveTarget::SELF, 30) };
 
         case EnemyType::SHAMAN: 
             return std::vector<Move>{
                     Move("Dark Empowerment", MoveType::SPECIAL, 20, 100, MoveEffect::SPATK_UP, MoveTarget::ENEMY),
-                    Move("Cursed Bolt", MoveType::SPECIAL, 75, 90, MoveEffect::SPDEF_DOWN, MoveTarget::ENEMY, 25) };
+                    Move("Cursed Bolt", MoveType::SPECIAL, 75, 90, MoveEffect::SPDEF_DOWN, MoveTarget::ENEMY) };
 
         case EnemyType::SPECTER:
             return std::vector<Move>{
                     Move("Spectral Curse", MoveType::EFFECT, 0, 100, MoveEffect::SPDEF_DOWN, MoveTarget::ENEMY),
-                    Move("Void Surge", MoveType::SPECIAL, 100, 75, MoveEffect::SPATK_DOWN, MoveTarget::ENEMY, 20) };
+                    Move("Void Surge", MoveType::SPECIAL, 100, 75, MoveEffect::SPATK_DOWN, MoveTarget::ENEMY, 10) };
         default:
             return {};
     }

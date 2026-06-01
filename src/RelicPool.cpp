@@ -244,8 +244,8 @@ Relic* RelicPool::getRandomRareRelic() {
                     "Flame Burst",
                     MoveType::SPECIAL,
                     110,
-                    90,
-                    MoveEffect::NONE,
+                    100,
+                    MoveEffect::ATK_UP,
                     MoveTarget::ENEMY
                 ),
                 50
@@ -294,7 +294,7 @@ Relic* RelicPool::getRandomLegendaryRelic() {
                     MoveType::SPECIAL,
                     100,
                     100,
-                    MoveEffect::NONE,
+                    MoveEffect::SPD_DOWN,
                     MoveTarget::ENEMY
                 ),
                 50

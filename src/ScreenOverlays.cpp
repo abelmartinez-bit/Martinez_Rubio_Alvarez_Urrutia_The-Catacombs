@@ -76,12 +76,12 @@ void drawLevelUp(sf::RenderWindow& window, sf::Font& font, Player* player, sf::V
 
     struct StatBtn { std::string label; float y; };
     StatBtn btns[6] = {
-        {"1.  HP     +20", 195.f},
-        {"2.  ATK    +10", 258.f},
-        {"3.  DEF    +10", 321.f},
-        {"4.  SP.ATK +10", 384.f},
-        {"5.  SP.DEF +10", 447.f},
-        {"6.  SPD    +6",  510.f},
+        {"1.  HP     +30", 195.f},
+        {"2.  ATK    +15", 258.f},
+        {"3.  DEF    +15", 321.f},
+        {"4.  SP.ATK +15", 384.f},
+        {"5.  SP.DEF +15", 447.f},
+        {"6.  SPD    +9",  510.f},
     };
 
     const float luBtnW = 260.f, luBtnH = 48.f;

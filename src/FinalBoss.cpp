@@ -38,26 +38,26 @@ void FinalBoss::updatePhase() {
     }
 }
 
-// FASE 1 - ataques fuertes balanceados
+// FASE 1 - moves fuertes balanceados
 void FinalBoss::setPhase1Moves() {
-    setMove(0, Move("Abyssal Strike", MoveType::PHYSICAL, 110, 90));
-    setMove(1, Move("Dark Nova", MoveType::SPECIAL, 105, 90));
-    setMove(2, Move("Dread Aura", MoveType::EFFECT, 0, 100, MoveEffect::ATK_UP, MoveTarget::SELF, 50));
-    setMove(3, Move("Crippling Curse", MoveType::EFFECT, 0, 95, MoveEffect::DEF_DOWN, MoveTarget::ENEMY, 50));
+    setMove(0, Move("Malevolent Hit", MoveType::PHYSICAL, 110, 90));
+    setMove(1, Move("Wither Shield", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::SELF));
+    setMove(2, Move("Wand of Atonement", MoveType::EFFECT, 0, 100, MoveEffect::HEAL, MoveTarget::SELF, 20));
+    setMove(3, Move("Gyrokinetic Wand", MoveType::EFFECT, 0, 100, MoveEffect::SPD_DOWN, MoveTarget::ENEMY, 40));
 }
 
-// FASE 2 - mas fuertes + se cura
+// FASE 2 - mas fuertes, buffs
 void FinalBoss::setPhase2Moves() {
     setMove(0, Move("Void Cleaver", MoveType::PHYSICAL, 125, 90));
     setMove(1, Move("Soul Rend", MoveType::SPECIAL, 120, 90));
-    setMove(2, Move("Dark Restoration", MoveType::EFFECT, 0, 100, MoveEffect::HEAL, MoveTarget::SELF, 20));
-    setMove(3, Move("Terrifying Roar", MoveType::EFFECT, 0, 95, MoveEffect::ATK_DOWN, MoveTarget::ENEMY, 55));
+    setMove(2, Move("Dread Aura", MoveType::EFFECT, 0, 100, MoveEffect::ATK_UP, MoveTarget::SELF, 50));
+    setMove(3, Move("Necromancer's Brooch", MoveType::EFFECT, 0, 100, MoveEffect::SPATK_UP, MoveTarget::SELF, 50));
 }
 
 // FASE 3 - devastadores, maximo poder
 void FinalBoss::setPhase3Moves() {
-    setMove(0, Move("Apocalypse", MoveType::PHYSICAL, 145, 85));
-    setMove(1, Move("Annihilation Beam", MoveType::SPECIAL, 140, 90));
-    setMove(2, Move("Final Judgement", MoveType::PHYSICAL, 160, 80));
-    setMove(3, Move("Doom Spiral", MoveType::SPECIAL, 135, 95));
+    setMove(0, Move("Implosion", MoveType::PHYSICAL, 145, 85));
+    setMove(1, Move("Wither Impact", MoveType::SPECIAL, 140, 90, MoveEffect::HEAL, MoveTarget::ENEMY, 5)); // daño + algo de curacion para hacerlo mas impredecible + referemcia
+    setMove(2, Move("Instant Transmission", MoveType::EFFECT, 0, 100, MoveEffect::SPD_UP, MoveTarget::SELF, 50));
+    setMove(3, Move("Terminal Doomsday", MoveType::SPECIAL, 135, 95));
 }

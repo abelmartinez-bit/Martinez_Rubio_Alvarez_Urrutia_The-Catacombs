@@ -129,12 +129,12 @@ std::string Floor::triggerEvent(Player& player, const Door& door) {
 
         if (player.getPotions().size() < player.getPotionSlots()) {
             player.addPotion(p);
-            result += "You found a " + potionName + " !";
+            result += "You found a " + potionName + "!";
         } else {
             result += "Found: " + p.getName() + ".\nBut your inventory is full, you left it behind.\n\n";
         }
 
-        
+    
     } else {
         Relic* r = RelicPool::getRandomRelic();
         std::string relicName = r->getName();

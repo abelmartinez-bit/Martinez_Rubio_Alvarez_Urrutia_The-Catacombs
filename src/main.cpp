@@ -60,9 +60,18 @@ int main() {
     music.setVolume(50.f);
     music.play();
 
+    sf::Music combatMusic;
+    if (!combatMusic.openFromFile("assets/audio/combat_music.mp3")) {
+        std::cerr << "Error: no se pudo cargar la musica de combate\n";
+        // no return, el juego sigue pero sin musica de combate
+    } else {
+        combatMusic.setLooping(true);
+        combatMusic.setVolume(60.f);
+    }
+
     // temp if missing, the boss fight just plays in silence.
     sf::Music bossMusic;
-    bool bossAudioLoaded = bossMusic.openFromFile("assets/audio/BossBG.wav");
+    bool bossAudioLoaded = bossMusic.openFromFile("assets/audio/boss_music.mp3");
     if (bossAudioLoaded) {
         bossMusic.setLooping(true);
         bossMusic.setVolume(70.f);   // Boss music slightly louder for impact
@@ -89,7 +98,7 @@ int main() {
     // temp test while no final boss bg, uses wall3
     sf::Texture finalBossTexture;
     {
-        bool bossTexLoaded = finalBossTexture.loadFromFile("assets/images/FinalBossBG.jpg");
+        bool bossTexLoaded = finalBossTexture.loadFromFile("assets/images/boss_bg2.png");
         if (!bossTexLoaded) {
             if (!finalBossTexture.loadFromFile("assets/images/wall3.jpg")) {
                 // wall3 also missing, reuse the corridor
@@ -299,6 +308,7 @@ int main() {
                         if (mouse.x >= btnX && mouse.x <= btnX + btnW && mouse.y >= playY && mouse.y <= playY + btnH) {
                             onScreenFlip = [&] { 
                                 music.stop();
+                                combatMusic.play();
                                 showLevelUp = false;
                                 showMoveSelect = false;
                                 combatRewardDescription = "";
@@ -519,6 +529,7 @@ int main() {
                                 if (gameLoop.getIsFinalBoss()) {
                                     onScreenFlip = [&] {
                                         bossMusic.stop();
+                                        combatMusic.stop();
                                         if (next == GameScreen::WIN) {
                                             // Optionally restart regular music on win screen
                                             // music.setLooping(true);
@@ -553,6 +564,7 @@ int main() {
                             combatRewardDescription = "";
                             if (gameLoop.getIsFinalBoss()) {
                                 music.stop();
+                                combatMusic.stop();
                                 if (bossAudioLoaded) {
                                     bossMusic.play();
                                 }
