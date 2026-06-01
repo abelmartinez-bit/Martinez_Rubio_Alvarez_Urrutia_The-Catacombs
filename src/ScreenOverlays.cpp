@@ -189,7 +189,7 @@ void drawEventScreen(sf::RenderWindow& window, sf::Font& font, const std::string
 
     // Description panel
     const float panelX = 110.f, panelY = 138.f;
-    const float panelW = 580.f, panelH = 230.f;
+    const float panelW = 580.f, panelH = 270.f;
 
     sf::RectangleShape border({panelW + 4.f, panelH + 4.f});
     border.setPosition({panelX - 2.f, panelY - 2.f});
@@ -215,7 +215,7 @@ void drawEventScreen(sf::RenderWindow& window, sf::Font& font, const std::string
         sf::Text hpText(font, hpStr, 17);
         hpText.setFillColor(sf::Color(100, 220, 100));
         sf::FloatRect hb = hpText.getLocalBounds();
-        hpText.setPosition({(800.f - hb.size.x) / 2.f - hb.position.x, 392.f});
+        hpText.setPosition({(800.f - hb.size.x) / 2.f - hb.position.x, 440.f});
         window.draw(hpText);
     }
 
@@ -231,7 +231,7 @@ void drawEventScreen(sf::RenderWindow& window, sf::Font& font, const std::string
     sf::Text hint(font, "Press  ENTER  to continue.", 19);
     hint.setFillColor(sf::Color(150, 150, 150, alpha));
     sf::FloatRect hb = hint.getLocalBounds();
-    hint.setPosition({(800.f - hb.size.x) / 2.f - hb.position.x, 460.f});
+    hint.setPosition({(800.f - hb.size.x) / 2.f - hb.position.x, 510.f});
     window.draw(hint);
 }
 
@@ -256,7 +256,7 @@ void drawRewardScreen(sf::RenderWindow& window, sf::Font& font, const std::strin
 
     // Description panel
     const float panelX = 110.f, panelY = 138.f;
-    const float panelW = 580.f, panelH = 230.f;
+    const float panelW = 580.f, panelH = 270.f;
 
     sf::RectangleShape border({panelW + 4.f, panelH + 4.f});
     border.setPosition({panelX - 2.f, panelY - 2.f});
@@ -282,7 +282,7 @@ void drawRewardScreen(sf::RenderWindow& window, sf::Font& font, const std::strin
         sf::Text hpText(font, hpStr, 17);
         hpText.setFillColor(sf::Color(100, 220, 100));
         sf::FloatRect hb = hpText.getLocalBounds();
-        hpText.setPosition({(800.f - hb.size.x) / 2.f - hb.position.x, 392.f});
+        hpText.setPosition({(800.f - hb.size.x) / 2.f - hb.position.x, 440.f});
         window.draw(hpText);
     }
 
@@ -298,7 +298,7 @@ void drawRewardScreen(sf::RenderWindow& window, sf::Font& font, const std::strin
     sf::Text hint(font, "Press  ENTER  to continue.", 19);
     hint.setFillColor(sf::Color(150, 150, 150, alpha));
     sf::FloatRect hb = hint.getLocalBounds();
-    hint.setPosition({(800.f - hb.size.x) / 2.f - hb.position.x, 460.f});
+    hint.setPosition({(800.f - hb.size.x) / 2.f - hb.position.x, 510.f});
     window.draw(hint);
 }
 

@@ -50,7 +50,7 @@ void FinalBoss::setPhase1Moves() {
 void FinalBoss::setPhase2Moves() {
     setMove(0, Move("Void Cleaver", MoveType::PHYSICAL, 125, 90));
     setMove(1, Move("Soul Rend", MoveType::SPECIAL, 120, 90));
-    setMove(2, Move("Dark Restoration", MoveType::EFFECT, 0, 100, MoveEffect::HEAL, MoveTarget::SELF, 30));
+    setMove(2, Move("Dark Restoration", MoveType::EFFECT, 0, 100, MoveEffect::HEAL, MoveTarget::SELF, 20));
     setMove(3, Move("Terrifying Roar", MoveType::EFFECT, 0, 95, MoveEffect::ATK_DOWN, MoveTarget::ENEMY, 55));
 }
 

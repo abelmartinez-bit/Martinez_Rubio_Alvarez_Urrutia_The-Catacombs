@@ -623,10 +623,15 @@ int main() {
 
         // COMBAT SCREEN — branches for regular vs. final boss
         else if (currentScreen == GameScreen::COMBAT && player && gameLoop.getCombat() && gameLoop.getCurrentFloor() && gameLoop.getCurrentEnemy()) {
-            drawCombat(window, font, player, gameLoop.getCurrentEnemy(), gameLoop.getCombat(), playerText, enemyText, 
-                        logText, resultText, instructionText, rewardGiven, combatSprite, 
-                        gameLoop.getCurrentFloor(), gameLoop.getIsMiniBoss(), combatRewardDescription,
-                        showingMoves, window.mapPixelToCoords(sf::Mouse::getPosition(window)));
+            if (gameLoop.getIsFinalBoss()) {
+                drawFinalBossCombat(window, font, player, gameLoop.getCurrentEnemy(), gameLoop.getCombat(), playerText, enemyText, logText, resultText,
+                                    instructionText, rewardGiven, finalBossSprite, gameLoop.getCurrentFloor(), combatRewardDescription, showingMoves, window.mapPixelToCoords(sf::Mouse::getPosition(window)));
+            } else {
+                drawCombat(window, font, player, gameLoop.getCurrentEnemy(), gameLoop.getCombat(), playerText, enemyText, logText, resultText,
+                           instructionText, rewardGiven, combatSprite, gameLoop.getCurrentFloor(), gameLoop.getIsMiniBoss(), combatRewardDescription,
+                           showingMoves, window.mapPixelToCoords(sf::Mouse::getPosition(window)));
+            }
+            
             
             // Pop-ups encima del combate (same for both)
             if (showLevelUp) {
