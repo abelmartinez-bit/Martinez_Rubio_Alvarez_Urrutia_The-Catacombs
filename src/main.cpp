@@ -68,6 +68,12 @@ int main() {
         bossMusic.setVolume(70.f);   // Boss music slightly louder for impact
     }
 
+    // Click sound
+    sf::SoundBuffer clickBuffer;
+    clickBuffer.loadFromFile("assets/audio/click.wav");
+    sf::Sound clickSound(clickBuffer);
+    clickSound.setVolume(50.f);
+
     sf::Texture bgTexture; //fondo del main menu
     if (!bgTexture.loadFromFile("assets/images/CTHomeScreen1.jpg")) {
         std::cerr << "Error: no se pudo cargar el fondo del menu\n";
@@ -401,6 +407,9 @@ int main() {
             if (transitionAlpha >= 255.f) {
                 transitionAlpha = 255.f;
                 currentScreen = pendingScreen;
+                if (currentScreen == GameScreen::COMBAT) {
+                    music.stop();
+                }
                 if (onScreenFlip) { 
                     onScreenFlip(); 
                     onScreenFlip = nullptr; 
@@ -430,6 +439,7 @@ int main() {
             // Mouse clicks
             if (const auto* click = event->getIf<sf::Event::MouseButtonPressed>()) {
                 if (click->button == sf::Mouse::Button::Left) {//click izquierdo
+                    clickSound.play();
                     //mapPixelToCoords toma el pixel de la pantalla y lo convierte a la coordenada
                     sf::Vector2f mouse = window.mapPixelToCoords(sf::Mouse::getPosition(window));
 
@@ -437,7 +447,6 @@ int main() {
                         // Boton PLAY
                         if (mouse.x >= btnX && mouse.x <= btnX + btnW && mouse.y >= playY && mouse.y <= playY + btnH) {
                             onScreenFlip = [&] { 
-                                music.stop();
                                 showLevelUp = false;
                                 showMoveSelect = false;
                                 combatRewardDescription = "";
