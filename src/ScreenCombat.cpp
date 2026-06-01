@@ -27,20 +27,136 @@ void drawHpBar(sf::RenderWindow& window,
     window.draw(fill);
 }
 
+//nueva funcion para dibujar botones, con efecto hover
+void drawPanelBtn(sf::RenderWindow& window, sf::Font& font,
+                         float x, float y, float w, float h,
+                         const std::string& label, bool hovered)
+{
+    sf::Color border = hovered ? sf::Color(210, 160, 60) : sf::Color(100, 65, 15);
+    sf::Color bg     = hovered ? sf::Color(55, 35, 10, 230) : sf::Color(18, 10, 3, 220);
+
+    sf::RectangleShape bdr({w + 4.f, h + 4.f});
+    bdr.setPosition({x - 2.f, y - 2.f});
+    bdr.setFillColor(border);
+    window.draw(bdr);
+
+    sf::RectangleShape box({w, h});
+    box.setPosition({x, y});
+    box.setFillColor(bg);
+    window.draw(box);
+
+    sf::Text txt(font, label, 18);
+    txt.setFillColor(hovered ? sf::Color(255, 205, 100) : sf::Color(210, 160, 60));
+    sf::FloatRect b = txt.getLocalBounds();
+    txt.setPosition({x + (w - b.size.x) / 2.f - b.position.x,
+                     y + (h - b.size.y) / 2.f - b.position.y});
+    window.draw(txt);
+}
+
+//nueva funcion para dibujar botones de moves, mas que nada para el hint del tipo/efecto
+void drawMoveBtn(sf::RenderWindow& window, sf::Font& font,
+                 float x, float y, float w, float h,
+                 const Move& move, bool hovered)
+{
+    sf::Color border = hovered ? sf::Color(210, 160, 60) : sf::Color(100, 65, 15);
+    sf::Color bg     = hovered ? sf::Color(55, 35, 10, 230) : sf::Color(18, 10, 3, 220);
+
+    sf::RectangleShape bdr({w + 4.f, h + 4.f});
+    bdr.setPosition({x - 2.f, y - 2.f});
+    bdr.setFillColor(border);
+    window.draw(bdr);
+
+    sf::RectangleShape box({w, h});
+    box.setPosition({x, y});
+    box.setFillColor(bg);
+    window.draw(box);
+
+    // nombre del move centrado
+    sf::Text txt(font, move.getName(), 16);
+    txt.setFillColor(hovered ? sf::Color(255, 205, 100) : sf::Color(210, 160, 60));
+    sf::FloatRect b = txt.getLocalBounds();
+    txt.setPosition({x + (w - b.size.x) / 2.f - b.position.x,
+                     y + (h - b.size.y) / 2.f - b.position.y - 10.f});
+    window.draw(txt);
+
+    // hint del tipo/efecto abajo del nombre
+    std::string hint;
+    if (move.getType() == MoveType::PHYSICAL) hint = "PHYSICAL";
+    else if (move.getType() == MoveType::SPECIAL) hint = "SPECIAL";
+    else {
+        switch (move.getEffect()) {
+            case MoveEffect::HEAL:      hint = "HEAL";      break;
+            case MoveEffect::BLOCK:     hint = "BLOCK";     break;
+            case MoveEffect::ATK_UP:    hint = "ATK UP";    break;
+            case MoveEffect::ATK_DOWN:  hint = "ATK DOWN";  break;
+            case MoveEffect::DEF_UP:    hint = "DEF UP";    break;
+            case MoveEffect::DEF_DOWN:  hint = "DEF DOWN";  break;
+            case MoveEffect::SPATK_UP:  hint = "SP.ATK UP"; break;
+            case MoveEffect::SPATK_DOWN:hint = "SP.ATK DOWN";break;
+            case MoveEffect::SPDEF_UP:  hint = "SP.DEF UP"; break;
+            case MoveEffect::SPDEF_DOWN:hint = "SP.DEF DOWN";break;
+            case MoveEffect::SPD_UP:    hint = "SPD UP";    break;
+            case MoveEffect::SPD_DOWN:  hint = "SPD DOWN";  break;
+            default: hint = "EFFECT"; break;
+        }
+    }
+
+    sf::Text hintTxt(font, hint, 12);
+    hintTxt.setFillColor(sf::Color(160, 130, 80));
+    sf::FloatRect hb = hintTxt.getLocalBounds();
+    hintTxt.setPosition({x + (w - hb.size.x) / 2.f - hb.position.x,
+                         y + (h - hb.size.y) / 2.f - hb.position.y + 12.f});
+    window.draw(hintTxt);
+}
+
+//nueva funcion para dibujar pop ups al hacer hover 
+void drawPopup(sf::RenderWindow& window, sf::Font& font,
+                      float x, float y, float w, float h,
+                      const std::string& title, const std::vector<std::string>& lines)
+{
+    // borde dorado
+    sf::RectangleShape border({w + 4.f, h + 4.f});
+    border.setPosition({x - 2.f, y - 2.f});
+    border.setFillColor(sf::Color(120, 80, 20));
+    window.draw(border);
+
+    // fondo oscuro
+    sf::RectangleShape bg({w, h});
+    bg.setPosition({x, y});
+    bg.setFillColor(sf::Color(15, 8, 2, 235));
+    window.draw(bg);
+
+    // titulo del popup
+    sf::Text ttl(font, title, 16);
+    ttl.setFillColor(sf::Color(210, 160, 60));
+    sf::FloatRect tb = ttl.getLocalBounds();
+    ttl.setPosition({x + (w - tb.size.x) / 2.f - tb.position.x, y + 8.f});
+    window.draw(ttl);
+
+    // linea separadora
+    sf::RectangleShape line({w - 20.f, 1.f});
+    line.setPosition({x + 10.f, y + 30.f});
+    line.setFillColor(sf::Color(100, 65, 15));
+    window.draw(line);
+
+    // lineas de contenido
+    float ly = y + 38.f;
+    for (const std::string& l : lines) {
+        sf::Text row(font, l, 14);
+        row.setFillColor(sf::Color(210, 195, 165));
+        row.setPosition({x + 12.f, ly});
+        window.draw(row);
+        ly += 20.f;
+    }
+}
+
 //funcion principal, con cambios para dibujar la pantalla de combate, tipo pokemon y entrega recompensa si termino
 void drawCombat(sf::RenderWindow& window, sf::Font& font, Player* player, Enemy* enemy, CombatEngine* combat, 
                 sf::Text& playerText, sf::Text& enemyText, sf::Text& logText, sf::Text& resultText, sf::Text& instructionText, 
                 bool& rewardGiven, const sf::Sprite& combatSprite, Floor* floor, bool isMiniBoss, 
-                std::string& rewardDescription) {
+                std::string& rewardDescription, bool showingMoves, sf::Vector2f mousePos) {
 
-    // Actualizar textos con estado actual
-    playerText.setString(
-        player->getName() + " | " + combat->potionList(*player) + "\n" +
-        "HP: " + std::to_string(player->getHp()) + "/" + std::to_string(player->getMaxHp()) + "\n" +
-        player->getHighestAtkStr() + " | " + player->getHighestDefStr() + "\n" +
-        "SPD: " + std::to_string(player->getSpd())
-    );
-
+    //ya no mostramos stats de player, solo la caja con nombre y hp bar, stats en el popup
     //ya no mostramos stats de enemy, solo la caja con nombre y hp bar
 
     logText.setString("Log:\n" + combat->getCombatLog());
@@ -65,7 +181,8 @@ void drawCombat(sf::RenderWindow& window, sf::Font& font, Player* player, Enemy*
         } else {
             instructionText.setString("Defeated...   Press ENTER to continue.");
         }
-    } else {
+    } 
+    else {
         // Combate en curso
         instructionText.setString("Click a move to attack   |   P: usar pocion");
         resultText.setString("");
@@ -115,7 +232,7 @@ void drawCombat(sf::RenderWindow& window, sf::Font& font, Player* player, Enemy*
     pBox.setFillColor(sf::Color(15, 8, 2, 215));
     window.draw(pBox);
 
-    sf::Text pName(font, player->getName() + "   Lv." + std::to_string(player->getLevel()), 20);
+    sf::Text pName(font, player->getName() + "  -  Lvl." + std::to_string(player->getLevel()), 20);
     pName.setFillColor(sf::Color(210, 160, 60));
     pName.setPosition({pBoxX + 10.f, pBoxY + 8.f});
     window.draw(pName);
@@ -140,34 +257,171 @@ void drawCombat(sf::RenderWindow& window, sf::Font& font, Player* player, Enemy*
     window.draw(enemyText);
     window.draw(logText);
     window.draw(resultText);
-    window.draw(instructionText);
+    //ahora sin draw de instructionText, porque lo ponemos dentro del panel inferior
 
-    //nuevos Botones de moves cuando el combate esta en curso
+    //Panel inferior con log y botones, tipo pokemon
+    const float panelY  = 440.f;
+    const float panelH  = 185.f;
+    const float logW    = 390.f;
+    const float btnAreaX = logW;
+    const float btnAreaW = 800.f - logW;
+
+    // fondo del panel
+    sf::RectangleShape panelBg({800.f, panelH});
+    panelBg.setPosition({0.f, panelY});
+    panelBg.setFillColor(sf::Color(12, 7, 2, 230));
+    window.draw(panelBg);
+
+    // borde superior
+    sf::RectangleShape panelTop({800.f, 3.f});
+    panelTop.setPosition({0.f, panelY});
+    panelTop.setFillColor(sf::Color(120, 80, 20));
+    window.draw(panelTop);
+
+    // divisor vertical entre log y botones
+    sf::RectangleShape divider({2.f, panelH - 10.f});
+    divider.setPosition({logW, panelY + 5.f});
+    divider.setFillColor(sf::Color(90, 55, 10));
+    window.draw(divider);
+
+    // Nuevo log dentro del panel
+    if (combat->isBattleOver()) {
+        std::string endMsg = player->isAlive()
+            ? "Victory!\nPress ENTER to continue."
+            : "Defeated...\nPress ENTER to continue.";
+        sf::Text endTxt(font, endMsg, 20);
+        endTxt.setFillColor(player->isAlive() ? sf::Color(100, 220, 100)
+                                            : sf::Color(210, 80, 80));
+        endTxt.setPosition({18.f, panelY + 20.f});
+        window.draw(endTxt);
+    } 
+    else {
+        std::string logStr = combat->getCombatLog();
+        if (logStr.empty()) logStr = "What will " + player->getName() + " do?";
+
+        //Separar el log en lineas por \n y por puntos, y limites de caracteres, para que quepan en la caja del panel
+        std::vector<std::string> logLines;
+        std::string line;
+        const int maxChars = 38;
+
+        for (char c : logStr) {
+            if (c == '\n') {
+                if (!line.empty()) logLines.push_back(line);
+                line = "";
+            } 
+            else {
+                line += c;
+                if (c == '.') { //si se llega a un punto, cortar la linea ahi para que no se amontonen las oraciones
+                    logLines.push_back(line);
+                    line = "";
+                } 
+                else if ((int)line.size() >= maxChars) { //si se pasa el limite de caracteres, cortar la linea
+                    int cutPos = line.rfind(' ');
+                    if (cutPos != (int)std::string::npos) {
+                        logLines.push_back(line.substr(0, cutPos));
+                        line = line.substr(cutPos + 1);
+                    } else {
+                        logLines.push_back(line);
+                        line = "";
+                    }
+                }
+            }
+        }
+        if (!line.empty()) logLines.push_back(line);
+
+        // Tomar solo las ultimas 6 lineas para que quepan en la caja
+        int startLine = std::max(0, (int)logLines.size() - 6);
+        float ly = panelY + 16.f;
+        for (int i = startLine; i < (int)logLines.size(); i++) {
+            sf::Text logTxt(font, logLines[i], 16);
+            logTxt.setFillColor(sf::Color(210, 195, 165));
+            logTxt.setPosition({18.f, ly});
+            window.draw(logTxt);
+            ly += 26.f;
+        }
+    }
+
+    //nuevo panel de botones, abajo derecha, moves, stats, relics y potions, con hovers para pop ups
     if (!combat->isBattleOver()) {
-        std::vector<Move> moves = player->getMoves();
-        const float moveBtnW = 155.f, moveBtnH = 50.f;
-        const float moveBtnY = 480.f;
-        const float startX = (800.f - (moveBtnW * 4 + 20.f * 3)) / 2.f;
+        const float bW = 170.f, bH = 58.f, bGap = 8.f;
+        const float bStartX = btnAreaX + (btnAreaW - bW * 2.f - bGap) / 2.f;
+        const float bRow1Y  = panelY + 20.f;
+        const float bRow2Y  = panelY + 20.f + bH + bGap;
+        float bx[4] = { bStartX, bStartX+bW+bGap, bStartX, bStartX+bW+bGap };
+        float by[4] = { bRow1Y, bRow1Y, bRow2Y, bRow2Y };
 
-        for (int i = 0; i < 4; i++) {
-            float bx = startX + i * (moveBtnW + 20.f);
+        if (showingMoves) {
+            // modo MOVES: mostrar los 4 moves del jugador
+            std::vector<Move> moves = player->getMoves();
+            for (int i = 0; i < 4; i++) {
+                bool hov = (mousePos.x >= bx[i] && mousePos.x <= bx[i]+bW &&
+                            mousePos.y >= by[i] && mousePos.y <= by[i]+bH);
+                drawMoveBtn(window, font, bx[i], by[i], bW, bH, moves[i], hov); //ahora su propia funcion 
+            }
+            // boton BACK
+            const float backW = 100.f, backH = 30.f;
+            float backX = btnAreaX + (btnAreaW - backW) / 2.f;
+            float backY = panelY + panelH - backH - 20.f;
+            bool backHov = (mousePos.x >= backX && mousePos.x <= backX+backW &&
+                            mousePos.y >= backY && mousePos.y <= backY+backH);
+            drawPanelBtn(window, font, backX, backY, backW, backH, "BACK", backHov);
 
-            sf::RectangleShape border({moveBtnW + 4.f, moveBtnH + 4.f});
-            border.setPosition({bx - 2.f, moveBtnY - 2.f});
-            border.setFillColor(sf::Color(120, 80, 20));
-            window.draw(border);
+        } else {
+            // menu principal: MOVES / STATS / RELICS / POTIONS
+            const char* labels[4] = { "MOVES", "STATS", "RELICS", "POTIONS" };
+            for (int i = 0; i < 4; i++) {
+                bool hov = (mousePos.x >= bx[i] && mousePos.x <= bx[i]+bW &&
+                            mousePos.y >= by[i] && mousePos.y <= by[i]+bH);
+                drawPanelBtn(window, font, bx[i], by[i], bW, bH, labels[i], hov);
 
-            sf::RectangleShape bg({moveBtnW, moveBtnH});
-            bg.setPosition({bx, moveBtnY});
-            bg.setFillColor(sf::Color(20, 12, 5, 210));
-            window.draw(bg);
+                // popups de hover
+                if (hov && i > 0) {
+                    const float popW = 320.f;
+                    float popX = bx[i] - popW - 10.f;
+                    if (popX < 5.f) popX = bx[i] + bW + 10.f;
+                    float popY, popH;
 
-            sf::Text moveLabel(font, moves[i].getName(), 15);
-            moveLabel.setFillColor(sf::Color(210, 160, 60));
-            sf::FloatRect flb = moveLabel.getLocalBounds();
-            moveLabel.setPosition({bx + (moveBtnW - flb.size.x) / 2.f - flb.position.x,
-                                   moveBtnY + (moveBtnH - flb.size.y) / 2.f - flb.position.y});
-            window.draw(moveLabel);
+                    if (i == 1) { // STATS
+                        std::vector<std::string> lines = {
+                            "ATK:    " + std::to_string(player->getAtk()),
+                            "DEF:    " + std::to_string(player->getDef()),
+                            "SP.ATK: " + std::to_string(player->getSpAtk()),
+                            "SP.DEF: " + std::to_string(player->getSpDef()),
+                            "SPD:    " + std::to_string(player->getSpd()),
+                            "EXP: " + std::to_string(player->getExp()) +
+                                " / " + std::to_string(player->getExpToNextLevel()),
+                        };
+                        popH = 38.f + lines.size() * 20.f + 10.f;
+                        popY = panelY - popH - 6.f;
+                        drawPopup(window, font, popX, popY, popW, popH, "STATS", lines);
+                    }
+                    else if (i == 2) { // RELICS
+                        std::vector<Relic*> relics = player->getRelics();
+                        std::vector<std::string> lines;
+                        if (relics.empty()) lines.push_back("No relics yet.");
+                        for (Relic* r : relics)
+                            lines.push_back(r->getName() + ": " + r->getDescription());
+                        popH = 38.f + std::max((int)lines.size(), 1) * 20.f + 10.f;
+                        if (popH > 300.f) popH = 300.f;
+                        popY = panelY - popH - 6.f;
+                        popX = (800.f - popW) / 2.f;
+                        drawPopup(window, font, popX, popY, popW, popH, "RELICS", lines);
+                    }
+                    else if (i == 3) { // POTIONS
+                        std::vector<Potion> potions = player->getPotions();
+                        std::vector<std::string> lines;
+                        lines.push_back("Slots: " + std::to_string(potions.size()) +
+                                        " / " + std::to_string(player->getPotionSlots()));
+                        if (potions.empty()) lines.push_back("No potions.");
+                        for (Potion& p : potions)
+                            lines.push_back("- " + p.getName());
+                        lines.push_back("(P: usar primera pocion)");
+                        popH = 38.f + lines.size() * 20.f + 10.f;
+                        popY = panelY - popH - 6.f;
+                        drawPopup(window, font, popX, popY, popW, popH, "POTIONS", lines);
+                    }
+                }
+            }
         }
     }
 }

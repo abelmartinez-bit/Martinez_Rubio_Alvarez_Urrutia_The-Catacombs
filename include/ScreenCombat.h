@@ -15,4 +15,8 @@ void drawCombat(sf::RenderWindow& window, sf::Font& font,
                 sf::Text& logText, sf::Text& resultText,
                 sf::Text& instructionText,
                 bool& rewardGiven, const sf::Sprite& combatSprite,
-                Floor* floor, bool isMiniBoss, std::string& rewardDescription);
+                Floor* floor, bool isMiniBoss, std::string& rewardDescription, 
+                bool showingMoves, sf::Vector2f mousePos);
+                //nuevos parametros
+                //showingMoves para saber si estamos mostrando los 4 botones o los 4 moves
+                //mousePos para saber donde se hace hover para los pop ups
