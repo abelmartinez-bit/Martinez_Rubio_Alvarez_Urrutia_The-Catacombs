@@ -234,7 +234,70 @@ void drawEventScreen(sf::RenderWindow& window, sf::Font& font, const std::string
     hint.setPosition({(800.f - hb.size.x) / 2.f - hb.position.x, 510.f});
     window.draw(hint);
 }
+    std::string wrapText(const std::string& text, sf::Font& font, unsigned int characterSize, float maxWidth) {
+    std::string result;
+    std::string line;
+    std::string word;
 
+    for (char c : text) {
+        if (c == '\n') {
+            if (!word.empty()) {
+                std::string testLine = line + word;
+
+                sf::Text testText(font, testLine, characterSize);
+
+                if (testText.getLocalBounds().size.x > maxWidth && !line.empty()) {
+                    result += line + "\n";
+                    result += word + "\n";
+                } else {
+                    result += testLine + "\n";
+                }
+
+                word.clear();
+                line.clear();
+            } else {
+                result += line + "\n";
+                line.clear();
+            }
+
+            continue;
+        }
+
+        if (c == ' ') {
+            std::string testLine = line + word + " ";
+
+            sf::Text testText(font, testLine, characterSize);
+
+            if (testText.getLocalBounds().size.x > maxWidth && !line.empty()) {
+                result += line + "\n";
+                line = word + " ";
+            } else {
+                line = testLine;
+            }
+
+            word.clear();
+        } else {
+            word += c;
+        }
+    }
+
+    if (!word.empty()) {
+        std::string testLine = line + word;
+
+        sf::Text testText(font, testLine, characterSize);
+
+        if (testText.getLocalBounds().size.x > maxWidth && !line.empty()) {
+            result += line + "\n";
+            result += word;
+        } else {
+            result += testLine;
+        }
+    } else {
+        result += line;
+    }
+
+    return result;
+}
 void drawRewardScreen(sf::RenderWindow& window, sf::Font& font, const std::string& description, Player* player, float time) {
     // Dark overlay
     sf::RectangleShape overlay({800.f, 600.f});
@@ -255,8 +318,8 @@ void drawRewardScreen(sf::RenderWindow& window, sf::Font& font, const std::strin
     window.draw(line);
 
     // Description panel
-    const float panelX = 110.f, panelY = 138.f;
-    const float panelW = 580.f, panelH = 270.f;
+    const float panelW = 680.f, panelH = 360.f;
+    const float panelX = 90.f, panelY = 138.f;
 
     sf::RectangleShape border({panelW + 4.f, panelH + 4.f});
     border.setPosition({panelX - 2.f, panelY - 2.f});
@@ -268,7 +331,11 @@ void drawRewardScreen(sf::RenderWindow& window, sf::Font& font, const std::strin
     panel.setFillColor(sf::Color(20, 12, 5, 220));
     window.draw(panel);
 
-    sf::Text desc(font, description, 18);
+    const unsigned int rewardTextSize = 13;
+    const float rewardTextMaxWidth = panelW - 44.f;
+
+    std::string wrappedDescription = wrapText(description, font, rewardTextSize, rewardTextMaxWidth);
+    sf::Text desc(font, wrappedDescription, rewardTextSize);    
     desc.setFillColor(sf::Color(210, 195, 165));
     desc.setPosition({panelX + 22.f, panelY + 18.f});
     window.draw(desc);
@@ -282,7 +349,7 @@ void drawRewardScreen(sf::RenderWindow& window, sf::Font& font, const std::strin
         sf::Text hpText(font, hpStr, 17);
         hpText.setFillColor(sf::Color(100, 220, 100));
         sf::FloatRect hb = hpText.getLocalBounds();
-        hpText.setPosition({(800.f - hb.size.x) / 2.f - hb.position.x, 440.f});
+        hpText.setPosition({(800.f - hb.size.x) / 2.f - hb.position.x, panelY + panelH - 42.f});  
         window.draw(hpText);
     }
 
@@ -298,7 +365,7 @@ void drawRewardScreen(sf::RenderWindow& window, sf::Font& font, const std::strin
     sf::Text hint(font, "Press  ENTER  to continue.", 19);
     hint.setFillColor(sf::Color(150, 150, 150, alpha));
     sf::FloatRect hb = hint.getLocalBounds();
-    hint.setPosition({(800.f - hb.size.x) / 2.f - hb.position.x, 510.f});
+    hint.setPosition({(800.f - hb.size.x) / 2.f - hb.position.x, panelY + panelH + 22.f});
     window.draw(hint);
 }
 
