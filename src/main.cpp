@@ -81,7 +81,7 @@ int main() {
     sf::SoundBuffer clickBuffer;
     clickBuffer.loadFromFile("assets/audio/click.wav");
     sf::Sound clickSound(clickBuffer);
-    clickSound.setVolume(50.f);
+    clickSound.setVolume(70.f);
 
     sf::Texture bgTexture; //fondo del main menu
     if (!bgTexture.loadFromFile("assets/images/CTHomeScreen1.jpg")) {

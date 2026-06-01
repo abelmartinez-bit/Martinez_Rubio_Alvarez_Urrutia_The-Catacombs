@@ -392,13 +392,12 @@ void drawCombat(sf::RenderWindow& window, sf::Font& font, Player* player, Enemy*
 
                     if (i == 1) { // STATS
                         std::vector<std::string> lines = {
-                            "ATK:    " + std::to_string(player->getAtk()),
-                            "DEF:    " + std::to_string(player->getDef()),
-                            "SP.ATK: " + std::to_string(player->getSpAtk()),
-                            "SP.DEF: " + std::to_string(player->getSpDef()),
-                            "SPD:     " + std::to_string(player->getSpd()),
-                            "EXP: " + std::to_string(player->getExp()) +
-                                " / " + std::to_string(player->getExpToNextLevel()),
+                            "ATK:    " + std::to_string(player->getAtk()) + " | " + std::to_string(enemy->getAtk()),
+                            "DEF:    " + std::to_string(player->getDef()) + " | " + std::to_string(enemy->getDef()),
+                            "SP.ATK: " + std::to_string(player->getSpAtk()) + " | " + std::to_string(enemy->getSpAtk()),
+                            "SP.DEF: " + std::to_string(player->getSpDef()) + " | " + std::to_string(enemy->getSpDef()),
+                            "SPD:     " + std::to_string(player->getSpd()) + " | " + std::to_string(enemy->getSpd()),
+                            "EXP: " + std::to_string(player->getExp()) + " / " + std::to_string(player->getExpToNextLevel()),
                         };
                         popH = 38.f + lines.size() * 20.f + 10.f;
                         popY = panelY - popH - 6.f;
