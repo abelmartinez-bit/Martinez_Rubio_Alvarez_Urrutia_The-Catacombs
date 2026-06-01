@@ -17,3 +17,12 @@ void drawCombat(sf::RenderWindow& window, sf::Font& font,
                 sf::Text& instructionText, sf::Text& combatTitleText,
                 bool& rewardGiven, const sf::Sprite& combatSprite,
                 Floor* floor, bool isMiniBoss, std::string& rewardDescription, bool isFinalBoss = false);
+
+void drawFinalBossCombat(sf::RenderWindow& window, sf::Font& font,
+                         Player* player, Enemy* enemy, CombatEngine* combat,
+                         sf::Text& playerText, sf::Text& enemyText,
+                         sf::Text& logText, sf::Text& resultText,
+                         sf::Text& instructionText,
+                         bool& rewardGiven, const sf::Sprite& finalBossSprite,
+                         Floor* floor, std::string& rewardDescription);
+ 
