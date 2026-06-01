@@ -77,12 +77,6 @@ int main() {
         bossMusic.setVolume(70.f);   // Boss music slightly louder for impact
     }
 
-    // Combat background music
-    sf::Music combatMusic;
-    combatMusic.openFromFile("assets/audio/combatBGmusic.wav");
-    combatMusic.setLooping(true);
-    combatMusic.setVolume(50.f);
-
     // Click sound
     sf::SoundBuffer clickBuffer;
     clickBuffer.loadFromFile("assets/audio/click.wav");
@@ -743,8 +737,18 @@ int main() {
                                 showMoveSelect = true; //new pop up para elegir que move boostear o reemplazar con MoveRelic
                             else {
                                 GameScreen next = gameLoop.onCombatFinished();
-                                combatMusic.stop();
-                                startTransition(next);
+                                if (gameLoop.getIsFinalBoss()) {
+                                    onScreenFlip = [&] {
+                                        bossMusic.stop();
+                                        combatMusic.stop();
+                                        if (next == GameScreen::WIN) {
+                                            // Optionally restart regular music on win screen
+                                            // music.setLooping(true);
+                                            // music.setVolume(30.f);
+                                            // music.play();
+                                        }
+                                    };
+                                }                                startTransition(next);
                             }
                         }
                     }
@@ -769,6 +773,13 @@ int main() {
 
                         onScreenFlip = [&, nextScreen] {
                             combatRewardDescription = "";
+                           if (gameLoop.getIsFinalBoss()) {
+                                music.stop();
+                                combatMusic.stop();
+                                if (bossAudioLoaded) {
+                                    bossMusic.play();
+                                }
+                            }
                         };
                         startTransition(nextScreen);
                     }
