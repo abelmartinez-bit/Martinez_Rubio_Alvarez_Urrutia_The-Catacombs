@@ -1,10 +1,9 @@
 #include "../include/CombatEngine.h"
-#include <cstdlib> //rand
-#include <ctime> //time for seeding rand
+#include "../include/FinalBoss.h"
+#include <cstdlib> //rand   
 #include <iostream> // temp for testing
 
 CombatEngine::CombatEngine(Player* p, Entity* e) : player(p), enemy(e) {
-    srand(time(0)); // seed random for accuracy checks y despues para crit chance
     // set base stats of player and enemy at the start of combat
     setBaseStats();
     // asi se pueden resetear despues con resetStats() sin perder el valor original
@@ -54,6 +53,7 @@ void CombatEngine::executeTurn(int playerMoveIndex) {
         } else combatLog += first->getName() + "'s " + firstMove.getName() + " missed!\n";
         
     }
+
     
     // Check if battle ended (died from first move so second doesnt get to move)
     if (isBattleOver()) {
@@ -92,6 +92,12 @@ void CombatEngine::executeTurn(int playerMoveIndex) {
         } else combatLog += second->getName() + "'s " + secondMove.getName() + " missed!\n";
     
     }
+
+    if (enemy->isAlive()) {
+        if (FinalBoss* boss = dynamic_cast<FinalBoss*>(enemy)) {
+        boss->updatePhase();
+    }
+}
 
     if (isBattleOver()) {
         endReset(player, enemy);
@@ -287,13 +293,9 @@ std::string CombatEngine::getWinner() {
     return "Draw";
 }
 
-std::string CombatEngine::getCombatLog() {
-    return combatLog;
-}
+std::string CombatEngine::getCombatLog() {return combatLog;}
 
-void CombatEngine::clearLog() {
-    combatLog = "";
-}
+void CombatEngine::clearLog() {combatLog = "";}
 
 void CombatEngine::setBaseStats() {
     player->setBaseAtk(player->getAtk());

@@ -2,8 +2,10 @@
 #include "Player.h"
 #include "Floor.h"
 #include "Enemy.h"
+#include "FinalBoss.h"
 #include "CombatEngine.h"
 #include "MainMenu.h"   // GameScreen enum
+#include "UtilityRelic.h" // for HEAL_ON_FLOOR relic effect
 
 // GameLoop coordina el flujo completo de una partida
 
@@ -18,6 +20,7 @@ private:
 
     int  currentFloorNumber;
     bool isMiniBoss;
+    bool isFinalBoss;
 
     static const int MAX_FLOORS = 10; // can be changed
 
@@ -26,10 +29,12 @@ private:
     void buildPreviewEnemies();
     void spawnFromDoor(const Door& door, int doorIndex);
     void startCombat();
+    void startFinalBossCombat();
     GameScreen advanceFloor();   // incrementa piso, genera doors o declara WIN
 
     std::string rewardDescription;
     GameScreen eventResultScreen;
+    bool needsEventFloorAdvance;  // Flag to defer floor advancement after event transition
 
 public:
     GameLoop();
@@ -44,8 +49,9 @@ public:
 
     // Llamado desde main.cpp despues de que el combate termino
     GameScreen onCombatFinished(); // Devuelve: DOOR_SELECT, WIN, GAME_OVER
-    GameScreen onEventDismissed() const { return eventResultScreen; }
+    GameScreen onEventDismissed();
     GameScreen onRewardsDismissed();
+    GameScreen performPendingEventFloorAdvance();  // Performs deferred floor advance after event
 
     void advanceTurn(int moveIndex); //ahora recibe el index del movimiento del player
     void usePotionInCombat(); // P: usa la primera pocion del inventario
@@ -63,7 +69,8 @@ public:
 
     std::string getRewardDescription()  const { return rewardDescription; }
 
-    CombatEngine* getCombat()        const { return combat; }
-    int getFloorNumber()   const { return currentFloorNumber; }
-    bool getIsMiniBoss()    const { return isMiniBoss; }
+    CombatEngine* getCombat() const { return combat; }
+    int getFloorNumber() const { return currentFloorNumber; }
+    bool getIsMiniBoss() const { return isMiniBoss; }
+    bool getIsFinalBoss() const { return isFinalBoss; } 
 };

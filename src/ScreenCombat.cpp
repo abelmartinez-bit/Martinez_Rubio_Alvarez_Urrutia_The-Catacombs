@@ -1,4 +1,5 @@
 #include "../include/ScreenCombat.h"
+#include "../include/FinalBoss.h"
 #include <cstdlib>
 #include <iostream>
 
@@ -149,6 +150,7 @@ void drawPopup(sf::RenderWindow& window, sf::Font& font,
         ly += 20.f;
     }
 }
+
 
 //funcion principal, con cambios para dibujar la pantalla de combate, tipo pokemon y entrega recompensa si termino
 void drawCombat(sf::RenderWindow& window, sf::Font& font, Player* player, Enemy* enemy, CombatEngine* combat, 
@@ -383,17 +385,17 @@ void drawCombat(sf::RenderWindow& window, sf::Font& font, Player* player, Enemy*
 
                     if (i == 1) { // STATS
                         std::vector<std::string> lines = {
-                            "ATK:    " + std::to_string(player->getAtk()),
-                            "DEF:    " + std::to_string(player->getDef()),
-                            "SP.ATK: " + std::to_string(player->getSpAtk()),
-                            "SP.DEF: " + std::to_string(player->getSpDef()),
-                            "SPD:    " + std::to_string(player->getSpd()),
+                            "ATK:    " + std::to_string(player->getAtk()) + " | " + std::to_string(enemy->getAtk()),
+                            "DEF:    " + std::to_string(player->getDef()) + " | " + std::to_string(enemy->getDef()),
+                            "SP.ATK: " + std::to_string(player->getSpAtk()) + " | " + std::to_string(enemy->getSpAtk()),
+                            "SP.DEF: " + std::to_string(player->getSpDef()) + " | " + std::to_string(enemy->getSpDef()),
+                            "SPD:     " + std::to_string(player->getSpd()) + " | " + std::to_string(enemy->getSpd()),
                             "EXP: " + std::to_string(player->getExp()) +
                                 " / " + std::to_string(player->getExpToNextLevel()),
                         };
                         popH = 38.f + lines.size() * 20.f + 10.f;
                         popY = panelY - popH - 6.f;
-                        drawPopup(window, font, popX, popY, popW, popH, "STATS", lines);
+                        drawPopup(window, font, popX, popY, popW, popH, "PLAYER  |  ENEMY", lines);
                     }
                     else if (i == 2) { // RELICS
                         std::vector<Relic*> relics = player->getRelics();
@@ -415,7 +417,7 @@ void drawCombat(sf::RenderWindow& window, sf::Font& font, Player* player, Enemy*
                         if (potions.empty()) lines.push_back("No potions.");
                         for (Potion& p : potions)
                             lines.push_back("- " + p.getName());
-                        lines.push_back("(P: usar primera pocion)");
+                        lines.push_back("(P: Use top potion)");
                         popH = 38.f + lines.size() * 20.f + 10.f;
                         popY = panelY - popH - 6.f;
                         drawPopup(window, font, popX, popY, popW, popH, "POTIONS", lines);
@@ -423,5 +425,343 @@ void drawCombat(sf::RenderWindow& window, sf::Font& font, Player* player, Enemy*
                 }
             }
         }
+    }
+}
+
+// remember to swap final boss music and background in main.cpp when calling this function
+
+void drawFinalBossCombat(sf::RenderWindow& window, sf::Font& font, Player* player, Enemy* enemy, CombatEngine* combat,
+                         sf::Text& playerText, sf::Text& enemyText, sf::Text& logText, sf::Text& resultText,
+                         sf::Text& instructionText, bool& rewardGiven, const sf::Sprite& finalBossBackground,
+                         Floor* floor, std::string& rewardDescription, bool showingMoves, sf::Vector2f mousePos) {
+
+    // Phase information
+    FinalBoss* boss = dynamic_cast<FinalBoss*>(enemy);
+    int phase = boss ? boss->getCurrentPhase() : 1;
+
+    // Update log text (used only for string; rendering happens inside the bottom panel)
+    logText.setString("Log:\n" + combat->getCombatLog());
+
+    // End-of-battle handling
+    if (combat->isBattleOver()) {
+        resultText.setString(combat->getWinner() + " wins!");
+
+        if (player->isAlive() && !rewardGiven) {
+            rewardDescription = "The darkness lifts. NECRON has fallen.\nThe Catacombs are silent at last.\n\n"
+                                "You have conquered The Catacombs!";
+            rewardGiven = true;
+        } else if (!player->isAlive() && !rewardGiven) {
+            rewardGiven = true;
+        }
+
+        // resultText positioning will be done just before drawing (centered, above bottom panel)
+    } else {
+        resultText.setString("");
+    }
+    // instructionText is no longer drawn separately – it is integrated into the bottom panel log area
+
+    // ---- Draw background and atmosphere ----
+    window.clear(sf::Color(0, 0, 0));
+    window.draw(finalBossBackground);
+
+    // Red tint overlay
+    sf::RectangleShape atmo({800.f, 600.f});
+    atmo.setFillColor(sf::Color(90, 0, 0, 110));
+    window.draw(atmo);
+
+    // ---- Top banner: NECRON title + phase boxes ----
+    sf::RectangleShape titleBg({800.f, 58.f});
+    titleBg.setFillColor(sf::Color(25, 0, 0, 235));
+    window.draw(titleBg);
+
+    sf::RectangleShape bannerLine({800.f, 2.f});
+    bannerLine.setPosition({0.f, 58.f});
+    bannerLine.setFillColor(sf::Color(140, 20, 20));
+    window.draw(bannerLine);
+
+    // "N E C R O N" title (centered)
+    sf::Text bossName(font, "N E C R O N", 32);
+    bossName.setFillColor(sf::Color(210, 40, 40));
+    {
+        sf::FloatRect b = bossName.getLocalBounds();
+        bossName.setPosition({(800.f - b.size.x) / 2.f - b.position.x, 10.f});
+    }
+    window.draw(bossName);
+
+    // Phase boxes (I, II, III) – right-aligned inside the banner
+    const float phaseBoxW = 54.f, phaseBoxH = 26.f, phaseBoxGap = 6.f;
+    const float phaseStartX = 800.f - (phaseBoxW * 3.f + phaseBoxGap * 2.f) - 14.f;
+    const float phaseBoxY = 16.f;
+
+    const char* phaseLabels[3] = {"I", "II", "III"};
+    sf::Color activeColors[3] = {
+        sf::Color(170, 60, 60),   // phase 1
+        sf::Color(200, 100, 30),  // phase 2
+        sf::Color(230, 20, 20)    // phase 3
+    };
+    sf::Color dimColor(55, 20, 20, 200);
+
+    for (int p = 0; p < 3; p++) {
+        float px = phaseStartX + p * (phaseBoxW + phaseBoxGap);
+        bool active = (p + 1 == phase);
+
+        sf::RectangleShape pBox({phaseBoxW, phaseBoxH});
+        pBox.setPosition({px, phaseBoxY});
+        pBox.setFillColor(active ? activeColors[p] : dimColor);
+        pBox.setOutlineColor(sf::Color(140, 30, 30));
+        pBox.setOutlineThickness(1.5f);
+        window.draw(pBox);
+
+        sf::Text pLabel(font, phaseLabels[p], 14);
+        pLabel.setFillColor(active ? sf::Color(255, 220, 220) : sf::Color(110, 60, 60));
+        sf::FloatRect pb = pLabel.getLocalBounds();
+        pLabel.setPosition({px + (phaseBoxW - pb.size.x) / 2.f - pb.position.x,
+                            phaseBoxY + (phaseBoxH - pb.size.y) / 2.f - pb.position.y});
+        window.draw(pLabel);
+    }
+
+    // ---- Player info box (bottom-left, like in drawCombat) ----
+    const float pBoxX = 30.f, pBoxY = 330.f, pBoxW = 330.f, pBoxH = 95.f;
+
+    sf::RectangleShape pBorder({pBoxW + 4.f, pBoxH + 4.f});
+    pBorder.setPosition({pBoxX - 2.f, pBoxY - 2.f});
+    pBorder.setFillColor(sf::Color(100, 20, 20));   // redder border
+    window.draw(pBorder);
+
+    sf::RectangleShape pBox({pBoxW, pBoxH});
+    pBox.setPosition({pBoxX, pBoxY});
+    pBox.setFillColor(sf::Color(15, 5, 5, 215));    // very dark red
+    window.draw(pBox);
+
+    sf::Text pName(font, player->getName() + "  -  Lvl." + std::to_string(player->getLevel()), 20);
+    pName.setFillColor(sf::Color(210, 160, 60));     // gold lettering (keep readable)
+    pName.setPosition({pBoxX + 10.f, pBoxY + 8.f});
+    window.draw(pName);
+
+    sf::Text pHpLbl(font, "HP", 14);
+    pHpLbl.setFillColor(sf::Color(220, 100, 100));
+    pHpLbl.setPosition({pBoxX + 10.f, pBoxY + 42.f});
+    window.draw(pHpLbl);
+
+    drawHpBar(window, pBoxX + 40.f, pBoxY + 46.f, pBoxW - 55.f, 12.f,
+              player->getHp(), player->getMaxHp());
+
+    std::string hpStr = std::to_string(player->getHp()) + " / " + std::to_string(player->getMaxHp());
+    sf::Text pHpNum(font, hpStr, 14);
+    pHpNum.setFillColor(sf::Color(255, 200, 200));
+    sf::FloatRect hnb = pHpNum.getLocalBounds();
+    pHpNum.setPosition({pBoxX + pBoxW - hnb.size.x - hnb.position.x - 10.f, pBoxY + 68.f});
+    window.draw(pHpNum);
+
+    // ---- Enemy info box (top-right, below the banner) ----
+    const float eBoxX = 430.f, eBoxY = 80.f, eBoxW = 330.f, eBoxH = 80.f;
+
+    sf::RectangleShape eBorder({eBoxW + 4.f, eBoxH + 4.f});
+    eBorder.setPosition({eBoxX - 2.f, eBoxY - 2.f});
+    eBorder.setFillColor(sf::Color(120, 15, 15));
+    window.draw(eBorder);
+
+    sf::RectangleShape eBox({eBoxW, eBoxH});
+    eBox.setPosition({eBoxX, eBoxY});
+    eBox.setFillColor(sf::Color(20, 5, 5, 215));
+    window.draw(eBox);
+
+    // Enemy name includes current phase
+    std::string phaseTag = "  [Phase " + std::string(phase == 1 ? "I" : phase == 2 ? "II" : "III") + "]";
+    sf::Text eName(font, enemy->getName() + phaseTag, 20);
+    eName.setFillColor(sf::Color(240, 40, 40));
+    eName.setPosition({eBoxX + 10.f, eBoxY + 8.f});
+    window.draw(eName);
+
+    sf::Text eHpLbl(font, "HP", 14);
+    eHpLbl.setFillColor(sf::Color(220, 80, 80));
+    eHpLbl.setPosition({eBoxX + 10.f, eBoxY + 40.f});
+    window.draw(eHpLbl);
+
+    // Draw the HP bar (without markers)
+    const float eHpBarX = eBoxX + 40.f;
+    const float eHpBarY = eBoxY + 44.f;
+    const float eHpBarW = eBoxW - 55.f;
+    const float eHpBarH = 12.f;
+    drawHpBar(window, eHpBarX, eHpBarY, eHpBarW, eHpBarH,
+              enemy->getHp(), enemy->getMaxHp());
+
+    // Phase threshold markers over the HP bar (healthbar splits)
+    {
+        // 66% marker (phase 1 → 2)
+        sf::RectangleShape mark66({2.f, eHpBarH + 4.f});
+        mark66.setPosition({eHpBarX + eHpBarW * 0.66f - 1.f, eHpBarY - 2.f});
+        mark66.setFillColor(sf::Color(230, 130, 30));
+        window.draw(mark66);
+
+        // 33% marker (phase 2 → 3)
+        sf::RectangleShape mark33({2.f, eHpBarH + 4.f});
+        mark33.setPosition({eHpBarX + eHpBarW * 0.33f - 1.f, eHpBarY - 2.f});
+        mark33.setFillColor(sf::Color(230, 20, 20));
+        window.draw(mark33);
+    }
+
+    // ---- Bottom panel with log and buttons (same structure as drawCombat, red themed) ----
+    const float panelY  = 440.f;
+    const float panelH  = 185.f;
+    const float logW    = 390.f;
+    const float btnAreaX = logW;
+    const float btnAreaW = 800.f - logW;
+
+    // Panel background (dark red)
+    sf::RectangleShape panelBg({800.f, panelH});
+    panelBg.setPosition({0.f, panelY});
+    panelBg.setFillColor(sf::Color(20, 5, 5, 230));
+    window.draw(panelBg);
+
+    // Top border
+    sf::RectangleShape panelTop({800.f, 3.f});
+    panelTop.setPosition({0.f, panelY});
+    panelTop.setFillColor(sf::Color(140, 20, 20));
+    window.draw(panelTop);
+
+    // Divider between log and buttons
+    sf::RectangleShape divider({2.f, panelH - 10.f});
+    divider.setPosition({logW, panelY + 5.f});
+    divider.setFillColor(sf::Color(100, 15, 15));
+    window.draw(divider);
+
+    // Log area
+    if (combat->isBattleOver()) {
+        std::string endMsg = player->isAlive()
+            ? "Victory!\nPress ENTER to continue."
+            : "Defeated...\nPress ENTER to continue.";
+        sf::Text endTxt(font, endMsg, 20);
+        endTxt.setFillColor(player->isAlive() ? sf::Color(100, 220, 100) : sf::Color(210, 80, 80));
+        endTxt.setPosition({18.f, panelY + 20.f});
+        window.draw(endTxt);
+    } else {
+        std::string logStr = combat->getCombatLog();
+        if (logStr.empty()) logStr = "What will " + player->getName() + " do?";
+
+        // Split log into lines (same logic as drawCombat)
+        std::vector<std::string> logLines;
+        std::string line;
+        const int maxChars = 38;
+
+        for (char c : logStr) {
+            if (c == '\n') {
+                if (!line.empty()) logLines.push_back(line);
+                line = "";
+            } else {
+                line += c;
+                if (c == '.') {
+                    logLines.push_back(line);
+                    line = "";
+                } else if ((int)line.size() >= maxChars) {
+                    int cutPos = line.rfind(' ');
+                    if (cutPos != (int)std::string::npos) {
+                        logLines.push_back(line.substr(0, cutPos));
+                        line = line.substr(cutPos + 1);
+                    } else {
+                        logLines.push_back(line);
+                        line = "";
+                    }
+                }
+            }
+        }
+        if (!line.empty()) logLines.push_back(line);
+
+        int startLine = std::max(0, (int)logLines.size() - 6);
+        float ly = panelY + 16.f;
+        for (int i = startLine; i < (int)logLines.size(); i++) {
+            sf::Text logTxt(font, logLines[i], 16);
+            logTxt.setFillColor(sf::Color(210, 170, 150));   // warm tone
+            logTxt.setPosition({18.f, ly});
+            window.draw(logTxt);
+            ly += 26.f;
+        }
+    }
+
+    // Button area
+    if (!combat->isBattleOver()) {
+        const float bW = 170.f, bH = 58.f, bGap = 8.f;
+        const float bStartX = btnAreaX + (btnAreaW - bW * 2.f - bGap) / 2.f;
+        const float bRow1Y  = panelY + 20.f;
+        const float bRow2Y  = panelY + 20.f + bH + bGap;
+        float bx[4] = { bStartX, bStartX + bW + bGap, bStartX, bStartX + bW + bGap };
+        float by[4] = { bRow1Y, bRow1Y, bRow2Y, bRow2Y };
+
+        if (showingMoves) {
+            // Show player moves
+            std::vector<Move> moves = player->getMoves();
+            for (int i = 0; i < 4; i++) {
+                bool hov = (mousePos.x >= bx[i] && mousePos.x <= bx[i] + bW &&
+                            mousePos.y >= by[i] && mousePos.y <= by[i] + bH);
+                drawMoveBtn(window, font, bx[i], by[i], bW, bH, moves[i], hov);
+            }
+            // BACK button
+            const float backW = 100.f, backH = 30.f;
+            float backX = btnAreaX + (btnAreaW - backW) / 2.f;
+            float backY = panelY + panelH - backH - 20.f;
+            bool backHov = (mousePos.x >= backX && mousePos.x <= backX + backW &&
+                            mousePos.y >= backY && mousePos.y <= backY + backH);
+            drawPanelBtn(window, font, backX, backY, backW, backH, "BACK", backHov);
+        } else {
+            // Main menu: MOVES / STATS / RELICS / POTIONS
+            const char* labels[4] = { "MOVES", "STATS", "RELICS", "POTIONS" };
+            for (int i = 0; i < 4; i++) {
+                bool hov = (mousePos.x >= bx[i] && mousePos.x <= bx[i] + bW &&
+                            mousePos.y >= by[i] && mousePos.y <= by[i] + bH);
+                drawPanelBtn(window, font, bx[i], by[i], bW, bH, labels[i], hov);
+
+                // Popups on hover
+                if (hov && i > 0) {
+                    const float popW = 320.f;
+                    float popX = bx[i] - popW - 10.f;
+                    if (popX < 5.f) popX = bx[i] + bW + 10.f;
+                    float popY, popH;
+
+                    if (i == 1) { // STATS
+                        std::vector<std::string> lines = {
+                            "ATK:    " + std::to_string(player->getAtk()) + " | " + std::to_string(enemy->getAtk()),
+                            "DEF:    " + std::to_string(player->getDef()) + " | " + std::to_string(enemy->getDef()),
+                            "SP.ATK: " + std::to_string(player->getSpAtk()) + " | " + std::to_string(enemy->getSpAtk()),
+                            "SP.DEF: " + std::to_string(player->getSpDef()) + " | " + std::to_string(enemy->getSpDef()),
+                            "SPD:     " + std::to_string(player->getSpd()) + " | " + std::to_string(enemy->getSpd()),
+                            "EXP: " + std::to_string(player->getExp()) + " / " + std::to_string(player->getExpToNextLevel()),
+                        };
+                        popH = 38.f + lines.size() * 20.f + 10.f;
+                        popY = panelY - popH - 6.f;
+                        drawPopup(window, font, popX, popY, popW, popH, "PLAYER  |  ENEMY", lines);
+                    } else if (i == 2) { // RELICS
+                        std::vector<Relic*> relics = player->getRelics();
+                        std::vector<std::string> lines;
+                        if (relics.empty()) lines.push_back("No relics yet.");
+                        for (Relic* r : relics)
+                            lines.push_back(r->getName() + ": " + r->getDescription());
+                        popH = 38.f + std::max((int)lines.size(), 1) * 20.f + 10.f;
+                        if (popH > 300.f) popH = 300.f;
+                        popY = panelY - popH - 6.f;
+                        popX = (800.f - popW) / 2.f;
+                        drawPopup(window, font, popX, popY, popW, popH, "RELICS", lines);
+                    } else if (i == 3) { // POTIONS
+                        std::vector<Potion> potions = player->getPotions();
+                        std::vector<std::string> lines;
+                        lines.push_back("Slots: " + std::to_string(potions.size()) + " / " + std::to_string(player->getPotionSlots()));
+                        if (potions.empty()) lines.push_back("No potions.");
+                        for (Potion& p : potions)
+                            lines.push_back("- " + p.getName());
+                        lines.push_back("(P: Use top potion)");
+                        popH = 38.f + lines.size() * 20.f + 10.f;
+                        popY = panelY - popH - 6.f;
+                        drawPopup(window, font, popX, popY, popW, popH, "POTIONS", lines);
+                    }
+                }
+            }
+        }
+    }
+
+
+    if (combat->isBattleOver()) {
+        resultText.setCharacterSize(28);
+        sf::FloatRect rb = resultText.getLocalBounds();
+        resultText.setPosition({(800.f - rb.size.x) / 2.f - rb.position.x, 205.f});
+        window.draw(resultText);
     }
 }

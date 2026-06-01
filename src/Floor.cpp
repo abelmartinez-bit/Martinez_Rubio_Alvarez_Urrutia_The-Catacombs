@@ -9,7 +9,7 @@ Floor::Floor(int number) : floorNumber(number) {}
 
 int Floor::calculateCorruptionChance(float modifier) const {
     // escala la prob de corrupcion con floorNumber + relic
-    return static_cast<int>(floorNumber * 10 + modifier);
+    return static_cast<int>(floorNumber * 8 + modifier);
 }
 
 EnemyType Floor::getRandomEnemyType() const {
@@ -129,9 +129,9 @@ std::string Floor::triggerEvent(Player& player, const Door& door) {
 
         if (player.getPotions().size() < player.getPotionSlots()) {
             player.addPotion(p);
-            result += "You discovered a " + potionName + " !";
+            result += "You found a " + potionName + " !";
         } else {
-            result += "You found a " + potionName + " , but your inventory is full. You had to leave it behind.";
+            result += "Found: " + p.getName() + ".\nBut your inventory is full, you left it behind.\n\n";
         }
 
         
@@ -166,9 +166,9 @@ std::string Floor::giveRewards(Player& player, Entity* enemy, bool isMiniBoss) {
         Potion p = Potion::createRandomPotion();
         if (player.getPotions().size() < (size_t)player.getPotionSlots()) {
             player.addPotion(p);
-            result += "Found: " + p.getName() + "\n\n";
+            result += "Found: " + p.getName() + "!\n\n";
         } else {
-            result += "Found " + p.getName() + ", but your inventory is full.\n\n";
+            result += "Found: " + p.getName() + ".\nBut your inventory is full, you left it behind.\n\n";
         }
     }
 
