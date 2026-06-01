@@ -462,7 +462,7 @@ void Player::initializeMovePool() {
                 Move("Lethal Strike", MoveType::PHYSICAL, 120, 80),
                 Move("Distract", MoveType::EFFECT, 0, 100, MoveEffect::SPATK_DOWN, MoveTarget::ENEMY, 30),
                 Move("Vanish", MoveType::EFFECT, 0, 100, MoveEffect::BLOCK, MoveTarget::ENEMY),
-                Move("Garrote", MoveType::PHYSICAL, 70, 100, MoveEffect::DEF_DOWN, MoveTarget::ENEMY)
+                Move("Garrote", MoveType::PHYSICAL, 70, 95, MoveEffect::DEF_DOWN, MoveTarget::ENEMY)
                 };
             };
             break;
@@ -471,7 +471,7 @@ void Player::initializeMovePool() {
         switch(preset) {
             case 0:
                 movePool = {
-                Move("Soul Drain", MoveType::SPECIAL, 80, 70, MoveEffect::HEAL, MoveTarget::ENEMY, 15),
+                Move("Soul Drain", MoveType::SPECIAL, 80, 65, MoveEffect::HEAL, MoveTarget::ENEMY, 15),
                 Move("Curse", MoveType::EFFECT, 0, 100, MoveEffect::SPATK_DOWN, MoveTarget::ENEMY, 30),
                 Move("Thunderbolt", MoveType::SPECIAL, 90, 80, MoveEffect::SPD_DOWN, MoveTarget::ENEMY),
                 Move("Ethereal Blast", MoveType::SPECIAL, 120, 75),
