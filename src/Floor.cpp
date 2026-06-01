@@ -139,9 +139,16 @@ std::string Floor::triggerEvent(Player& player, const Door& door) {
         Relic* r = RelicPool::getRandomRelic();
         std::string relicName = r->getName();
         std::string relicDesc = r->getDescription();
-        player.addRelic(r);
+        std::string synergyMessages = player.addRelic(r);
+       
+       
         result += "Ancient relic found: " + relicName + "\n" + relicDesc;
+       
+        if (synergyMessages.empty()) {
+            result += "\n\n" + synergyMessages; // se añaden los mensajes de sinergias si es que se activaron
     }
+
+}
 
     result += "\n\nGained " + std::to_string(expGained) + " EXP!";
     result += "\n\nYou advance to the next floor...";
@@ -209,8 +216,12 @@ std::string Floor::giveRewards(Player& player, Entity* enemy, bool isMiniBoss) {
         }
     }
 
-    player.addRelic(dropped);
+    std::string synergyMessages = player.addRelic(dropped);
     result += "Relic acquired:\n" + rarityLabel + dropped->getName() + "\n" + dropped->getDescription();
+
+    if (!synergyMessages.empty()) {
+        result += "\n\n" + synergyMessages; // se añaden los mensajes de sinergias si es que se activaron
+    }
 
     player.displayStats(); // temp for testing
     return result;
