@@ -109,18 +109,21 @@ void Player::checkRelicSynergies() {
         setMaxHp(getMaxHp() + 20);
         setSpAtk(getSpAtk() + 10);
         activeSynergies.push_back("Dragon Wisdom");
+        
         std::cout << "Synergy activated: Dragon Wisdom! Max HP +20 and SP.ATK +10.\n";
     }
 
     if (hasRelic("Ancient Blade") && hasRelic("Warrior Fang") && !hasSynergy("Warrior Legacy")) {
         setAtk(getAtk() + 10);
         activeSynergies.push_back("Warrior Legacy");
+
         std::cout << "Synergy activated: Warrior Legacy! ATK +10.\n";
     }
 
     if (hasRelic("Phoenix Feather") && hasRelic("Healing Charm") && !hasSynergy("Rebirth Blessing")) {
         addRestoreOnLevelUp(10);
         activeSynergies.push_back("Rebirth Blessing");
+
         std::cout << "Synergy activated: Rebirth Blessing! Extra level-up restore +10%.\n";
     }
 
@@ -133,24 +136,28 @@ void Player::checkRelicSynergies() {
         }
 
         activeSynergies.push_back("Perfect Aim");
+
         std::cout << "Synergy activated: Perfect Aim! All moves accuracy +5.\n";
     }
 
     if (hasRelic("Stone Shield") && hasRelic("Iron Helmet") && !hasSynergy("Iron Defense")) {
         setDef(getDef() + 8);
         activeSynergies.push_back("Iron Defense");
+
         std::cout << "Synergy activated: Iron Defense! DEF +8.\n";
     }
 
     if (hasRelic("Cloth Mantle") && hasRelic("Silver Thread") && !hasSynergy("Mystic Protection")) {
         setSpDef(getSpDef() + 8);
         activeSynergies.push_back("Mystic Protection");
+
         std::cout << "Synergy activated: Mystic Protection! SP.DEF +8.\n";
     }
 
     if (hasRelic("Traveler Boots") && hasRelic("Light Sandals") && !hasSynergy("Swift Step")) {
         setSpd(getSpd() + 5);
         activeSynergies.push_back("Swift Step");
+
         std::cout << "Synergy activated: Swift Step! SPD +5.\n";
     }
 
@@ -158,29 +165,34 @@ void Player::checkRelicSynergies() {
         setMaxHp(getMaxHp() + 15);
         heal(15);
         activeSynergies.push_back("Vital Core");
+
         std::cout << "Synergy activated: Vital Core! Max HP +15 and healed 15 HP.\n";
     }
 
     if (hasRelic("Potion Belt") && hasRelic("Large Potion Belt") && !hasSynergy("Alchemist Pack")) {
         expandPotionSlots(1);
         activeSynergies.push_back("Alchemist Pack");
+
         std::cout << "Synergy activated: Alchemist Pack! Extra potion slot +1.\n";
     }
 
     if (hasRelic("Minor Scholar Coin") && hasRelic("Scholar Coin") && !hasSynergy("Scholar Fortune")) {
         addExpBoost(10);
         activeSynergies.push_back("Scholar Fortune");
+
         std::cout << "Synergy activated: Scholar Fortune! Extra EXP boost +10%.\n";
     }
 
     if (hasRelic("Small Ruby") && hasRelic("Ancient Blade") && !hasSynergy("Crimson Edge")) {
         setAtk(getAtk() + 8);
         activeSynergies.push_back("Crimson Edge");
+
         std::cout << "Synergy activated: Crimson Edge! ATK +8.\n";
     }
     if (hasRelic("Blue Crystal") && hasRelic("Golden Ring") && !hasSynergy("Arcane Focus")) {
         setSpAtk(getSpAtk() + 8);
         activeSynergies.push_back("Arcane Focus");
+
         std::cout << "Synergy activated: Arcane Focus! SP.ATK +8.\n";
     }
 
@@ -188,6 +200,7 @@ void Player::checkRelicSynergies() {
         setDef(getDef() + 6);
         setSpDef(getSpDef() + 6);
         activeSynergies.push_back("Guardian Balance");
+
         std::cout << "Synergy activated: Guardian Balance! DEF +6 and SP.DEF +6.\n";
     }
 
@@ -202,9 +215,135 @@ void Player::checkRelicSynergies() {
         }
 
         activeSynergies.push_back("Predator Instinct");
+
         std::cout << "Synergy activated: Predator Instinct! SPD +4 and all moves accuracy +3.\n";
     }
+
+    if (hasRelic("Iron Knuckle") && hasRelic("Berserker's Axe") && !hasSynergy("Berserker Grip")) {
+        setAtk(getAtk() + 12);
+        activeSynergies.push_back("Berserker Grip");
+
+        std::cout << "Synergy activated: Berserker Grip! ATK +12.\n";
+    }
+
+    if (hasRelic("Stone Guard") && hasRelic("Guardian Shield") && !hasSynergy("Stonewall Guard")) {
+    setDef(getDef() + 12);
+    activeSynergies.push_back("Stonewall Guard");
+
+    std::cout << "Synergy activated: Stonewall Guard! DEF +12.\n";
+    }
+
+    if (hasRelic("Sage's Amulet") && hasRelic("Sage's Robe") && !hasSynergy("Sage's Awakening")) {
+    setSpAtk(getSpAtk() + 15);
+    setSpDef(getSpDef() + 8);
+    activeSynergies.push_back("Sage's Awakening");
+
+    std::cout << "Synergy activated: Sage's Awakening! SP.ATK +15 and SP.DEF +8.\n";
+    }
+
+    if (hasRelic("Healing Talisman") && hasRelic("Healing Pendant") && !hasSynergy("Blessed Recovery")) {
+    addRestoreOnLevelUp(10);
+    heal(20);
+    activeSynergies.push_back("Blessed Recovery");
+
+    std::cout << "Synergy activated: Blessed Recovery! Extra level-up restore +10% and healed 20 HP.\n";
+    }
+
+    if (hasRelic("Apprentice's Coin") && hasRelic("Scholar Coin") && !hasSynergy("Scholar's Path")) {
+    addExpBoost(10);
+    activeSynergies.push_back("Scholar's Path");
+
+    std::cout << "Synergy activated: Scholar's Path! Extra EXP boost +10%.\n";
+    }
+
+    if (hasRelic("Scholar Coin") && hasRelic("Timekeeper's Hourglass") && !hasSynergy("Accelerated Learning")) {
+    addExpBoost(15);
+    activeSynergies.push_back("Accelerated Learning");
+
+    std::cout << "Synergy activated: Accelerated Learning! Extra EXP boost +15%.\n";
+    }
+
+    if (hasRelic("Ice Scroll") && hasRelic("Mystic Cape") && !hasSynergy("Frozen Veil")) {
+    setSpDef(getSpDef() + 10);
+    setSpAtk(getSpAtk() + 6);
+    activeSynergies.push_back("Frozen Veil");
+
+    std::cout << "Synergy activated: Frozen Veil! SP.DEF +10 and SP.ATK +6.\n";
+    }
+
+    if (hasRelic("Flame Scroll") && hasRelic("Berserker's Axe") && !hasSynergy("Flame Rage")) {
+    setAtk(getAtk() + 8);
+    setSpAtk(getSpAtk() + 8);
+    activeSynergies.push_back("Flame Rage");
+
+    std::cout << "Synergy activated: Flame Rage! ATK +8 and SP.ATK +8.\n";
+    }
+
+    if (hasRelic("Earth Tome") && hasRelic("Eternal Shield") && !hasSynergy("Earthbound Guardian")) {
+    setDef(getDef() + 15);
+    setMaxHp(getMaxHp() + 20);
+    heal(20);
+    activeSynergies.push_back("Earthbound Guardian");
+
+    std::cout << "Synergy activated: Earthbound Guardian! DEF +15, Max HP +20 and healed 20 HP.\n";
+    }
+
+    if (hasRelic("Wind Scroll") && hasRelic("Hunter Boots") && !hasSynergy("Storm Hunter")) {
+    setSpd(getSpd() + 8);
+    setAtk(getAtk() + 6);
+    activeSynergies.push_back("Storm Hunter");
+
+    std::cout << "Synergy activated: Storm Hunter! SPD +8 and ATK +6.\n";
+    }
+
+    if (hasRelic("Thunder Tome") && hasRelic("Sharp Eye") && !hasSynergy("Thunder Precision")) {
+    std::vector<Move> moves = getMoves();
+
+    for (int i = 0; i < 4; i++) {
+        moves[i].addAccuracy(4);
+        setMove(i, moves[i]);
+    }
+
+    setSpAtk(getSpAtk() + 6);
+    activeSynergies.push_back("Thunder Precision");
+
+    std::cout << "Synergy activated: Thunder Precision! SP.ATK +6 and all moves accuracy +4.\n";
+    }
+
+    if (hasRelic("Ancient Blade") && hasRelic("Berserker's Axe") && !hasSynergy("Ancient Rage")) {
+    setAtk(getAtk() + 18);
+    activeSynergies.push_back("Ancient Rage");
+
+    std::cout << "Synergy activated: Ancient Rage! ATK +18.\n";
+    }
+
+    if (hasRelic("Dragon Heart") && hasRelic("Healing Pendant") && !hasSynergy("Dragon Recovery")) {
+    setMaxHp(getMaxHp() + 20);
+    heal(30);
+    activeSynergies.push_back("Dragon Recovery");
+
+    std::cout << "Synergy activated: Dragon Recovery! Max HP +20 and healed 30 HP.\n";
+    }
+
+    if (hasRelic("Eternal Shield") && hasRelic("Guardian Shield") && !hasSynergy("Eternal Guardian")) {
+    setDef(getDef() + 15);
+    setSpDef(getSpDef() + 8);
+    activeSynergies.push_back("Eternal Guardian");
+
+    std::cout << "Synergy activated: Eternal Guardian! DEF +15 and SP.DEF +8.\n";
+    }
+
+    if (hasRelic("Potion Belt") && hasRelic("Healing Talisman") && !hasSynergy("Field Medic")) {
+    expandPotionSlots(1);
+    addRestoreOnLevelUp(5);
+    activeSynergies.push_back("Field Medic");
+
+    std::cout << "Synergy activated: Field Medic! Potion slots +1 and extra level-up restore +5%.\n";
+    }
+
+
 }
+    
 
 void Player::addPotion(Potion potion) {
     if (potions.size() < potionSlots)
